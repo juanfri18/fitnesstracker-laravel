@@ -46,7 +46,7 @@
                 <div class="card stat-card p-3">
                     <div class="d-flex justify-content-between mb-2">
                         <span class="fw-bold">{{ $meta['titulo'] }}</span>
-                        <span class="text-muted small">{{ $meta['actual'] }} / {{ $meta['meta'] }}</span>
+                        <span class="text-muted small">{{ round($meta['actual'], 1) }} / {{ $meta['meta'] }}</span>
                     </div>
                     <div class="progress" style="height: 20px;">
                         <div class="progress-bar bg-{{ $meta['color'] }} progress-bar-striped progress-bar-animated" 
@@ -61,9 +61,24 @@
         @endforelse
     </div>
 
-    <div class="card stat-card p-4">
-        <h5 class="fw-bold mb-3">Progreso de Calorías</h5>
-        <canvas id="caloriesChart" height="100"></canvas>
+    <div class="row g-4">
+        <!-- Gráfico Principal (Lineal) -->
+        <div class="col-lg-8">
+            <div class="card stat-card p-4 h-100">
+                <h5 class="fw-bold mb-3"><i class="fas fa-fire-alt text-danger me-2"></i>Progreso de Calorías</h5>
+                <canvas id="caloriesChart" height="100"></canvas>
+            </div>
+        </div>
+
+        <!-- Gráfico Secundario (Doughnut) -->
+        <div class="col-lg-4">
+            <div class="card stat-card p-4 h-100">
+                <h5 class="fw-bold mb-3"><i class="fas fa-chart-pie text-primary me-2"></i>Distribución de Entrenos</h5>
+                <div style="position: relative; height:250px; width:100%">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
@@ -71,11 +86,11 @@
 @section('scripts_extra')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    // Gráfico de Calorías (PHP Inicializado)
     const ctx = document.getElementById('caloriesChart').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {
-            // Blade inyecta el JSON directamente a JS
             labels: @json($labels),
             datasets: [{
                 label: 'Kcal',
@@ -87,5 +102,29 @@
             }]
         }
     });
+
+    // Gráfico de Tipos (AJAX Asíncrono)
+    const ctxPie = document.getElementById('pieChart').getContext('2d');
+    fetch('/api/metricas/tipos')
+        .then(res => res.json())
+        .then(data => {
+            new Chart(ctxPie, {
+                type: 'doughnut',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        data: data.dataPoints,
+                        backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#0dcaf0'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } },
+                    cutout: '70%'
+                }
+            });
+        });
 </script>
 @endsection

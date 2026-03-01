@@ -1,0 +1,14 @@
+CREATE TABLE `entrenamientos` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `usuario_id` int(11) NOT NULL,
+  `fecha` date NOT NULL,
+  `tipo` enum('Fuerza','Carrera','Caminata') NOT NULL,
+  `duracion_minutos` int(11) DEFAULT 0,
+  `calorias` int(11) DEFAULT 0,
+  `sensacion` int(11) DEFAULT NULL CHECK (`sensacion` between 1 and 10),
+  `distancia_km` decimal(5,2) DEFAULT 0.00,
+  PRIMARY KEY (`id`),
+  KEY `idx_entrenamiento_fecha` (`fecha`),
+  KEY `idx_entrenamiento_usuario` (`usuario_id`),
+  CONSTRAINT `fk_entrenamiento_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci

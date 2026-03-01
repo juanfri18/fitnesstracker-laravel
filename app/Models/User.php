@@ -40,5 +40,22 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
+
+    /**
+     * Get the trainings for the user.
+     */
+    public function entrenamientos()
+    {
+        return $this->hasMany(Entrenamiento::class);
+    }
+
+    /**
+     * Get the objectives for the user.
+     */
+    public function objetivos()
+    {
+        return $this->hasMany(Objetivo::class);
+    }
 }

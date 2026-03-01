@@ -4,26 +4,24 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB; // Herramienta para hablar con la Base de Datos
+use Illuminate\Support\Facades\Auth;
 
 class EntrenamientoController extends Controller
 {
     public function index()
     {
-        // 1. Como aún no tenemos sistema de Login en Laravel, fingimos que somos el usuario 1
-        $usuario_id = 1; 
+        $usuario_id = Auth::id(); 
 
-        // 2. Consulta a la base de datos real (equivalente a tu antiguo PDO)
-        $actividades = DB::table('entrenamientos')
-                        ->where('usuario_id', $usuario_id)
+        $actividades = \App\Models\Entrenamiento::where('usuario_id', $usuario_id)
                         ->orderBy('fecha', 'desc')
                         ->limit(5)
                         ->get();
 
-        // Convertimos el resultado a un array normal para que Blade lo entienda fácil
         $actividades_array = json_decode(json_encode($actividades), true);
 
-        // 3. Devolvemos la vista y le pasamos los datos reales
-        return view('inicio', ['actividades' => $actividades_array]);
+        return view('inicio', [
+            'actividades' => $actividades_array
+        ]);
     }
     public function store(Request $request)
     {
@@ -51,9 +49,9 @@ class EntrenamientoController extends Controller
             $calorias_calculadas = $duracion * 6.5;
         }
 
-        // 3. GUARDAR EN BASE DE DATOS
-        DB::table('entrenamientos')->insert([
-            'usuario_id' => 1, // Fijo temporalmente
+        // 3. GUARDAR EN BASE DE DATOS (Usando insertGetId para obtener el ID de la sesión)
+        $entrenamiento_id = \App\Models\Entrenamiento::insertGetId([
+            'usuario_id' => Auth::id(),
             'fecha' => $request->fecha,
             'tipo' => $tipo_db,
             'duracion_minutos' => $duracion,
@@ -62,6 +60,36 @@ class EntrenamientoController extends Controller
             'calorias' => round($calorias_calculadas)
         ]);
 
+        // 3.5 GUARDAR DETALLES DE MÚLTIPLES EJERCICIOS (Si es de Fuerza)
+        if ($tipo_db === 'Fuerza' && $request->has('grupo_muscular')) {
+            $grupos = $request->grupo_muscular;
+            $ejercicios = $request->ejercicio;
+            $series = $request->series;
+            $reps = $request->reps;
+            $cargas = $request->carga;
+
+            $detalles = [];
+            foreach ($grupos as $index => $grupo) {
+                // Solo guardamos si realmente seleccionó un grupo y un ejercicio
+                if (!empty($grupo) && !empty($ejercicios[$index])) {
+                    $detalles[] = [
+                        'entrenamiento_id' => $entrenamiento_id,
+                        'grupo_muscular' => $grupo,
+                        'ejercicio' => $ejercicios[$index],
+                        'series' => empty($series[$index]) ? null : intval($series[$index]),
+                        'repeticiones' => empty($reps[$index]) ? null : intval($reps[$index]),
+                        'carga_kg' => empty($cargas[$index]) ? null : floatval($cargas[$index]),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+            }
+            
+            if (!empty($detalles)) {
+                \App\Models\EntrenamientoDetalle::insert($detalles);
+            }
+        }
+
         // 4. REDIRECCIÓN ELEGANTE
         // Esto sustituye a tu antiguo: header("Location: index.php?msg=guardado");
         return redirect('/')->with('msg', '¡Actividad registrada con éxito!');
@@ -69,14 +97,14 @@ class EntrenamientoController extends Controller
     // 1. Mostrar el formulario de edición
     public function edit($id)
     {
-        $usuario_id = 1; // Fijo temporalmente
-        $entreno = DB::table('entrenamientos')->where('id', $id)->where('usuario_id', $usuario_id)->first();
+        $usuario_id = Auth::id();
+        $entreno = \App\Models\Entrenamiento::where('id', $id)->where('usuario_id', $usuario_id)->first();
 
         if (!$entreno) {
             return redirect('/');
         }
 
-        return view('editar', ['entreno' => (array) $entreno]);
+        return view('editar', ['entreno' => $entreno->toArray()]);
     }
 
     // 2. Guardar los cambios en la BD
@@ -100,9 +128,8 @@ class EntrenamientoController extends Controller
         elseif ($tipo_db === 'Caminata') $calorias = $duracion * 4.5;
         elseif ($tipo_db === 'Fuerza') $calorias = $duracion * 6.5;
 
-        DB::table('entrenamientos')
-            ->where('id', $id)
-            ->where('usuario_id', 1) // Seguridad: solo el dueño puede editar
+        \App\Models\Entrenamiento::where('id', $id)
+            ->where('usuario_id', Auth::id()) // Seguridad: solo el dueño puede editar
             ->update([
                 'fecha' => $request->fecha,
                 'tipo' => $tipo_db,
@@ -112,17 +139,80 @@ class EntrenamientoController extends Controller
                 'calorias' => round($calorias)
             ]);
 
+        // ACTUALIZAR DETALLES: Solo si se envían nuevos, o si se cambió el tipo de entrenamiento
+        if ($tipo_db !== 'Fuerza') {
+            \App\Models\EntrenamientoDetalle::where('entrenamiento_id', $id)->delete();
+        } elseif ($request->has('grupo_muscular')) {
+            \App\Models\EntrenamientoDetalle::where('entrenamiento_id', $id)->delete();
+            $grupos = $request->grupo_muscular;
+            $ejercicios = $request->ejercicio;
+            $series = $request->series;
+            $reps = $request->reps;
+            $cargas = $request->carga;
+
+            $detalles = [];
+            foreach ($grupos as $index => $grupo) {
+                if (!empty($grupo) && !empty($ejercicios[$index])) {
+                    $detalles[] = [
+                        'entrenamiento_id' => $id,
+                        'grupo_muscular' => $grupo,
+                        'ejercicio' => $ejercicios[$index],
+                        'series' => empty($series[$index]) ? null : intval($series[$index]),
+                        'repeticiones' => empty($reps[$index]) ? null : intval($reps[$index]),
+                        'carga_kg' => empty($cargas[$index]) ? null : floatval($cargas[$index]),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+            }
+            
+            if (!empty($detalles)) {
+                \App\Models\EntrenamientoDetalle::insert($detalles);
+            }
+        }
+
         return redirect('/')->with('msg', '¡Actividad actualizada correctamente!');
     }
 
     // 3. Eliminar de la BD
     public function destroy($id)
     {
-        DB::table('entrenamientos')
-            ->where('id', $id)
-            ->where('usuario_id', 1) // Seguridad: solo el dueño puede borrar
+        \App\Models\Entrenamiento::where('id', $id)
+            ->where('usuario_id', Auth::id()) // Seguridad: solo el dueño puede borrar
             ->delete();
 
         return redirect('/')->with('msg', 'Entrenamiento eliminado.');
+    }
+
+    // 4. Mostrar Vista del Calendario
+    public function calendario()
+    {
+        return view('calendario');
+    }
+
+    // 5. Devolver JSON estructurado para FullCalendar.js
+    public function eventosAPI()
+    {
+        $usuario_id = Auth::id();
+        $entrenamientos = \App\Models\Entrenamiento::where('usuario_id', $usuario_id)
+                            ->get();
+
+        $eventos = [];
+        foreach ($entrenamientos as $entreno) {
+            // Asignar colores por tipo
+            $color = '#0d6efd'; // Azul por defecto
+            if ($entreno->tipo === 'Fuerza') $color = '#dc3545'; // Rojo
+            if ($entreno->tipo === 'Carrera') $color = '#198754'; // Verde
+            if ($entreno->tipo === 'Caminata') $color = '#ffc107'; // Amarillo
+
+            $eventos[] = [
+                'title' => $entreno->tipo . ' (' . $entreno->duracion_minutos . 'm)',
+                'start' => $entreno->fecha,
+                'url' => url('/entrenamientos/' . $entreno->id . '/edit'),
+                'color' => $color,
+            ];
+        }
+
+        return response()->json($eventos);
     }
 }

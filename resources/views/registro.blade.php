@@ -42,29 +42,40 @@
                     </div>
 
                     <div id="sec-fuerza" class="form-section animate__animated animate__fadeIn">
-                        <h5 class="text-primary mb-3"><i class="fas fa-dumbbell me-2"></i>Detalle Musculación</h5>
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label class="small fw-bold">Grupo Muscular</label>
-                                <select class="form-select" id="group" name="grupo_muscular" onchange="loadEx()">
-                                    <option value="">Seleccione...</option>
-                                    <option value="pecho">Pecho</option>
-                                    <option value="espalda">Espalda</option>
-                                    <option value="pierna">Pierna</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="small fw-bold">Ejercicio</label>
-                                <select class="form-select" id="exList" name="ejercicio">
-                                    <option>Seleccione grupo primero...</option>
-                                </select>
-                            </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="text-primary mb-0"><i class="fas fa-dumbbell me-2"></i>Detalle Musculación</h5>
+                            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill" onclick="addExerciseRow()"><i class="fas fa-plus"></i> Añadir Ejercicio</button>
                         </div>
                         
-                        <div class="row g-2 p-3 bg-light rounded shadow-sm">
-                            <div class="col-4"><label class="small fw-bold">Nº Series</label><input type="number" name="series" class="form-control" placeholder="Ej: 4"></div>
-                            <div class="col-4"><label class="small fw-bold">Repeticiones</label><input type="number" name="reps" class="form-control" placeholder="Ej: 12"></div>
-                            <div class="col-4"><label class="small fw-bold">Carga (Kg)</label><input type="number" name="carga" class="form-control" placeholder="Ej: 60"></div>
+                        <div id="exercises-container">
+                            <!-- Fila de ejercicio base -->
+                            <div class="exercise-row p-3 mb-3 bg-light rounded border position-relative">
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label class="small fw-bold">Grupo Muscular</label>
+                                        <select class="form-select group-select" name="grupo_muscular[]" onchange="loadEx(this)">
+                                            <option value="">Seleccione...</option>
+                                            <option value="pecho">Pecho</option>
+                                            <option value="espalda">Espalda</option>
+                                            <option value="pierna">Pierna</option>
+                                            <option value="hombro">Hombro</option>
+                                            <option value="brazo">Brazos (Bíceps/Tríceps)</option>
+                                            <option value="core">Core / Abdominales</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="small fw-bold">Ejercicio</label>
+                                        <select class="form-select ex-select" name="ejercicio[]">
+                                            <option>Seleccione grupo primero...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-4"><label class="small fw-bold">Nº Series</label><input type="number" name="series[]" class="form-control" placeholder="Ej: 4"></div>
+                                    <div class="col-4"><label class="small fw-bold">Repeticiones</label><input type="number" name="reps[]" class="form-control" placeholder="Ej: 12"></div>
+                                    <div class="col-4"><label class="small fw-bold">Carga (Kg)</label><input type="number" name="carga[]" step="0.5" class="form-control" placeholder="Ej: 60"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -104,9 +115,12 @@
 @section('scripts_extra')
 <script>
     const exercises = { 
-        pecho: ['Press Banca', 'Aperturas', 'Flexiones'], 
-        espalda: ['Dominadas', 'Remo con Barra', 'Jalón al Pecho'],
-        pierna: ['Sentadillas', 'Prensa', 'Zancadas']
+        pecho: ['Press Banca', 'Aperturas', 'Flexiones', 'Press Inclinado', 'Cruce de Poleas'], 
+        espalda: ['Dominadas', 'Remo con Barra', 'Jalón al Pecho', 'Remo en Polea Baja', 'Peso Muerto'],
+        pierna: ['Sentadillas', 'Prensa', 'Zancadas', 'Curl Femoral', 'Extensión de Cuádriceps', 'Gemelos'],
+        hombro: ['Press Militar', 'Elevaciones Laterales', 'Pájaros', 'Elevaciones Frontales'],
+        brazo: ['Curl de Bíceps', 'Curl Martillo', 'Press Francés', 'Extensión de Tríceps Polea', 'Fondos'],
+        core: ['Plancha', 'Crunch', 'Elevación de Piernas', 'Rueda Abdominal']
     };
 
     function toggleModule() {
@@ -122,11 +136,59 @@
         }
     }
 
-    function loadEx() {
-        const g = document.getElementById('group').value;
-        const l = document.getElementById('exList');
+    // Actualizado para funcionar con múltiples filas
+    function loadEx(selectElement) {
+        const g = selectElement.value;
+        // Buscar el select de ejercicios que esté en el mismo "exercise-row" que este desplegable
+        const l = selectElement.closest('.exercise-row').querySelector('.ex-select');
+        
         l.innerHTML = '<option value="">Seleccione...</option>'; 
-        exercises[g]?.forEach(e => l.innerHTML += `<option value="${e}">${e}</option>`);
+        if(exercises[g]) {
+            exercises[g].forEach(e => l.innerHTML += `<option value="${e}">${e}</option>`);
+        }
+    }
+
+    function addExerciseRow() {
+        const container = document.getElementById('exercises-container');
+        // Clonamos el primer ejercicio (que siempre será la plantilla Base)
+        const firstRow = container.querySelector('.exercise-row');
+        const newRow = firstRow.cloneNode(true);
+        
+        // Limpiamos los valores clonados
+        newRow.querySelectorAll('input, select').forEach(input => {
+            if(input.tagName === 'SELECT') {
+                input.selectedIndex = 0;
+            } else {
+                input.value = '';
+            }
+        });
+
+        // Limpiamos la lista de ejercicios del clon
+        const exSelect = newRow.querySelector('.ex-select');
+        exSelect.innerHTML = '<option>Seleccione grupo primero...</option>';
+
+        // Añadimos botón de eliminar en la parte superior derecha si no existe
+        if(!newRow.querySelector('.btn-remove-row')) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn-close btn-remove-row position-absolute top-0 end-0 m-2';
+            btn.onclick = function() { removeExerciseRow(this); };
+            newRow.appendChild(btn);
+        }
+
+        // Añadimos la nueva fila al contenedor añadiendo una pequeña animación
+        newRow.classList.add('animate__animated', 'animate__fadeInDown');
+        container.appendChild(newRow);
+    }
+
+    function removeExerciseRow(btn) {
+        const container = document.getElementById('exercises-container');
+        // Aseguramos que siempre quede al menos una fila
+        if(container.querySelectorAll('.exercise-row').length > 1) {
+            btn.closest('.exercise-row').remove();
+        } else {
+            alert('Debes incluir al menos un ejercicio de fuerza.');
+        }
     }
 
     function pace() {

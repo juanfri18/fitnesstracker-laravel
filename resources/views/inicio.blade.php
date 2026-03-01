@@ -19,15 +19,19 @@
         <div class="col-lg-4">
             <div class="card profile-card p-4 shadow-sm mb-4 ">
                 <div class="text-center mb-3">
-                    <div class="rounded-circle mx-auto mb-2" style="width: 80px; height: 80px; background: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
-                        <i class="fas fa-user"></i>
+                    <div class="rounded-circle mx-auto mb-2 overflow-hidden" style="width: 80px; height: 80px; background: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                        @if(Auth::user()->foto)
+                            <img src="{{ asset('storage/' . Auth::user()->foto) }}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                        @else
+                            <i class="fas fa-user"></i>
+                        @endif
                     </div>
-                    <h4 class="fw-bold mb-0">¡Hola, Atleta!</h4>
+                    <h4 class="fw-bold mb-0">¡Hola, {{ Auth::user()->name }}!</h4>
                     <p class="text-muted small">"Preparando maratón"</p>
                 </div>
                 <div class="row g-2 mb-4">
-                    <div class="col-6"><div class="stat-badge"><small class="d-block text-muted">Peso</small><span class="stat-value">78 kg</span></div></div>
-                    <div class="col-6"><div class="stat-badge"><small class="d-block text-muted">Grasa</small><span class="stat-value">18%</span></div></div>
+                    <div class="col-6"><div class="stat-badge"><small class="d-block text-muted">Peso</small><span class="stat-value">{{ Auth::user()->peso ?? '-- '}} kg</span></div></div>
+                    <div class="col-6"><div class="stat-badge"><small class="d-block text-muted">Grasa</small><span class="stat-value">{{ Auth::user()->grasa ?? '-- '}} %</span></div></div>
                 </div>
                 <h6 class="fw-bold small text-muted">Progreso Semanal</h6>
                 <canvas id="miniChart" height="150"></canvas>
@@ -56,16 +60,23 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const ctx = document.getElementById('miniChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['L','M','X','J','V','S','D'],
-            datasets: [{ 
-                data: [300, 450, 0, 550, 400, 700, 200], 
-                borderColor: '#2A5199', tension: 0.4, fill: true, backgroundColor: 'rgba(42,81,153,0.1)' 
-            }]
-        },
-        options: { plugins: { legend: {display: false} }, scales: { y: {display: false}, x: {grid: {display: false}} } }
-    });
+    
+    // Fetch data asynchronously (AJAX - SPA approach)
+    fetch('/api/metricas/dashboard')
+        .then(response => response.json())
+        .then(data => {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{ 
+                        data: data.dataPoints, 
+                        borderColor: '#2A5199', tension: 0.4, fill: true, backgroundColor: 'rgba(42,81,153,0.1)' 
+                    }]
+                },
+                options: { plugins: { legend: {display: false} }, scales: { y: {display: false}, x: {grid: {display: false}} } }
+            });
+        })
+        .catch(error => console.error("Error loading AJAX chart data:", error));
 </script>
 @endsection

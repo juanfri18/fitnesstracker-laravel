@@ -24,12 +24,28 @@
         <h3 class="fw-bold mb-1" style="color: var(--primary-color);">FitnessTracker</h3>
         <p class="text-muted mb-4 small">Bienvenido de nuevo, atleta.</p>
 
-        <form action="/" method="GET" class="text-start">
+        @if(session('msg'))
+            <div class="alert alert-success small text-start">{{ session('msg') }}</div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger text-start small">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="/login" method="POST" class="text-start">
+            @csrf
+            
             <div class="mb-3">
                 <label class="form-label small fw-bold text-muted">Correo Electrónico</label>
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0"><i class="fas fa-envelope text-muted"></i></span>
-                    <input type="email" class="form-control border-start-0 ps-0" value="atleta@fitnesstracker.com" required>
+                    <input type="email" name="email" class="form-control border-start-0 ps-0" placeholder="atleta@ejemplo.com" value="{{ old('email') }}" required autofocus>
                 </div>
             </div>
             
@@ -37,14 +53,14 @@
                 <label class="form-label small fw-bold text-muted">Contraseña</label>
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0"><i class="fas fa-lock text-muted"></i></span>
-                    <input type="password" class="form-control border-start-0 ps-0" value="123456" required>
+                    <input type="password" name="password" class="form-control border-start-0 ps-0" required>
                 </div>
             </div>
 
             <button type="submit" class="btn btn-login shadow-sm">Entrar al panel</button>
 
             <div class="mt-4 text-center">
-                <small class="text-muted"><em>* Simulación de login para el Sprint 4</em></small>
+                <small class="text-muted">¿No tienes cuenta? <a href="/registro-usuario" style="color: var(--primary-color); text-decoration: none; font-weight: bold;">Regístrate aquí</a></small>
             </div>
         </form>
     </div>

@@ -5,25 +5,32 @@ use App\Http\Controllers\EntrenamientoController;
 use App\Http\Controllers\MetricaController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ObjetivoController;
+use App\Http\Controllers\AuthController;
 
-// 1. Rutas Públicas (Autenticación mock/dummy)
-Route::view('/login', 'login')->name('login');
-Route::post('/logout', function () {
-    return redirect('/login');
-})->name('logout');
+// Rutas Públicas de Autenticación (Solo para invitados)
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
 
-// 2. Rutas Protegidas (Simuladas en este caso con middleware web, en un futuro 'auth')
-Route::middleware(['web'])->group(function () {
+    Route::get('/registro-usuario', [AuthController::class, 'showRegisterForm'])->name('registro.form');
+    Route::post('/registro-usuario', [AuthController::class, 'register'])->name('registro.post');
+});
+
+// Ruta de Logout (Solo para autenticados)
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+
+// Rutas Protegidas de la Aplicación
+Route::middleware(['auth'])->group(function () {
     
     // Inicio / Dashboard
     Route::get('/', [EntrenamientoController::class, 'index'])->name('home');
 
-    // Registro de Vista individual
+    // Muro de Registro de Vista individual
     Route::get('/registro', function () {
         return view('registro');
     });
 
-    // Entrenamientos (Rutas RESTful mediante resource, exceptuando create/show si no se usan)
+    // Entrenamientos
     Route::resource('entrenamientos', EntrenamientoController::class)->except(['create', 'show']);
 
     // Estadísticas
@@ -34,4 +41,13 @@ Route::middleware(['web'])->group(function () {
 
     // Perfil
     Route::get('/perfil', [PerfilController::class, 'index']);
+    Route::post('/perfil', [PerfilController::class, 'update']);
+
+    // Calendario
+    Route::get('/calendario', [EntrenamientoController::class, 'calendario']);
+    Route::get('/api/calendario/eventos', [EntrenamientoController::class, 'eventosAPI']);
+
+    // API de Gráficas AJAX
+    Route::get('/api/metricas/dashboard', [MetricaController::class, 'dashboardAPI']);
+    Route::get('/api/metricas/tipos', [MetricaController::class, 'tiposAPI']);
 });

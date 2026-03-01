@@ -1,0 +1,50 @@
+[
+    {
+        "Field": "id",
+        "Type": "int(11)",
+        "Null": "NO",
+        "Key": "PRI",
+        "Default": null,
+        "Extra": "auto_increment"
+    },
+    {
+        "Field": "usuario_id",
+        "Type": "int(11)",
+        "Null": "NO",
+        "Key": "MUL",
+        "Default": null,
+        "Extra": ""
+    },
+    {
+        "Field": "tipo",
+        "Type": "enum('Peso Corporal','Frecuencia Semanal','Distancia Mensual')",
+        "Null": "NO",
+        "Key": "",
+        "Default": null,
+        "Extra": ""
+    },
+    {
+        "Field": "valor_objetivo",
+        "Type": "decimal(10,2)",
+        "Null": "NO",
+        "Key": "",
+        "Default": null,
+        "Extra": ""
+    },
+    {
+        "Field": "fecha_limite",
+        "Type": "date",
+        "Null": "NO",
+        "Key": "",
+        "Default": null,
+        "Extra": ""
+    },
+    {
+        "Field": "estado",
+        "Type": "enum('Pendiente','Completado','Fallido')",
+        "Null": "YES",
+        "Key": "",
+        "Default": "Pendiente",
+        "Extra": ""
+    }
+]

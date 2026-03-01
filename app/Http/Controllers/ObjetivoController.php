@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ObjetivoController extends Controller
 {
@@ -12,11 +13,9 @@ class ObjetivoController extends Controller
      */
     public function index()
     {
-        $usuario_id = 1; // Fijo temporalmente
+        $usuario_id = Auth::id();
 
-        $objetivos = DB::table('objetivos')
-            ->where('usuario_id', $usuario_id)
-            ->get();
+        $objetivos = \App\Models\Objetivo::where('usuario_id', $usuario_id)->get();
 
         return view('objetivos.index', ['objetivos' => $objetivos]);
     }
@@ -31,12 +30,12 @@ class ObjetivoController extends Controller
             'valor_objetivo' => 'required|numeric',
         ]);
 
-        DB::table('objetivos')->insert([
-            'usuario_id' => 1,
+        \App\Models\Objetivo::create([
+            'usuario_id' => Auth::id(),
             'tipo' => $request->tipo,
             'valor_objetivo' => $request->valor_objetivo,
             'estado' => 'Pendiente',
-            'fecha_creacion' => now(),
+            'fecha_limite' => now()->addDays(30)
         ]);
 
         return redirect('/estadisticas')->with('msg', '¡Objetivo guardado con éxito!');
@@ -51,9 +50,8 @@ class ObjetivoController extends Controller
             'estado' => 'required|string|in:Pendiente,Completado',
         ]);
 
-        DB::table('objetivos')
-            ->where('id', $id)
-            ->where('usuario_id', 1)
+        \App\Models\Objetivo::where('id', $id)
+            ->where('usuario_id', Auth::id())
             ->update([
                 'estado' => $request->estado
             ]);
@@ -66,9 +64,8 @@ class ObjetivoController extends Controller
      */
     public function destroy(string $id)
     {
-        DB::table('objetivos')
-            ->where('id', $id)
-            ->where('usuario_id', 1)
+        \App\Models\Objetivo::where('id', $id)
+            ->where('usuario_id', Auth::id())
             ->delete();
 
         return redirect('/estadisticas')->with('msg', 'Objetivo eliminado.');
