@@ -4,5 +4,8 @@ $app = require_once 'bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
-$schema = Illuminate\Support\Facades\DB::select("SHOW COLUMNS FROM objetivos");
-file_put_contents('schema_dump.json', json_encode($schema, JSON_PRETTY_PRINT));
+$schema_users = Illuminate\Support\Facades\DB::select("SHOW COLUMNS FROM users");
+file_put_contents('users_schema.json', json_encode($schema_users, JSON_PRETTY_PRINT));
+
+$schema_usuarios = Illuminate\Support\Facades\DB::select("SHOW COLUMNS FROM usuarios");
+file_put_contents('usuarios_schema.json', json_encode($schema_usuarios, JSON_PRETTY_PRINT));

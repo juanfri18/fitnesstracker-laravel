@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('usuarios', function (Blueprint $table) {
             $table->integer('altura')->nullable()->after('peso')->comment('Altura en centímetros');
             $table->integer('edad')->nullable()->after('altura');
             $table->string('genero')->nullable()->after('edad');
@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('usuarios', function (Blueprint $table) {
             $table->dropColumn(['altura', 'edad', 'genero']);
         });
     }

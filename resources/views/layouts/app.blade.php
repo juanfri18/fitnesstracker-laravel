@@ -3,12 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FitnessTracker - @yield('titulo', 'Inicio')</title>
+    <title>SINERGYFIT - @yield('titulo', 'Inicio')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary-color: #2A5199; --bg-light: #f0f2f5; }
-        body { background-color: var(--bg-light); font-family: 'Segoe UI', sans-serif; }
+        body { 
+            background-color: var(--bg-light); 
+            background-image: linear-gradient(rgba(240, 242, 245, 0.60), rgba(240, 242, 245, 0.60)), url('{{ asset("images/background.webp") }}');
+            background-size: 65%;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            font-family: 'Segoe UI', sans-serif; 
+        }
         .navbar-custom { background-color: var(--primary-color); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .navbar-brand { color: white !important; font-weight: 800; font-size: 1.4rem; letter-spacing: 0.5px;}
         .btn-menu { background: rgba(255,255,255,0.1); border: none; color: white; border-radius: 8px; padding: 8px 12px; transition: 0.3s; }
