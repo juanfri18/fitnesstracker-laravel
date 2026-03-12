@@ -36,18 +36,9 @@
                 <small class="d-block text-muted">Duración</small>
                 <span class="fw-bold">{{ $actividad['duracion_minutos'] }} min</span>
             </div>
-            <div class="col-4 text-center border-end">
-                @if($actividad['distancia_km'] > 0)
-                    <small class="d-block text-muted">Distancia</small>
-                    <span class="fw-bold">{{ $actividad['distancia_km'] }} km</span>
-                @else
-                    <small class="d-block text-muted">Calorías</small>
-                    <span class="fw-bold">{{ $actividad['calorias'] }} kcal</span>
-                @endif
-            </div>
-            <div class="col-4 text-center">
-                <small class="d-block text-muted">Sensación</small>
-                <span class="badge bg-primary">{{ $actividad['sensacion'] }}/10</span>
+            <div class="col-8 text-center text-muted small px-3">
+                <i class="fas fa-info-circle me-1"></i>
+                <span class="fst-italic">{{ $actividad['notas'] ?: 'Sin detalles adicionales' }}</span>
             </div>
         </div>
     </div>

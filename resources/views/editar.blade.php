@@ -49,11 +49,11 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="small fw-bold">Distancia (km)</label>
-                                <input type="number" step="0.01" class="form-control" name="distancia" value="{{ $entreno['distancia_km'] }}">
+                                <input type="number" step="0.01" class="form-control" name="distancia" value="{{ $entreno['distancia_km'] ?? '' }}">
                             </div>
                             <div class="col-md-6">
                                 <label class="small fw-bold">Tiempo (min)</label>
-                                <input type="number" class="form-control" name="tiempo" value="{{ $entreno['duracion_minutos'] }}">
+                                <input type="number" class="form-control" name="tiempo" value="{{ $entreno['duracion_minutos'] ?? '' }}">
                             </div>
                         </div>
                     </div>
@@ -66,8 +66,8 @@
 
                     <div class="mt-4">
                         <label class="form-label fw-bold">Sensación (1-10)</label>
-                        <input type="range" class="form-range" min="1" max="10" name="sensacion" value="{{ $entreno['sensacion'] }}" oninput="document.getElementById('val').innerText=this.value">
-                        <div class="text-center fw-bold fs-5 text-warning" id="val">{{ $entreno['sensacion'] }}</div>
+                        <input type="range" class="form-range" min="1" max="10" name="sensacion" value="{{ $entreno['sensacion'] ?? 5 }}" oninput="document.getElementById('val').innerText=this.value">
+                        <div class="text-center fw-bold fs-5 text-warning" id="val">{{ $entreno['sensacion'] ?? 5 }}</div>
                     </div>
 
                     <div class="d-grid gap-2 mt-5">

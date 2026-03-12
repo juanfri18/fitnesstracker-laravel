@@ -15,7 +15,7 @@ class ObjetivoController extends Controller
     {
         $usuario_id = Auth::id();
 
-        $objetivos = \App\Models\Objetivo::where('usuario_id', $usuario_id)->get();
+        $objetivos = \App\Models\Objetivo::where('user_id', $usuario_id)->get();
 
         return view('objetivos.index', ['objetivos' => $objetivos]);
     }
@@ -26,16 +26,18 @@ class ObjetivoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'tipo' => 'required|string',
-            'valor_objetivo' => 'required|numeric',
+            'tipo_objetivo' => 'required|string',
+            'valor_objetivo' => 'required|numeric|min:0.1',
+            'fecha_limite' => 'nullable|date|after_or_equal:today',
         ]);
 
         \App\Models\Objetivo::create([
-            'usuario_id' => Auth::id(),
-            'tipo' => $request->tipo,
+            'user_id' => Auth::id(),
+            'tipo_objetivo' => $request->tipo_objetivo,
             'valor_objetivo' => $request->valor_objetivo,
-            'estado' => 'Pendiente',
-            'fecha_limite' => now()->addDays(30)
+            'estado' => 'en_progreso',
+            'fecha_inicio' => now(),
+            'fecha_limite' => $request->fecha_limite ? \Carbon\Carbon::parse($request->fecha_limite) : now()->addDays(30)
         ]);
 
         return redirect('/estadisticas')->with('msg', '¡Objetivo guardado con éxito!');
@@ -47,11 +49,11 @@ class ObjetivoController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'estado' => 'required|string|in:Pendiente,Completado',
+            'estado' => 'required|string|in:en_progreso,completado',
         ]);
 
         \App\Models\Objetivo::where('id', $id)
-            ->where('usuario_id', Auth::id())
+            ->where('user_id', Auth::id())
             ->update([
                 'estado' => $request->estado
             ]);
@@ -65,7 +67,7 @@ class ObjetivoController extends Controller
     public function destroy(string $id)
     {
         \App\Models\Objetivo::where('id', $id)
-            ->where('usuario_id', Auth::id())
+            ->where('user_id', Auth::id())
             ->delete();
 
         return redirect('/estadisticas')->with('msg', 'Objetivo eliminado.');

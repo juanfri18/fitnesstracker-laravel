@@ -27,4 +27,14 @@ class Entrenamiento extends Model
     {
         return $this->hasMany(EntrenamientoDetalle::class);
     }
+
+    /**
+     * Get the exercises for this training.
+     */
+    public function ejercicios()
+    {
+        return $this->belongsToMany(Ejercicio::class, 'entrenamiento_detalles')
+                    ->withPivot(['series', 'repeticiones', 'carga_kg'])
+                    ->withTimestamps();
+    }
 }

@@ -12,7 +12,7 @@ class EntrenamientoController extends Controller
     {
         $usuario_id = Auth::id(); 
 
-        $actividades = \App\Models\Entrenamiento::where('usuario_id', $usuario_id)
+        $actividades = \App\Models\Entrenamiento::where('user_id', $usuario_id)
                         ->orderBy('fecha', 'desc')
                         ->limit(5)
                         ->get();
@@ -49,16 +49,19 @@ class EntrenamientoController extends Controller
             $calorias_calculadas = $duracion * 6.5;
         }
 
-        // 3. GUARDAR EN BASE DE DATOS (Usando insertGetId para obtener el ID de la sesión)
-        $entrenamiento_id = \App\Models\Entrenamiento::insertGetId([
-            'usuario_id' => Auth::id(),
+        // 3. GUARDAR EN BASE DE DATOS
+        $notas = "Sensación: " . $sensacion . "/10";
+        if ($distancia > 0) $notas .= " | Distancia: {$distancia}km";
+        if ($calorias_calculadas > 0) $notas .= " | Aprox: " . round($calorias_calculadas) . " kcal";
+
+        $entrenamiento = \App\Models\Entrenamiento::create([
+            'user_id' => Auth::id(),
             'fecha' => $request->fecha,
             'tipo' => $tipo_db,
             'duracion_minutos' => $duracion,
-            'sensacion' => $sensacion,
-            'distancia_km' => $distancia,
-            'calorias' => round($calorias_calculadas)
+            'notas' => $notas
         ]);
+        $entrenamiento_id = $entrenamiento->id;
 
         // 3.5 GUARDAR DETALLES DE MÚLTIPLES EJERCICIOS (Si es de Fuerza)
         if ($tipo_db === 'Fuerza' && $request->has('grupo_muscular')) {
@@ -72,10 +75,16 @@ class EntrenamientoController extends Controller
             foreach ($grupos as $index => $grupo) {
                 // Solo guardamos si realmente seleccionó un grupo y un ejercicio
                 if (!empty($grupo) && !empty($ejercicios[$index])) {
+                    // Mapear el string a ejercicio_id
+                    $ej_model = \App\Models\Ejercicio::firstOrCreate(
+                        ['nombre' => $ejercicios[$index]],
+                        ['grupo_muscular' => $grupo]
+                    );
+
                     $detalles[] = [
                         'entrenamiento_id' => $entrenamiento_id,
                         'grupo_muscular' => $grupo,
-                        'ejercicio' => $ejercicios[$index],
+                        'ejercicio_id' => $ej_model->id,
                         'series' => empty($series[$index]) ? null : intval($series[$index]),
                         'repeticiones' => empty($reps[$index]) ? null : intval($reps[$index]),
                         'carga_kg' => empty($cargas[$index]) ? null : floatval($cargas[$index]),
@@ -98,7 +107,7 @@ class EntrenamientoController extends Controller
     public function edit($id)
     {
         $usuario_id = Auth::id();
-        $entreno = \App\Models\Entrenamiento::where('id', $id)->where('usuario_id', $usuario_id)->first();
+        $entreno = \App\Models\Entrenamiento::where('id', $id)->where('user_id', $usuario_id)->first();
 
         if (!$entreno) {
             return redirect('/');
@@ -128,15 +137,17 @@ class EntrenamientoController extends Controller
         elseif ($tipo_db === 'Caminata') $calorias = $duracion * 4.5;
         elseif ($tipo_db === 'Fuerza') $calorias = $duracion * 6.5;
 
+        $notas = "Sensación: " . $sensacion . "/10";
+        if ($distancia > 0) $notas .= " | Distancia: {$distancia}km";
+        if ($calorias > 0) $notas .= " | Aprox: " . round($calorias) . " kcal";
+
         \App\Models\Entrenamiento::where('id', $id)
-            ->where('usuario_id', Auth::id()) // Seguridad: solo el dueño puede editar
+            ->where('user_id', Auth::id()) // Seguridad: solo el dueño puede editar
             ->update([
                 'fecha' => $request->fecha,
                 'tipo' => $tipo_db,
                 'duracion_minutos' => $duracion,
-                'sensacion' => $sensacion,
-                'distancia_km' => $distancia,
-                'calorias' => round($calorias)
+                'notas' => $notas
             ]);
 
         // ACTUALIZAR DETALLES: Solo si se envían nuevos, o si se cambió el tipo de entrenamiento
@@ -153,10 +164,15 @@ class EntrenamientoController extends Controller
             $detalles = [];
             foreach ($grupos as $index => $grupo) {
                 if (!empty($grupo) && !empty($ejercicios[$index])) {
+                    $ej_model = \App\Models\Ejercicio::firstOrCreate(
+                        ['nombre' => $ejercicios[$index]],
+                        ['grupo_muscular' => $grupo]
+                    );
+
                     $detalles[] = [
                         'entrenamiento_id' => $id,
                         'grupo_muscular' => $grupo,
-                        'ejercicio' => $ejercicios[$index],
+                        'ejercicio_id' => $ej_model->id,
                         'series' => empty($series[$index]) ? null : intval($series[$index]),
                         'repeticiones' => empty($reps[$index]) ? null : intval($reps[$index]),
                         'carga_kg' => empty($cargas[$index]) ? null : floatval($cargas[$index]),
@@ -178,7 +194,7 @@ class EntrenamientoController extends Controller
     public function destroy($id)
     {
         \App\Models\Entrenamiento::where('id', $id)
-            ->where('usuario_id', Auth::id()) // Seguridad: solo el dueño puede borrar
+            ->where('user_id', Auth::id()) // Seguridad: solo el dueño puede borrar
             ->delete();
 
         return redirect('/')->with('msg', 'Entrenamiento eliminado.');
@@ -194,7 +210,7 @@ class EntrenamientoController extends Controller
     public function eventosAPI()
     {
         $usuario_id = Auth::id();
-        $entrenamientos = \App\Models\Entrenamiento::where('usuario_id', $usuario_id)
+        $entrenamientos = \App\Models\Entrenamiento::where('user_id', $usuario_id)
                             ->get();
 
         $eventos = [];

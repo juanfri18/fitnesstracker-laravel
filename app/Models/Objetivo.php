@@ -11,8 +11,8 @@ class Objetivo extends Model
 
     protected $guarded = [];
 
-    // La base de datos original usa fecha_creacion, no created_at
-    public $timestamps = false;
+    // The new database uses standard created_at and updated_at
+    // public $timestamps = true; (default)
 
     /**
      * Get the user that owns the objective.

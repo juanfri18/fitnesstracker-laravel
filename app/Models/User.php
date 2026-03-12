@@ -65,4 +65,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Objetivo::class);
     }
+
+    /**
+     * Get the metrics for the user.
+     */
+    public function metricas()
+    {
+        return $this->hasMany(Metrica::class, 'user_id');
+    }
 }

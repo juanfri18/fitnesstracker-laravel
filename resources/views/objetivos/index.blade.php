@@ -27,8 +27,8 @@
                         @csrf
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-muted">Apunto a conseguir...</label>
-                            <select name="tipo" class="form-select" required>
-                                <option value="Distancia Mensual">Recorrer Distancia Mensual (km)</option>
+                            <select name="tipo_objetivo" class="form-select" required>
+                                <option value="Volumen Mensual">Volumen Mensual (kg levantados)</option>
                                 <option value="Frecuencia Semanal">Frecuencia Semanal (Días de entreno)</option>
                                 <option value="Peso Corporal">Objetivo de Peso Corporal (kg)</option>
                             </select>
@@ -53,22 +53,22 @@
                     <h5 class="fw-bold mb-4">Tus objetivos activos y completados</h5>
                     <div class="list-group">
                         @forelse($objetivos as $obj)
-                            <div class="list-group-item d-flex justify-content-between align-items-center py-3 border-start-0 border-end-0 border-top-0 mb-2 {{ $obj->estado === 'Completado' ? 'bg-light' : '' }}">
+                            <div class="list-group-item d-flex justify-content-between align-items-center py-3 border-start-0 border-end-0 border-top-0 mb-2 {{ $obj->estado === 'completado' ? 'bg-light' : '' }}">
                                 <div>
                                     <h6 class="fw-bold mb-1">
-                                        {{ ucfirst($obj->tipo) }}: {{ $obj->valor_objetivo }}
+                                        {{ ucfirst($obj->tipo_objetivo) }}: {{ $obj->valor_objetivo }}
                                     </h6>
-                                    <span class="badge {{ $obj->estado === 'Completado' ? 'bg-success' : 'bg-warning text-dark' }}">
-                                        {{ $obj->estado }}
+                                    <span class="badge {{ $obj->estado === 'completado' ? 'bg-success' : 'bg-warning text-dark' }}">
+                                        {{ ucfirst(str_replace('_', ' ', $obj->estado)) }}
                                     </span>
                                     <small class="text-muted ms-2"><i class="far fa-calendar-alt me-1"></i>{{ $obj->fecha_limite ? 'Límite: ' . \Carbon\Carbon::parse($obj->fecha_limite)->format('d/m/Y') : 'Sin fecha límite' }}</small>
                                 </div>
                                 <div class="d-flex gap-2">
-                                    @if($obj->estado !== 'Completado')
+                                    @if($obj->estado !== 'completado')
                                         <form action="{{ route('objetivos.update', $obj->id) }}" method="POST">
                                             @csrf
                                             @method('PUT')
-                                            <input type="hidden" name="estado" value="Completado">
+                                            <input type="hidden" name="estado" value="completado">
                                             <button type="submit" class="btn btn-sm btn-outline-success" title="Marcar completado"><i class="fas fa-check"></i></button>
                                         </form>
                                     @endif

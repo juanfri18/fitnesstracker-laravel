@@ -13,16 +13,17 @@ return new class extends Migration
     {
         Schema::create('entrenamiento_detalles', function (Blueprint $table) {
             $table->id();
-            $table->integer('entrenamiento_id');
+            $table->unsignedBigInteger('entrenamiento_id');
             $table->string('grupo_muscular');
-            $table->string('ejercicio');
+            $table->unsignedBigInteger('ejercicio_id');
             $table->integer('series')->nullable();
             $table->integer('repeticiones')->nullable();
             $table->decimal('carga_kg', 8, 2)->nullable();
             $table->timestamps();
 
-            // Foreign key (Asumiendo que la tabla se llama entrenamientos)
+            // Foreign keys
             $table->foreign('entrenamiento_id')->references('id')->on('entrenamientos')->onDelete('cascade');
+            $table->foreign('ejercicio_id')->references('id')->on('ejercicios')->onDelete('cascade');
         });
     }
 
