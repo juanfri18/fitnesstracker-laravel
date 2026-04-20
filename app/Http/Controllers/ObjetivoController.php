@@ -28,7 +28,8 @@ class ObjetivoController extends Controller
         $request->validate([
             'tipo_objetivo' => 'required|string',
             'valor_objetivo' => 'required|numeric|min:0.1',
-            'fecha_limite' => 'nullable|date|after_or_equal:today',
+            'fecha_inicio' => 'nullable|date',
+            'fecha_limite' => 'nullable|date|after_or_equal:fecha_inicio',
         ]);
 
         \App\Models\Objetivo::create([
@@ -36,7 +37,7 @@ class ObjetivoController extends Controller
             'tipo_objetivo' => $request->tipo_objetivo,
             'valor_objetivo' => $request->valor_objetivo,
             'estado' => 'en_progreso',
-            'fecha_inicio' => now(),
+            'fecha_inicio' => $request->fecha_inicio ? \Carbon\Carbon::parse($request->fecha_inicio) : now(),
             'fecha_limite' => $request->fecha_limite ? \Carbon\Carbon::parse($request->fecha_limite) : now()->addDays(30)
         ]);
 

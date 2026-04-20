@@ -23,15 +23,35 @@ class EntrenamientoController extends Controller
             'actividades' => $actividades_array
         ]);
     }
+
+    public function historial()
+    {
+        $usuario_id = Auth::id(); 
+        // Recuperamos todas las actividades ordenadas por fecha reciente usando paginate para no saturar 
+        $actividades = \App\Models\Entrenamiento::where('user_id', $usuario_id)
+                        ->orderBy('fecha', 'desc')
+                        ->paginate(20);
+
+        // Convertir la colección a array porque la partials.actividad usa sintaxis ['id']
+        // Como es un Paginator, manipulamos los items internos
+        $coleccion_transformada = json_decode(json_encode($actividades->items()), true);
+        
+        // Reemplazar la colección en el paginating wrapper
+        $actividades->setCollection(collect($coleccion_transformada));
+
+        return view('entrenamientos', [
+            'actividades' => $actividades
+        ]);
+    }
     public function store(Request $request)
     {
-        // 1. VALIDACIÓN (Tarea FT-52): Laravel comprueba automáticamente que no vengan vacíos
+        // 1. VALIDACIÓN 
         $request->validate([
             'fecha' => 'required|date',
             'modulo' => 'required|string',
         ]);
 
-        // 2. LÓGICA DE CALORÍAS (Reciclada exactamente de tu PHP nativo)
+        // 2. LÓGICA DE CALORÍAS 
         $tipo_db = 'Fuerza';
         if ($request->modulo === 'carrera') $tipo_db = 'Carrera';
         if ($request->modulo === 'caminata') $tipo_db = 'Caminata';
@@ -99,8 +119,30 @@ class EntrenamientoController extends Controller
             }
         }
 
-        // 4. REDIRECCIÓN ELEGANTE
-        // Esto sustituye a tu antiguo: header("Location: index.php?msg=guardado");
+        // 4. VERIFICACIÓN DE LOGROS (GAMIFICACIÓN)
+        $usuario = Auth::user();
+        
+        // 4.1 Primer Entrenamiento
+        if (\App\Models\Entrenamiento::where('user_id', $usuario->id)->count() === 1) {
+            $logro = \App\Models\Logro::where('criterio', 'primer_entreno')->first();
+            if ($logro && !$usuario->logros->contains($logro->id)) {
+                $usuario->logros()->attach($logro->id);
+            }
+        }
+
+        // 4.2 Levantador NATO (5 Sesiones de Fuerza)
+        if ($tipo_db === 'Fuerza') {
+            $fuerzaCount = \App\Models\Entrenamiento::where('user_id', $usuario->id)->where('tipo', 'Fuerza')->count();
+            if ($fuerzaCount >= 5) {
+                $logro = \App\Models\Logro::where('criterio', '5_sesiones_fuerza')->first();
+                if ($logro && !$usuario->logros->contains($logro->id)) {
+                    $usuario->logros()->attach($logro->id);
+                }
+            }
+        }
+
+        // 5. REDIRECCIÓN ELEGANTE
+        // Esto sustituye a al antiguo: header("Location: index.php?msg=guardado");
         return redirect('/')->with('msg', '¡Actividad registrada con éxito!');
     }
     // 1. Mostrar el formulario de edición

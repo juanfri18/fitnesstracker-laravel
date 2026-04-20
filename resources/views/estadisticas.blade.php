@@ -10,7 +10,7 @@
 
 @section('contenido')
 <div class="container py-5">
-    <h2 class="fw-bold mb-4" style="color: var(--primary-color);">Tus Métricas</h2>
+    <h2 class="fw-bold mb-4" style="color: var(--primary-color);">Tus Estadísticas</h2>
 
     <div class="row g-4 mb-4">
         <div class="col-md-3">
@@ -22,7 +22,18 @@
         <div class="col-md-3">
             <div class="card stat-card p-3 h-100">
                 <small class="text-muted">Esta Semana</small>
-                <h3 class="fw-bold text-success">{{ $semana['sem_entrenos'] }} workouts</h3>
+                <div class="d-flex align-items-center justify-content-between">
+                    <h3 class="fw-bold text-success mb-0">{{ $semana['sem_entrenos'] }} workouts</h3>
+                    @if(isset($tendencia_porcentaje))
+                        @if($tendencia_porcentaje > 0)
+                            <span class="badge bg-success bg-opacity-25 text-success"><i class="fas fa-arrow-up me-1"></i>{{ $tendencia_porcentaje }}% vs ant</span>
+                        @elseif($tendencia_porcentaje < 0)
+                            <span class="badge bg-danger bg-opacity-25 text-danger"><i class="fas fa-arrow-down me-1"></i>{{ abs($tendencia_porcentaje) }}% vs ant</span>
+                        @else
+                            <span class="badge bg-secondary bg-opacity-25 text-secondary"><i class="fas fa-minus me-1"></i>0% vs ant</span>
+                        @endif
+                    @endif
+                </div>
             </div>
         </div>
         <div class="col-md-3">
@@ -39,7 +50,7 @@
         </div>
     </div>
 
-    <h4 class="fw-bold mb-3">Mis Objetivos</h4>
+    <h4 class="fw-bold mb-3">Mis Metas</h4>
     <div class="row mb-5">
         @forelse($lista_objetivos as $meta)
             <div class="col-md-6 mb-3">

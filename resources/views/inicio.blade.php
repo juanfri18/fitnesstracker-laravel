@@ -51,6 +51,14 @@
                     Todavía no has registrado ninguna actividad. ¡Empieza hoy!
                 </div>
             @endforelse
+
+            @if(count($actividades) >= 5)
+                <div class="d-flex justify-content-center mt-3 mb-4 w-100">
+                    <a href="/historial" class="btn btn-primary shadow-sm" style="border-radius: 30px; padding: 12px 35px; font-weight: bold; font-size: 1.05rem;">
+                        Ver todos los entrenamientos <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            @endif
         </div>
     </div>
 </div>

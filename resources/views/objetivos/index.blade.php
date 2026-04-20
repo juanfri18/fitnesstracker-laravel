@@ -20,7 +20,7 @@
         <div class="col-lg-4">
             <div class="card shadow-sm border-0" style="border-radius: 15px;">
                 <div class="card-header bg-white border-bottom-0 pb-0 pt-4">
-                    <h5 class="fw-bold"><i class="fas fa-flag-checkered text-primary me-2"></i>Nuevo Objetivo</h5>
+                    <h5 class="fw-bold"><i class="fas fa-flag-checkered text-primary me-2"></i>Nueva Meta</h5>
                 </div>
                 <div class="card-body">
                     <form action="{{ route('objetivos.store') }}" method="POST">
@@ -30,17 +30,27 @@
                             <select name="tipo_objetivo" class="form-select" required>
                                 <option value="Volumen Mensual">Volumen Mensual (kg levantados)</option>
                                 <option value="Frecuencia Semanal">Frecuencia Semanal (Días de entreno)</option>
-                                <option value="Peso Corporal">Objetivo de Peso Corporal (kg)</option>
+                                <option value="Peso Corporal">Meta de Peso Corporal (kg)</option>
                             </select>
                         </div>
-                        <div class="mb-4">
-                            <label class="form-label small fw-bold text-muted">Meta (Número o cantidad)</label>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Valor (Número o cantidad)</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0"><i class="fas fa-bullseye text-secondary"></i></span>
                                 <input type="number" step="0.1" min="1" name="valor_objetivo" class="form-control border-start-0" placeholder="Ej: 50" required>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 fw-bold" style="border-radius: 25px;">Crear Objetivo</button>
+                        <div class="row g-2 mb-4">
+                            <div class="col-6">
+                                <label class="form-label small fw-bold text-muted">Fecha Inicio</label>
+                                <input type="date" name="fecha_inicio" class="form-control">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold text-muted">Fecha Límite</label>
+                                <input type="date" name="fecha_limite" class="form-control">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 fw-bold" style="border-radius: 25px;">Crear Meta</button>
                     </form>
                 </div>
             </div>
@@ -50,7 +60,7 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border-0" style="border-radius: 15px;">
                 <div class="card-body p-4">
-                    <h5 class="fw-bold mb-4">Tus objetivos activos y completados</h5>
+                    <h5 class="fw-bold mb-4">Tus metas activas y completadas</h5>
                     <div class="list-group">
                         @forelse($objetivos as $obj)
                             <div class="list-group-item d-flex justify-content-between align-items-center py-3 border-start-0 border-end-0 border-top-0 mb-2 {{ $obj->estado === 'completado' ? 'bg-light' : '' }}">
@@ -72,7 +82,7 @@
                                             <button type="submit" class="btn btn-sm btn-outline-success" title="Marcar completado"><i class="fas fa-check"></i></button>
                                         </form>
                                     @endif
-                                    <form action="{{ route('objetivos.destroy', $obj->id) }}" method="POST" onsubmit="return confirm('¿Eliminar objetivo?');">
+                                    <form action="{{ route('objetivos.destroy', $obj->id) }}" method="POST" onsubmit="return confirm('¿Eliminar meta?');">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar"><i class="fas fa-trash"></i></button>
@@ -82,7 +92,7 @@
                         @empty
                             <div class="text-center py-5">
                                 <i class="fas fa-award fs-1 text-muted mb-3 opacity-25"></i>
-                                <h5 class="text-muted fw-bold">Aún no hay objetivos</h5>
+                                <h5 class="text-muted fw-bold">Aún no hay metas</h5>
                                 <p class="text-muted small">Crea tu primer desafío para empezar a medir tu progreso semanal.</p>
                             </div>
                         @endforelse

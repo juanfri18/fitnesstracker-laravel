@@ -95,6 +95,38 @@
                             <button type="button" class="btn btn-light ms-2 shadow-sm" style="border-radius: 25px; padding: 10px 30px; font-weight: 600;" onclick="window.location.reload()">Cancelar</button>
                         </div>
                     </form>
+
+                    <!-- SECCIÓN GAMIFICACIÓN (LOGROS) -->
+                    <h5 class="section-title mt-5"><i class="fas fa-trophy me-2 text-warning"></i>Vitrina de Logros</h5>
+                    <div class="row g-3">
+                        @php
+                            $all_logros = \App\Models\Logro::all();
+                            $mis_logros = $user->logros->pluck('id')->toArray();
+                        @endphp
+                        
+                        @forelse($all_logros as $logro)
+                            @php
+                                $unlocked = in_array($logro->id, $mis_logros);
+                            @endphp
+                            <div class="col-md-4 text-center">
+                                <div class="card p-3 shadow-sm h-100" style="border-radius: 15px; border: 2px solid {{ $unlocked ? 'var(--primary-color)' : '#eee' }}; opacity: {{ $unlocked ? '1' : '0.5' }}; transition: 0.3s;">
+                                    <div class="mx-auto mt-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 50%; background: {{ $unlocked ? 'rgba(42,81,153,0.1)' : '#f8f9fa' }};">
+                                        <i class="{{ $logro->icono }} fa-2x" style="color: {{ $unlocked ? 'var(--primary-color)' : '#bbb' }};"></i>
+                                    </div>
+                                    <h6 class="fw-bold mt-3 mb-1" style="color: {{ $unlocked ? '#333' : '#999' }};">{{ $logro->nombre }}</h6>
+                                    <small class="text-muted d-block lh-sm mb-2" style="font-size: 0.75rem;">{{ $logro->descripcion }}</small>
+                                    @if($unlocked)
+                                        <span class="badge bg-warning text-dark"><i class="fas fa-star me-1"></i>{{ $logro->puntos }} pts</span>
+                                    @else
+                                        <span class="badge bg-secondary"><i class="fas fa-lock me-1"></i>Bloqueado</span>
+                                    @endif
+                                </div>
+                            </div>
+                        @empty
+                            <div class="col-12"><small class="text-muted fst-italic">Aún no hay medallas globales configuradas en el sistema.</small></div>
+                        @endforelse
+                    </div>
+
                 </div>
             </div>
         </div>

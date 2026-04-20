@@ -13,7 +13,8 @@
         @auth
             <a href="/" class="menu-link {{ request()->is('/') ? 'active' : '' }}"><i class="fas fa-home text-primary"></i> Inicio</a>
             <a href="/registro" class="menu-link {{ request()->is('registro') ? 'active' : '' }}"><i class="fas fa-plus-circle text-success"></i> Registrar</a>
-            <a href="/estadisticas" class="menu-link {{ request()->is('estadisticas') ? 'active' : '' }}"><i class="fas fa-chart-line text-info"></i> Estadísticas</a>
+            <a href="/historial" class="menu-link {{ request()->is('historial') ? 'active' : '' }}"><i class="fas fa-dumbbell text-primary"></i> Entrenamientos</a>
+            <a href="/estadisticas" class="menu-link {{ request()->is('estadisticas') ? 'active' : '' }}"><i class="fas fa-chart-line text-info"></i> Tus Estadísticas</a>
             <a href="/objetivos" class="menu-link {{ request()->is('objetivos') ? 'active' : '' }}"><i class="fas fa-bullseye text-warning"></i> Mis Metas</a>
             <a href="/calendario" class="menu-link {{ request()->is('calendario') ? 'active' : '' }}"><i class="far fa-calendar-alt text-danger"></i> Calendario</a>
             <a href="/perfil" class="menu-link {{ request()->is('perfil') ? 'active' : '' }}"><i class="fas fa-user-cog text-secondary"></i> Mi Perfil</a>

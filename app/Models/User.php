@@ -73,4 +73,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Metrica::class, 'user_id');
     }
+
+    /**
+     * Get the achievements for the user.
+     */
+    public function logros()
+    {
+        return $this->belongsToMany(Logro::class, 'logro_user')->withTimestamps();
+    }
 }

@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Entrenamientos
     Route::resource('entrenamientos', EntrenamientoController::class)->except(['create', 'show']);
+    Route::get('/historial', [EntrenamientoController::class, 'historial'])->name('entrenamientos.historial');
 
     // Estadísticas
     Route::get('/estadisticas', [MetricaController::class, 'index']);

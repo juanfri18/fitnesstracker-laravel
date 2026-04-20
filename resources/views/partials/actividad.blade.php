@@ -2,7 +2,12 @@
     <div class="card-body">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <div class="d-flex align-items-center">
-                <div class="text-white me-3 p-2 rounded" style="background-color: var(--primary-color);">
+                @php
+                    $bgClass = 'bg-primary';
+                    if($actividad['tipo'] == 'Fuerza') $bgClass = 'bg-danger';
+                    elseif($actividad['tipo'] == 'Carrera') $bgClass = 'bg-success';
+                @endphp
+                <div class="text-white me-3 p-2 rounded {{ $bgClass }}">
                     @if($actividad['tipo'] == 'Fuerza')
                         <i class="fas fa-dumbbell fs-4"></i>
                     @elseif($actividad['tipo'] == 'Carrera')

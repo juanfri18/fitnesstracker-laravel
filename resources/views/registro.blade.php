@@ -6,8 +6,7 @@
 <style>
     .card-custom { border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
     .form-section { display: none; margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
-    .btn-save { background-color: var(--primary-color); color: white; font-weight: bold; padding: 12px; border-radius: 25px; border: none; width: 100%; transition: 0.3s; }
-    .btn-save:hover { background-color: #1e3c72; }
+    .btn-save { color: white; font-weight: bold; padding: 12px; border-radius: 25px; border: none; width: 100%; transition: 0.3s; }
 </style>
 @endsection
 
@@ -16,7 +15,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card card-custom p-4 p-md-5 bg-white">
-                <h3 class="fw-bold mb-4 text-center" style="color: var(--primary-color);">Registrar Actividad</h3>
+                <h3 id="formTitle" class="fw-bold mb-4 text-center text-primary">Registrar Actividad</h3>
                 
                 <form id="fitnessForm" action="/entrenamientos" method="POST">
                     @csrf 
@@ -32,7 +31,7 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Módulo / Categoría</label>
-                            <select class="form-select border-primary fw-bold" id="mainCat" name="modulo" required onchange="toggleModule()">
+                            <select class="form-select border-primary fw-bold text-primary" id="mainCat" name="modulo" required onchange="toggleModule()">
                                 <option value="" disabled selected>Seleccione...</option>
                                 <option value="fuerza">Entrenamiento de Fuerza</option>
                                 <option value="carrera">Carrera</option>
@@ -101,7 +100,7 @@
                         </div>
 
                         <div class="d-grid gap-2 mt-5">
-                            <button type="submit" class="btn btn-save shadow">Guardar Actividad</button>
+                            <button id="submitBtn" type="submit" class="btn btn-primary btn-save shadow">Guardar Actividad</button>
                             <a href="/" class="btn btn-link text-muted text-center text-decoration-none">Cancelar y Volver</a>
                         </div>
                     </div>
@@ -125,6 +124,41 @@
 
     function toggleModule() {
         const val = document.getElementById('mainCat').value;
+        const mainCat = document.getElementById('mainCat');
+        const formTitle = document.getElementById('formTitle');
+        const submitBtn = document.getElementById('submitBtn');
+        const feelVal = document.getElementById('feelVal');
+
+        [mainCat, formTitle, submitBtn, feelVal].forEach(el => {
+            if(el) {
+                el.classList.remove('border-primary', 'text-primary', 'bg-primary', 'btn-primary',
+                                    'border-danger', 'text-danger', 'bg-danger', 'btn-danger',
+                                    'border-success', 'text-success', 'bg-success', 'btn-success');
+            }
+        });
+
+        if (val === 'caminata') {
+            mainCat.classList.add('bg-primary', 'text-white');
+            if(formTitle) formTitle.classList.add('text-primary');
+            if(submitBtn) submitBtn.classList.add('btn-primary');
+            if(feelVal) feelVal.classList.add('bg-primary');
+        } else if (val === 'fuerza') {
+            mainCat.classList.add('bg-danger', 'text-white');
+            if(formTitle) formTitle.classList.add('text-danger');
+            if(submitBtn) submitBtn.classList.add('btn-danger');
+            if(feelVal) feelVal.classList.add('bg-danger');
+        } else if (val === 'carrera') {
+            mainCat.classList.add('bg-success', 'text-white');
+            if(formTitle) formTitle.classList.add('text-success');
+            if(submitBtn) submitBtn.classList.add('btn-success');
+            if(feelVal) feelVal.classList.add('bg-success');
+        } else {
+            mainCat.classList.add('bg-primary', 'text-white');
+            if(formTitle) formTitle.classList.add('text-primary');
+            if(submitBtn) submitBtn.classList.add('btn-primary');
+            if(feelVal) feelVal.classList.add('bg-primary');
+        }
+
         document.getElementById('sec-fuerza').style.display = val === 'fuerza' ? 'block' : 'none';
         document.getElementById('sec-cardio').style.display = (val === 'carrera' || val === 'caminata') ? 'block' : 'none';
         document.getElementById('sec-common').style.display = 'block';

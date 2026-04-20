@@ -5,8 +5,7 @@
 @section('css_extra')
 <style>
     .card-custom { border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-    .btn-save { background-color: #ffc107; color: #000; font-weight: bold; border: none; width: 100%; padding: 12px; border-radius: 25px;} 
-    .btn-save:hover { background-color: #e0a800; }
+    .btn-save { color: white; font-weight: bold; padding: 12px; border-radius: 25px; border: none; width: 100%; transition: 0.3s; }
     .form-section { display: none; margin-top: 20px; }
 </style>
 @endsection
@@ -23,7 +22,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card card-custom p-4 bg-white">
-                <h3 class="fw-bold mb-4 text-center text-warning">Editar Actividad</h3>
+                <h3 id="formTitle" class="fw-bold mb-4 text-center text-primary">Editar Actividad</h3>
                 
                 <form action="/entrenamientos/{{ $entreno['id'] }}" method="POST">
                     @csrf
@@ -36,7 +35,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Tipo</label>
-                            <select class="form-select border-warning fw-bold" id="mainCat" name="modulo" required onchange="toggleModule()">
+                            <select class="form-select fw-bold" id="mainCat" name="modulo" required onchange="toggleModule()">
                                 <option value="fuerza" {{ $tipo_actual == 'fuerza' ? 'selected' : '' }}>Fuerza</option>
                                 <option value="carrera" {{ $tipo_actual == 'carrera' ? 'selected' : '' }}>Carrera</option>
                                 <option value="caminata" {{ $tipo_actual == 'caminata' ? 'selected' : '' }}>Caminata</option>
@@ -66,12 +65,12 @@
 
                     <div class="mt-4">
                         <label class="form-label fw-bold">Sensación (1-10)</label>
-                        <input type="range" class="form-range" min="1" max="10" name="sensacion" value="{{ $entreno['sensacion'] ?? 5 }}" oninput="document.getElementById('val').innerText=this.value">
-                        <div class="text-center fw-bold fs-5 text-warning" id="val">{{ $entreno['sensacion'] ?? 5 }}</div>
+                        <input type="range" class="form-range" min="1" max="10" name="sensacion" value="{{ $entreno['sensacion'] ?? 5 }}" oninput="document.getElementById('feelVal').innerText=this.value">
+                        <div class="text-center fw-bold fs-5 text-primary" id="feelVal">{{ $entreno['sensacion'] ?? 5 }}</div>
                     </div>
 
                     <div class="d-grid gap-2 mt-5">
-                        <button type="submit" class="btn btn-save shadow">Guardar Cambios</button>
+                        <button id="submitBtn" type="submit" class="btn btn-primary btn-save shadow">Guardar Cambios</button>
                         <a href="/" class="btn btn-link text-muted text-decoration-none text-center">Cancelar</a>
                     </div>
                 </form>
@@ -84,7 +83,43 @@
 @section('scripts_extra')
 <script>
     function toggleModule() {
-        const val = document.getElementById('mainCat').value;
+        const mainCat = document.getElementById('mainCat');
+        const val = mainCat.value;
+        const formTitle = document.getElementById('formTitle');
+        const submitBtn = document.getElementById('submitBtn');
+        const feelVal = document.getElementById('feelVal');
+
+        [mainCat, formTitle, submitBtn, feelVal].forEach(el => {
+            if(el) {
+                el.classList.remove('border-warning', 'text-warning', 'bg-warning', 'btn-warning',
+                                    'border-primary', 'text-primary', 'bg-primary', 'btn-primary',
+                                    'border-danger', 'text-danger', 'bg-danger', 'btn-danger',
+                                    'border-success', 'text-success', 'bg-success', 'btn-success');
+            }
+        });
+
+        if (val === 'caminata') {
+            mainCat.classList.add('bg-primary', 'text-white');
+            if(formTitle) formTitle.classList.add('text-primary');
+            if(submitBtn) submitBtn.classList.add('btn-primary');
+            if(feelVal) feelVal.classList.add('text-primary');
+        } else if (val === 'fuerza') {
+            mainCat.classList.add('bg-danger', 'text-white');
+            if(formTitle) formTitle.classList.add('text-danger');
+            if(submitBtn) submitBtn.classList.add('btn-danger');
+            if(feelVal) feelVal.classList.add('text-danger');
+        } else if (val === 'carrera') {
+            mainCat.classList.add('bg-success', 'text-white');
+            if(formTitle) formTitle.classList.add('text-success');
+            if(submitBtn) submitBtn.classList.add('btn-success');
+            if(feelVal) feelVal.classList.add('text-success');
+        } else {
+            mainCat.classList.add('bg-primary', 'text-white');
+            if(formTitle) formTitle.classList.add('text-primary');
+            if(submitBtn) submitBtn.classList.add('btn-primary');
+            if(feelVal) feelVal.classList.add('text-primary');
+        }
+
         document.getElementById('sec-fuerza').style.display = val === 'fuerza' ? 'block' : 'none';
         document.getElementById('sec-cardio').style.display = (val === 'carrera' || val === 'caminata') ? 'block' : 'none';
         

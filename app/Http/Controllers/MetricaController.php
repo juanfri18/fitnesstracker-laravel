@@ -23,6 +23,19 @@ class MetricaController extends Controller
             ->whereRaw('YEARWEEK(fecha, 1) = YEARWEEK(CURDATE(), 1)')
             ->first();
 
+        // 2.5 TENDENCIA (vs Semana Pasada)
+        $semana_pasada = \App\Models\Entrenamiento::selectRaw('COUNT(id) as sem_entrenos, IFNULL(SUM(duracion_minutos), 0) as sem_min')
+            ->where('user_id', $usuario_id)
+            ->whereRaw('YEARWEEK(fecha, 1) = YEARWEEK(DATE_SUB(CURDATE(), INTERVAL 7 DAY), 1)')
+            ->first();
+        
+        $tendencia_porcentaje = 0;
+        if ($semana_pasada && $semana_pasada->sem_min > 0) {
+            $tendencia_porcentaje = (($semana->sem_min - $semana_pasada->sem_min) / $semana_pasada->sem_min) * 100;
+        } elseif ($semana && $semana->sem_min > 0) {
+            $tendencia_porcentaje = 100;
+        }
+
         // 3. MEJOR MARCA (Carga Máxima)
         $mejor_marca = DB::table('entrenamiento_detalles')
             ->join('entrenamientos', 'entrenamiento_detalles.entrenamiento_id', '=', 'entrenamientos.id')
@@ -84,6 +97,7 @@ class MetricaController extends Controller
         return view('estadisticas', [
             'totales' => $totales ? $totales->toArray() : ['total_entrenos' => 0, 'total_min' => 0],
             'semana' => $semana ? $semana->toArray() : ['sem_entrenos' => 0, 'sem_min' => 0],
+            'tendencia_porcentaje' => round($tendencia_porcentaje),
             'mejor_marca' => $mejor_marca,
             'lista_objetivos' => $lista_objetivos
         ]);
