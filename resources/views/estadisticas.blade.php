@@ -76,7 +76,14 @@
         <!-- Gráfico Principal (Lineal) -->
         <div class="col-lg-8">
             <div class="card stat-card p-4 h-100">
-                <h5 class="fw-bold mb-3"><i class="fas fa-fire-alt text-danger me-2"></i>Tiempo de Entrenamiento</h5>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-fire-alt text-danger me-2"></i>Tiempo de Entrenamiento</h5>
+                    <select id="periodoSelect" class="form-select form-select-sm" style="width: 150px;" onchange="updateChart()">
+                        <option value="semana" selected>Últimos 7 días</option>
+                        <option value="mes">Últimos 30 días</option>
+                        <option value="anio">Último año</option>
+                    </select>
+                </div>
                 <canvas id="caloriesChart" height="100"></canvas>
             </div>
         </div>
@@ -97,34 +104,48 @@
 @section('scripts_extra')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Gráfico de Tiempo (AJAX Asíncrono)
-    const ctx = document.getElementById('caloriesChart').getContext('2d');
-    fetch('/api/metricas/dashboard')
-        .then(res => {
-            if (!res.ok) throw new Error('Error en la respuesta del servidor');
-            return res.json();
-        })
-        .then(data => {
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.labels,
-                    datasets: [{
-                        label: 'Minutos',
-                        data: data.dataPoints,
-                        borderColor: '#dc3545',
-                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
+    let caloriesChartInst = null;
+    
+    function updateChart() {
+        const periodo = document.getElementById('periodoSelect').value;
+        const ctx = document.getElementById('caloriesChart').getContext('2d');
+        
+        fetch(`/api/metricas/dashboard?periodo=${periodo}`)
+            .then(res => {
+                if (!res.ok) throw new Error('Error en la respuesta del servidor');
+                return res.json();
+            })
+            .then(data => {
+                if(caloriesChartInst) caloriesChartInst.destroy();
+                
+                caloriesChartInst = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Minutos',
+                            data: data.dataPoints,
+                            borderColor: '#dc3545',
+                            backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error cargando gráfico principal:', error);
+                const container = document.getElementById('caloriesChart').parentNode;
+                // Evitamos borrar el select
+                const canvas = document.getElementById('caloriesChart');
+                if(canvas) {
+                    canvas.outerHTML = '<div class="alert alert-warning text-center mt-4" id="caloriesChartError">No se pudieron cargar los datos de evolución.</div>';
                 }
             });
-        })
-        .catch(error => {
-            console.error('Error cargando gráfico principal:', error);
-            const container = document.getElementById('caloriesChart').parentNode;
-            container.innerHTML = '<div class="alert alert-warning text-center mt-4">No se pudieron cargar los datos de evolución.</div>';
-        });
+    }
+
+    // Inicializar al cargar
+    updateChart();
 
     // Gráfico de Tipos (AJAX Asíncrono)
     const ctxPie = document.getElementById('pieChart').getContext('2d');

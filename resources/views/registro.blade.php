@@ -23,20 +23,29 @@
                     <div class="row g-3 mb-4">
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Fecha</label>
-                            <input type="date" class="form-control" id="date" name="fecha" required>
+                            <input type="date" class="form-control @error('fecha') is-invalid @enderror" id="date" name="fecha" value="{{ old('fecha', date('Y-m-d')) }}" required>
+                            @error('fecha')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Duración (min)</label>
-                            <input type="number" class="form-control" id="time" name="tiempo" placeholder="Minutos" required oninput="pace()">
+                            <input type="number" class="form-control @error('tiempo') is-invalid @enderror" id="time" name="tiempo" placeholder="Minutos" value="{{ old('tiempo') }}" required oninput="pace()">
+                            @error('tiempo')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Módulo / Categoría</label>
-                            <select class="form-select border-primary fw-bold text-primary" id="mainCat" name="modulo" required onchange="toggleModule()">
+                            <select class="form-select border-primary fw-bold text-primary @error('modulo') is-invalid @enderror" id="mainCat" name="modulo" required onchange="toggleModule()">
                                 <option value="" disabled selected>Seleccione...</option>
-                                <option value="fuerza">Entrenamiento de Fuerza</option>
-                                <option value="carrera">Carrera</option>
-                                <option value="caminata">Caminata</option>
+                                <option value="fuerza" {{ old('modulo') == 'fuerza' ? 'selected' : '' }}>Entrenamiento de Fuerza</option>
+                                <option value="carrera" {{ old('modulo') == 'carrera' ? 'selected' : '' }}>Carrera</option>
+                                <option value="caminata" {{ old('modulo') == 'caminata' ? 'selected' : '' }}>Caminata</option>
                             </select>
+                            @error('modulo')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
@@ -234,6 +243,12 @@
         }
     }
 
-    document.getElementById('date').valueAsDate = new Date();
+    if (!document.getElementById('date').value) {
+        document.getElementById('date').valueAsDate = new Date();
+    }
+    // Si había un valor viejo, disparar toggleModule
+    if (document.getElementById('mainCat').value) {
+        toggleModule();
+    }
 </script>
 @endsection

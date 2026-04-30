@@ -46,5 +46,24 @@
                 <span class="fst-italic">{{ $actividad['notas'] ?: 'Sin detalles adicionales' }}</span>
             </div>
         </div>
+
+        @if(!empty($actividad['detalles']))
+            <div class="mx-1 mb-2">
+                <h6 class="small fw-bold text-secondary mb-2"><i class="fas fa-list-ul me-2"></i>Ejercicios Realizados</h6>
+                <ul class="list-group list-group-flush small" style="border-radius: 10px; overflow: hidden; border: 1px solid #eee;">
+                    @foreach($actividad['detalles'] as $detalle)
+                        <li class="list-group-item d-flex justify-content-between align-items-center bg-light border-bottom border-white">
+                            <span>
+                                <span class="fw-bold text-dark">{{ $detalle['ejercicio']['nombre'] ?? 'Ejercicio' }}</span>
+                                <span class="text-muted ms-1">({{ $detalle['grupo_muscular'] }})</span>
+                            </span>
+                            <span class="badge bg-secondary rounded-pill">
+                                {{ $detalle['series'] }}x{{ $detalle['repeticiones'] }} @if($detalle['carga_kg']) | {{ $detalle['carga_kg'] }}kg @endif
+                            </span>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
     </div>
 </div>

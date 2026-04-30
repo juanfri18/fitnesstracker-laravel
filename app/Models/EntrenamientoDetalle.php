@@ -18,4 +18,12 @@ class EntrenamientoDetalle extends Model
     {
         return $this->belongsTo(Entrenamiento::class);
     }
+
+    /**
+     * Get the exercise associated with this detail.
+     */
+    public function ejercicio()
+    {
+        return $this->belongsTo(Ejercicio::class);
+    }
 }

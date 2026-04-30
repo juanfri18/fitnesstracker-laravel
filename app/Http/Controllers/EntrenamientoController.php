@@ -12,7 +12,8 @@ class EntrenamientoController extends Controller
     {
         $usuario_id = Auth::id(); 
 
-        $actividades = \App\Models\Entrenamiento::where('user_id', $usuario_id)
+        $actividades = \App\Models\Entrenamiento::with(['detalles', 'detalles.ejercicio'])
+                        ->where('user_id', $usuario_id)
                         ->orderBy('fecha', 'desc')
                         ->limit(5)
                         ->get();
@@ -28,7 +29,8 @@ class EntrenamientoController extends Controller
     {
         $usuario_id = Auth::id(); 
         // Recuperamos todas las actividades ordenadas por fecha reciente usando paginate para no saturar 
-        $actividades = \App\Models\Entrenamiento::where('user_id', $usuario_id)
+        $actividades = \App\Models\Entrenamiento::with(['detalles', 'detalles.ejercicio'])
+                        ->where('user_id', $usuario_id)
                         ->orderBy('fecha', 'desc')
                         ->paginate(20);
 
@@ -138,6 +140,33 @@ class EntrenamientoController extends Controller
                 if ($logro && !$usuario->logros->contains($logro->id)) {
                     $usuario->logros()->attach($logro->id);
                 }
+            }
+        }
+        // 4.3 Maratonista (Carrera >= 10km)
+        if ($tipo_db === 'Carrera' && $distancia >= 10) {
+            $logro = \App\Models\Logro::where('criterio', 'carrera_10km')->first();
+            if ($logro && !$usuario->logros->contains($logro->id)) {
+                $usuario->logros()->attach($logro->id);
+            }
+        }
+
+        // 4.4 Leyenda del Sudor (Más de 1000 minutos totales)
+        // Sumamos la duración de todos sus entrenos en la BD
+        $minutosTotales = \App\Models\Entrenamiento::where('user_id', $usuario->id)->sum('duracion_minutos');
+        
+        if ($minutosTotales >= 1000) {
+            $logro = \App\Models\Logro::where('criterio', '1000_minutos')->first();
+            if ($logro && !$usuario->logros->contains($logro->id)) {
+                $usuario->logros()->attach($logro->id);
+            }
+        }
+
+        // 4.5 Constancia Pura (Racha de 3 días)
+        $racha = $usuario->calcularRacha();
+        if ($racha >= 3) {
+            $logro = \App\Models\Logro::where('criterio', 'racha_3_dias')->first();
+            if ($logro && !$usuario->logros->contains($logro->id)) {
+                $usuario->logros()->attach($logro->id);
             }
         }
 

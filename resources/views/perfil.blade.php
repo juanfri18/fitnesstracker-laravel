@@ -97,12 +97,25 @@
                     </form>
 
                     <!-- SECCIÓN GAMIFICACIÓN (LOGROS) -->
-                    <h5 class="section-title mt-5"><i class="fas fa-trophy me-2 text-warning"></i>Vitrina de Logros</h5>
+                    @php
+                        $all_logros = \App\Models\Logro::all();
+                        $mis_logros = $user->logros->pluck('id')->toArray();
+                        $total_puntos = $user->logros->sum('puntos');
+                        $racha_actual = $user->calcularRacha();
+                    @endphp
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-5 mb-3 border-bottom pb-2">
+                        <h5 class="section-title mb-0 border-0 pb-0"><i class="fas fa-trophy me-2 text-warning"></i>Vitrina de Logros</h5>
+                        <div>
+                            <span class="badge bg-danger rounded-pill px-3 py-2 me-2 shadow-sm" style="font-size: 0.9rem;">
+                                <i class="fas fa-fire me-1"></i> Racha: {{ $racha_actual }} días
+                            </span>
+                            <span class="badge bg-warning text-dark rounded-pill px-3 py-2 shadow-sm" style="font-size: 0.9rem;">
+                                <i class="fas fa-star me-1"></i> Total: {{ $total_puntos }} pts
+                            </span>
+                        </div>
+                    </div>
                     <div class="row g-3">
-                        @php
-                            $all_logros = \App\Models\Logro::all();
-                            $mis_logros = $user->logros->pluck('id')->toArray();
-                        @endphp
                         
                         @forelse($all_logros as $logro)
                             @php

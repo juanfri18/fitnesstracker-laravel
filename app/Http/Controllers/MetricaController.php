@@ -106,21 +106,29 @@ class MetricaController extends Controller
     /**
      * Devuelve los datos JSON para las gráficas asíncronas (AJAX)
      */
-    public function dashboardAPI()
+    public function dashboardAPI(Request $request)
     {
         $usuario_id = Auth::id();
+        $periodo = $request->query('periodo', 'semana'); // Default a semana
+        
+        $fechaInicio = now()->subDays(7);
+        if ($periodo === 'mes') {
+            $fechaInicio = now()->subDays(30);
+        } elseif ($periodo === 'anio') {
+            $fechaInicio = now()->subDays(365);
+        }
 
-        $chartData = \App\Models\Entrenamiento::selectRaw('fecha, SUM(duracion_minutos) as total_valores')
+        $chartData = \App\Models\Entrenamiento::selectRaw('DATE(fecha) as dia, SUM(duracion_minutos) as total_valores')
             ->where('user_id', $usuario_id)
-            ->where('fecha', '>=', now()->subDays(7))
-            ->groupBy('fecha')
-            ->orderBy('fecha', 'asc')
+            ->where('fecha', '>=', $fechaInicio)
+            ->groupBy('dia')
+            ->orderBy('dia', 'asc')
             ->get();
 
         $labels = [];
         $dataPoints = [];
         foreach($chartData as $row) {
-            $labels[] = date('d/m', strtotime($row->fecha));
+            $labels[] = date('d/m', strtotime($row->dia));
             $dataPoints[] = $row->total_valores;
         }
 

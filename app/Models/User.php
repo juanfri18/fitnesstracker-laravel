@@ -81,4 +81,48 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Logro::class, 'logro_user')->withTimestamps();
     }
+
+    /**
+     * Calcula la racha actual de días consecutivos entrenando.
+     */
+    public function calcularRacha()
+    {
+        $fechas = $this->entrenamientos()
+                       ->select('fecha')
+                       ->orderBy('fecha', 'desc')
+                       ->distinct()
+                       ->pluck('fecha')
+                       ->map(function ($f) {
+                           return \Carbon\Carbon::parse($f)->startOfDay();
+                       });
+
+        if ($fechas->isEmpty()) {
+            return 0;
+        }
+
+        $racha = 0;
+        $hoy = \Carbon\Carbon::today();
+        $ayer = \Carbon\Carbon::yesterday();
+
+        $primeraFecha = clone $fechas->first();
+
+        // Si el último entrenamiento es anterior a ayer, la racha está rota (0)
+        // Se utiliza lt (less than) para tolerar fechas futuras o de otras zonas horarias.
+        if ($primeraFecha->lt($ayer)) {
+            return 0;
+        }
+
+        $fechaEsperada = $primeraFecha;
+
+        foreach ($fechas as $fecha) {
+            if ($fecha->eq($fechaEsperada)) {
+                $racha++;
+                $fechaEsperada->subDay();
+            } else {
+                break; // Se rompió la racha hacia atrás
+            }
+        }
+
+        return $racha;
+    }
 }

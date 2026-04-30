@@ -41,7 +41,7 @@ class ObjetivoController extends Controller
             'fecha_limite' => $request->fecha_limite ? \Carbon\Carbon::parse($request->fecha_limite) : now()->addDays(30)
         ]);
 
-        return redirect('/estadisticas')->with('msg', '¡Objetivo guardado con éxito!');
+        return redirect('/objetivos')->with('msg', '¡Objetivo guardado con éxito!');
     }
 
     /**
@@ -59,7 +59,7 @@ class ObjetivoController extends Controller
                 'estado' => $request->estado
             ]);
 
-        return redirect('/estadisticas')->with('msg', '¡Estado del objetivo actualizado!');
+        return redirect('/objetivos')->with('msg', '¡Estado del objetivo actualizado!');
     }
 
     /**
@@ -71,6 +71,6 @@ class ObjetivoController extends Controller
             ->where('user_id', Auth::id())
             ->delete();
 
-        return redirect('/estadisticas')->with('msg', 'Objetivo eliminado.');
+        return redirect('/objetivos')->with('msg', 'Objetivo eliminado.');
     }
 }
