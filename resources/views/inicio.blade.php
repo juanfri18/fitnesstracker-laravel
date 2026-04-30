@@ -16,7 +16,7 @@
 @section('contenido')
 <div class="container-fluid px-4 mt-4">
     <div class="row g-4 ">
-        <div class="col-lg-4">
+        <div class="col-lg-4 d-flex flex-column justify-content-center" style="min-height: 100%;">
             <div class="card profile-card p-4 shadow-sm mb-4 ">
                 <div class="text-center mb-3">
                     <div class="rounded-circle mx-auto mb-2 overflow-hidden" style="width: 80px; height: 80px; background: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem;">

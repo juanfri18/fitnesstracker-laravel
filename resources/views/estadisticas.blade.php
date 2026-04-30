@@ -103,6 +103,7 @@
 
 @section('scripts_extra')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script>
     let caloriesChartInst = null;
     
@@ -130,13 +131,14 @@
                             fill: true,
                             tension: 0.4
                         }]
+                    },
+                    options: {
+                        plugins: { datalabels: { display: false } } // Desactivar en línea
                     }
                 });
             })
             .catch(error => {
                 console.error('Error cargando gráfico principal:', error);
-                const container = document.getElementById('caloriesChart').parentNode;
-                // Evitamos borrar el select
                 const canvas = document.getElementById('caloriesChart');
                 if(canvas) {
                     canvas.outerHTML = '<div class="alert alert-warning text-center mt-4" id="caloriesChartError">No se pudieron cargar los datos de evolución.</div>';
@@ -149,26 +151,51 @@
 
     // Gráfico de Tipos (AJAX Asíncrono)
     const ctxPie = document.getElementById('pieChart').getContext('2d');
+    
+    // Registrar el plugin para porcentajes en gráfica circular
+    Chart.register(ChartDataLabels);
+
     fetch('/api/metricas/tipos')
         .then(res => {
             if (!res.ok) throw new Error('Error en la respuesta del servidor');
             return res.json();
         })
         .then(data => {
+            const bgColors = data.labels.map(label => {
+                const lp = label.toLowerCase();
+                if (lp.includes('fuerza')) return '#dc3545'; // Rojo
+                if (lp.includes('carrera') || lp.includes('correr') || lp.includes('running')) return '#198754'; // Verde
+                if (lp.includes('caminata') || lp.includes('andar')) return '#0d6efd'; // Azul
+                return '#6c757d'; // Default gris
+            });
+
             new Chart(ctxPie, {
                 type: 'doughnut',
                 data: {
                     labels: data.labels,
                     datasets: [{
                         data: data.dataPoints,
-                        backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#0dcaf0'],
+                        backgroundColor: bgColors,
                         borderWidth: 0
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } },
+                    plugins: { 
+                        legend: { position: 'bottom' },
+                        datalabels: {
+                            color: '#ffffff',
+                            font: { weight: 'bold', size: 14 },
+                            formatter: (value, ctx) => {
+                                let sum = 0;
+                                let dataArr = ctx.chart.data.datasets[0].data;
+                                dataArr.forEach(data => { sum += Number(data); });
+                                let percentage = (value * 100 / sum).toFixed(0) + "%";
+                                return percentage;
+                            }
+                        }
+                    },
                     cutout: '70%'
                 }
             });
