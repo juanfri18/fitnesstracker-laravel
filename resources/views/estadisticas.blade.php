@@ -10,7 +10,14 @@
 
 @section('contenido')
 <div class="container py-5">
-    <h2 class="fw-bold mb-4" style="color: var(--primary-color);">Tus Estadísticas</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0" style="color: var(--primary-color);">Tus Estadísticas</h2>
+        <select class="form-select form-select-sm shadow-sm" style="width: 180px; border-radius: 20px; font-weight: bold; border-color: var(--primary-color); color: var(--primary-color);" onchange="window.location.href='/estadisticas?periodo=' + this.value">
+            <option value="semana" {{ request('periodo', 'semana') == 'semana' ? 'selected' : '' }}>🗓️ Esta Semana</option>
+            <option value="mes" {{ request('periodo') == 'mes' ? 'selected' : '' }}>📅 Este Mes</option>
+            <option value="anio" {{ request('periodo') == 'anio' ? 'selected' : '' }}>📆 Este Año</option>
+        </select>
+    </div>
 
     <div class="row g-4 mb-4">
         <div class="col-md-3">
@@ -21,7 +28,7 @@
         </div>
         <div class="col-md-3">
             <div class="card stat-card p-3 h-100">
-                <small class="text-muted">Esta Semana</small>
+                <small class="text-muted">Este Periodo</small>
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="fw-bold text-success mb-0">{{ $semana['sem_entrenos'] }} workouts</h3>
                     @if(isset($tendencia_porcentaje))
@@ -78,11 +85,6 @@
             <div class="card stat-card p-4 h-100">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="fw-bold mb-0"><i class="fas fa-fire-alt text-danger me-2"></i>Tiempo de Entrenamiento</h5>
-                    <select id="periodoSelect" class="form-select form-select-sm" style="width: 150px;" onchange="updateChart()">
-                        <option value="semana" selected>Últimos 7 días</option>
-                        <option value="mes">Últimos 30 días</option>
-                        <option value="anio">Último año</option>
-                    </select>
                 </div>
                 <canvas id="caloriesChart" height="100"></canvas>
             </div>
@@ -108,7 +110,7 @@
     let caloriesChartInst = null;
     
     function updateChart() {
-        const periodo = document.getElementById('periodoSelect').value;
+        const periodo = "{{ request('periodo', 'semana') }}";
         const ctx = document.getElementById('caloriesChart').getContext('2d');
         
         fetch(`/api/metricas/dashboard?periodo=${periodo}`)

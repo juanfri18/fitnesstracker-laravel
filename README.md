@@ -48,6 +48,25 @@
    ```
    Tu aplicación estará corriendo en `http://localhost:8000`.
 
+## 🐳 Ejecución con Docker (Avanzado)
+Si no deseas instalar PHP ni MySQL en tu máquina, puedes levantar la aplicación completa en un contenedor usando nuestro `docker-compose.yml` preconfigurado:
+1. Asegúrate de tener **Docker** y **Docker Compose** instalados.
+2. Abre la terminal en la raíz del proyecto y ejecuta:
+   ```bash
+   docker-compose up -d --build
+   ```
+3. El sistema levantará un servidor Apache+PHP y una base de datos MySQL de forma automática y persistente en el puerto `8000`. Accede a `http://localhost:8000`.
+
+## 🧪 Testing Automatizado
+La aplicación cuenta con cobertura de pruebas unitarias y de características usando **PHPUnit** y una base de datos temporal en memoria (`sqlite`) para no alterar tus datos de producción.
+Para ejecutar la batería de pruebas y verificar que todas las matemáticas y controladores funcionan correctamente:
+```bash
+php artisan test
+```
+
+## 📚 Manual de Usuario
+Puedes consultar el documento [MANUAL_USUARIO.md](./MANUAL_USUARIO.md) para ver la guía rápida de la plataforma, cómo configurar objetivos y un listado de problemas frecuentes.
+
 ## Tecnologías Utilizadas
 - **Laravel** (Framework PHP)
 - **Blade** (Motor de plantillas)

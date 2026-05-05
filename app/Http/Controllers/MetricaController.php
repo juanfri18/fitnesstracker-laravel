@@ -8,25 +8,44 @@ use Illuminate\Support\Facades\Auth;
 
 class MetricaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $usuario_id = Auth::id();
+        $periodo = $request->query('periodo', 'semana');
 
         // 1. TOTALES GLOBALES (Entrenos, Tiempo, Volumen)
         $totales = \App\Models\Entrenamiento::selectRaw('COUNT(id) as total_entrenos, IFNULL(SUM(duracion_minutos), 0) as total_min')
             ->where('user_id', $usuario_id)
             ->first();
 
-        // 2. TOTALES SEMANA ACTUAL
+        // Filtros dinámicos de tiempo (Semana, Mes, Año)
+        $inicio = now()->startOfWeek();
+        $fin = now()->endOfWeek();
+        $inicio_pasado = now()->subWeek()->startOfWeek();
+        $fin_pasado = now()->subWeek()->endOfWeek();
+        
+        if ($periodo === 'mes') {
+            $inicio = now()->startOfMonth();
+            $fin = now()->endOfMonth();
+            $inicio_pasado = now()->subMonth()->startOfMonth();
+            $fin_pasado = now()->subMonth()->endOfMonth();
+        } elseif ($periodo === 'anio') {
+            $inicio = now()->startOfYear();
+            $fin = now()->endOfYear();
+            $inicio_pasado = now()->subYear()->startOfYear();
+            $fin_pasado = now()->subYear()->endOfYear();
+        }
+
+        // 2. TOTALES PERIODO ACTUAL
         $semana = \App\Models\Entrenamiento::selectRaw('COUNT(id) as sem_entrenos, IFNULL(SUM(duracion_minutos), 0) as sem_min')
             ->where('user_id', $usuario_id)
-            ->whereRaw('YEARWEEK(fecha, 1) = YEARWEEK(CURDATE(), 1)')
+            ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
             ->first();
 
-        // 2.5 TENDENCIA (vs Semana Pasada)
+        // 2.5 TENDENCIA (vs Periodo Pasado)
         $semana_pasada = \App\Models\Entrenamiento::selectRaw('COUNT(id) as sem_entrenos, IFNULL(SUM(duracion_minutos), 0) as sem_min')
             ->where('user_id', $usuario_id)
-            ->whereRaw('YEARWEEK(fecha, 1) = YEARWEEK(DATE_SUB(CURDATE(), INTERVAL 7 DAY), 1)')
+            ->whereBetween('fecha', [$inicio_pasado->toDateString(), $fin_pasado->toDateString()])
             ->first();
         
         $tendencia_porcentaje = 0;

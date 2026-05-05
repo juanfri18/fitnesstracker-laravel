@@ -121,8 +121,37 @@ class EntrenamientoController extends Controller
             }
         }
 
-        // 4. VERIFICACIÓN DE LOGROS (GAMIFICACIÓN)
-        $usuario = Auth::user();
+        // --- 3.5. GESTIÓN DE RACHAS (STREAKS) ---
+        $usuario = \App\Models\User::find(Auth::id());
+        $fecha_entreno = \Carbon\Carbon::parse($request->fecha)->startOfDay();
+        
+        if ($usuario->ultima_actividad_fecha) {
+            $ultima = \Carbon\Carbon::parse($usuario->ultima_actividad_fecha)->startOfDay();
+            $diferencia_dias = $ultima->diffInDays($fecha_entreno, false); 
+            
+            if ($diferencia_dias == 1) {
+                // Entrenó justo al día siguiente
+                $usuario->racha_actual += 1;
+                $usuario->ultima_actividad_fecha = $fecha_entreno->toDateString();
+            } elseif ($diferencia_dias > 1) {
+                // Rompió la racha
+                $usuario->racha_actual = 1;
+                $usuario->ultima_actividad_fecha = $fecha_entreno->toDateString();
+            }
+            // Si diff == 0, entrena 2 veces el mismo día, no sube la racha ni cambia la fecha (ya es hoy)
+        } else {
+            // Su primer registro absoluto
+            $usuario->racha_actual = 1;
+            $usuario->ultima_actividad_fecha = $fecha_entreno->toDateString();
+        }
+        
+        // Récord histórico
+        if ($usuario->racha_actual > $usuario->mejor_racha) {
+            $usuario->mejor_racha = $usuario->racha_actual;
+        }
+        $usuario->save();
+
+        // 4. GAMIFICACIÓN: Otorgar logros pasivamente
         
         // 4.1 Primer Entrenamiento
         if (\App\Models\Entrenamiento::where('user_id', $usuario->id)->count() === 1) {

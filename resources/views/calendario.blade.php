@@ -55,6 +55,10 @@
             },
             // API AJAX
             events: '/api/calendario/eventos',
+            dateClick: function(info) {
+                // Redirige al registro y pasa la fecha seleccionada por GET
+                window.location.href = '/registro?fecha=' + info.dateStr;
+            },
             eventDidMount: function(info) {
                 info.el.style.borderRadius = "4px";
             }

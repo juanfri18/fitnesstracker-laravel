@@ -23,7 +23,7 @@
                     <div class="row g-3 mb-4">
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Fecha</label>
-                            <input type="date" class="form-control @error('fecha') is-invalid @enderror" id="date" name="fecha" value="{{ old('fecha', date('Y-m-d')) }}" required>
+                            <input type="date" class="form-control @error('fecha') is-invalid @enderror" id="date" name="fecha" value="{{ old('fecha', request('fecha', date('Y-m-d'))) }}" required>
                             @error('fecha')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
