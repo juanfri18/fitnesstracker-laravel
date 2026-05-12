@@ -36,12 +36,17 @@ class PerfilController extends Controller
         $grasa_calculada = null;
 
         // Cálculo automático de Grasa Corporal (Aproximación por IMC)
-        if ($request->peso && $request->altura && $request->edad && $request->genero) {
-            $altura_metros = $request->altura / 100;
-            $imc = $request->peso / ($altura_metros * $altura_metros);
-            $factor_genero = ($request->genero === 'Hombre') ? 1 : 0;
+        $peso_calc = $request->peso ?? $user->peso;
+        $altura_calc = $request->altura ?? $user->altura;
+        $edad_calc = $request->edad ?? $user->edad;
+        $genero_calc = $request->genero ?? $user->genero;
+
+        if ($peso_calc && $altura_calc && $edad_calc && $genero_calc) {
+            $altura_metros = $altura_calc / 100;
+            $imc = $peso_calc / ($altura_metros * $altura_metros);
+            $factor_genero = ($genero_calc === 'Hombre') ? 1 : 0;
             
-            $grasa_calculada = (1.20 * $imc) + (0.23 * $request->edad) - (10.8 * $factor_genero) - 5.4;
+            $grasa_calculada = (1.20 * $imc) + (0.23 * $edad_calc) - (10.8 * $factor_genero) - 5.4;
             // Evitar resultados absurdos o negativos
             $grasa_calculada = max(1, min(60, round($grasa_calculada, 1)));
         }

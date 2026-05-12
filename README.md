@@ -56,6 +56,11 @@ Si no deseas instalar PHP ni MySQL en tu máquina, puedes levantar la aplicació
    docker-compose up -d --build
    ```
 3. El sistema levantará un servidor Apache+PHP y una base de datos MySQL de forma automática y persistente en el puerto `8000`. Accede a `http://localhost:8000`.
+4. Una vez arrancados los contenedores, ejecuta las migraciones y seeders dentro del contenedor de la app:
+   ```bash
+   docker exec fitness_app php artisan migrate --force
+   docker exec fitness_app php artisan db:seed --class=LogroSeeder --force
+   ```
 
 ## 🧪 Testing Automatizado
 La aplicación cuenta con cobertura de pruebas unitarias y de características usando **PHPUnit** y una base de datos temporal en memoria (`sqlite`) para no alterar tus datos de producción.

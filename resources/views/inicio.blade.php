@@ -27,7 +27,7 @@
                         @endif
                     </div>
                     <h4 class="fw-bold mb-0">¡Hola, {{ Auth::user()->name }}!</h4>
-                    <p class="text-muted small">"Preparando maratón"</p>
+                    <p class="text-muted small">{{ Auth::user()->biografia ? '"'.Auth::user()->biografia.'"' : '' }}</p>
                 </div>
                 <div class="row g-2 mb-4">
                     <div class="col-6"><div class="stat-badge"><small class="d-block text-muted">Peso</small><span class="stat-value">{{ Auth::user()->peso ?? '-- '}} kg</span></div></div>
@@ -47,8 +47,19 @@
             @forelse ($actividades as $actividad)
                 @include('partials.actividad', ['actividad' => $actividad])
             @empty
-                <div class="alert alert-info text-center">
-                    Todavía no has registrado ninguna actividad. ¡Empieza hoy!
+                {{-- #9: Onboarding para usuario nuevo --}}
+                <div class="card shadow-sm border-0 p-5 text-center" style="border-radius: 15px;">
+                    <div class="mb-4">
+                        <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background: rgba(42, 81, 153, 0.1);">
+                            <i class="fas fa-rocket text-primary fs-1"></i>
+                        </div>
+                    </div>
+                    <h4 class="fw-bold">¡Bienvenido a SinergyFit!</h4>
+                    <p class="text-muted mb-4">Aún no tienes entrenamientos registrados.<br>Empieza hoy y desbloquea tu primer logro 🏆</p>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="/registro" class="btn btn-primary rounded-pill fw-bold px-4"><i class="fas fa-plus me-2"></i>Registrar primer entreno</a>
+                        <a href="/perfil" class="btn btn-outline-secondary rounded-pill fw-bold px-4"><i class="fas fa-user me-2"></i>Completar mi perfil</a>
+                    </div>
                 </div>
             @endforelse
 
@@ -62,6 +73,31 @@
         </div>
     </div>
 </div>
+
+{{-- #26: Modal de celebración de logros --}}
+@if(session('logros_nuevos'))
+<div class="modal fade" id="logroModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+            <div class="modal-body p-5" style="background: linear-gradient(135deg, #2A5199 0%, #1e3c72 100%); color: white;">
+                <div class="mb-3">
+                    <i class="fas fa-trophy fa-4x" style="color: #ffc107; filter: drop-shadow(0 4px 8px rgba(255, 193, 7, 0.5));"></i>
+                </div>
+                <h3 class="fw-bold mb-2">🎉 ¡Logro Desbloqueado!</h3>
+                @foreach(session('logros_nuevos') as $nombre_logro)
+                    <h4 class="fw-bold mb-1" style="color: #ffc107;">{{ $nombre_logro }}</h4>
+                @endforeach
+                <p class="mt-3 mb-0 small opacity-75">¡Sigue así, campeón! Revisa tu vitrina de logros en tu perfil.</p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center py-3">
+                <button type="button" class="btn btn-primary rounded-pill fw-bold px-5" data-bs-dismiss="modal">
+                    <i class="fas fa-fist-raised me-2"></i>¡Vamos!
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 @endsection
 
 @section('scripts_extra')
@@ -85,6 +121,24 @@
                 options: { plugins: { legend: {display: false} }, scales: { y: {display: false}, x: {grid: {display: false}} } }
             });
         })
-        .catch(error => console.error("Error loading AJAX chart data:", error));
+        .catch(error => {
+            console.error("Error loading AJAX chart data:", error);
+            const canvas = document.getElementById('miniChart');
+            if(canvas) {
+                canvas.outerHTML = '<div class="alert alert-warning text-center small mt-2"><i class="fas fa-exclamation-triangle me-1"></i>No se pudo cargar el gráfico.</div>';
+            }
+        });
+
+    // #26: Confetti celebration
+    @if(session('logros_nuevos'))
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = new bootstrap.Modal(document.getElementById('logroModal'));
+            modal.show();
+            // Fire confetti
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+            setTimeout(() => confetti({ particleCount: 100, spread: 100, origin: { y: 0.5 } }), 500);
+            setTimeout(() => confetti({ particleCount: 80, spread: 120, origin: { y: 0.7 } }), 1000);
+        });
+    @endif
 </script>
 @endsection

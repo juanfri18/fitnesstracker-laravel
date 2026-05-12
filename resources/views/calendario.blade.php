@@ -27,6 +27,13 @@
             <div id="calendar"></div>
         </div>
     </div>
+
+    {{-- #8: Leyenda de colores --}}
+    <div class="d-flex justify-content-center gap-4 mt-3 flex-wrap">
+        <span class="d-flex align-items-center gap-2 small fw-bold"><span style="width: 14px; height: 14px; border-radius: 3px; background: #dc3545; display: inline-block;"></span> Fuerza</span>
+        <span class="d-flex align-items-center gap-2 small fw-bold"><span style="width: 14px; height: 14px; border-radius: 3px; background: #198754; display: inline-block;"></span> Carrera</span>
+        <span class="d-flex align-items-center gap-2 small fw-bold"><span style="width: 14px; height: 14px; border-radius: 3px; background: #ffc107; display: inline-block;"></span> Caminata</span>
+    </div>
 </div>
 @endsection
 

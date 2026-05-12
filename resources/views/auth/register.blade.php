@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary-color: #2A5199; --bg-light: #f0f2f5; }
+
         body { 
             background-color: var(--bg-light); 
             background-image: linear-gradient(rgba(240, 242, 245, 0.60), rgba(240, 242, 245, 0.60)), url('{{ asset("images/background.webp") }}');
@@ -23,7 +24,7 @@
             margin: 0; 
             padding: 20px; 
         }
-        .login-card { border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 450px; padding: 2rem; background: white; }
+        .login-card { border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 400px; padding: 2rem; background: white; }
         .btn-login { background-color: var(--primary-color); color: white; border-radius: 25px; font-weight: 600; padding: 12px; width: 100%; }
         .btn-login:hover { background-color: #1e3c72; color: white; }
         .icon-container { width: 70px; height: 70px; background: rgba(42, 81, 153, 0.1); color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.5rem auto; }
@@ -31,15 +32,15 @@
 </head>
 <body>
 
-    <div class="login-card text-center mb-5">
+    <div class="login-card text-center mb-5 mt-5">
         <div class="mb-3 text-center">
-            <img src="{{ asset('images/logo.webp') }}" alt="SINERGYFIT Logo" style="height: 100px; width: auto; margin: 0 auto 1.5rem auto; display: block;">
+            <img src="{{ asset('images/logo.webp') }}" alt="SINERGYFIT Logo" style="height: 120px; width: auto; margin: 0 auto 1.5rem auto; display: block;">
         </div>
         <h3 class="mb-1 d-flex justify-content-center align-items-center" style="font-family: 'Arial Black', 'Segoe UI', sans-serif; text-transform: uppercase;">
-            <span style="color: var(--primary-color); font-weight: 900; font-size: 1.8rem; letter-spacing: 2px; text-shadow: -2px 2px 0px rgba(42, 81, 153, 0.2), -4px 4px 0px rgba(42, 81, 153, 0.1);">SINERGY</span>
-            <span style="background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; font-size: 2.2rem; font-style: italic; margin-left: -2px; padding-right: 8px; filter: drop-shadow(-2px 2px 4px rgba(255, 65, 108, 0.8)) drop-shadow(-4px 4px 0px rgba(255, 65, 108, 0.4));">FIT</span>
+            <span style="color: var(--primary-color); font-weight: 900; font-size: 2rem; letter-spacing: 2px; text-shadow: -2px 2px 0px rgba(42, 81, 153, 0.2), -4px 4px 0px rgba(42, 81, 153, 0.1);">SINERGY</span>
+            <span style="background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; font-size: 2.4rem; font-style: italic; margin-left: -2px; padding-right: 8px; filter: drop-shadow(-2px 2px 4px rgba(255, 65, 108, 0.8)) drop-shadow(-4px 4px 0px rgba(255, 65, 108, 0.4));">FIT</span>
         </h3>
-        <p class="text-muted mb-4 fw-bold">Crear Cuenta</p>
+        <p class="text-muted mb-4 small">Crea tu cuenta de atleta.</p>
 
         @if ($errors->any())
             <div class="alert alert-danger text-start small">
@@ -93,6 +94,7 @@
             </div>
         </form>
     </div>
+
 
 </body>
 </html>

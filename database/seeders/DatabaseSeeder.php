@@ -56,13 +56,40 @@ class DatabaseSeeder extends Seeder
             'carga_kg' => 80,
         ]);
 
-        // Crear objetivo
+        // Crear entrenamientos adicionales (Historial demo)
+        $entrenamiento2 = \App\Models\Entrenamiento::create([
+            'user_id' => $user->id,
+            'tipo' => 'Carrera',
+            'fecha' => now()->subDays(2),
+            'duracion_minutos' => 45,
+            'calorias_estimadas' => 495,
+            'notas' => 'Distancia: 5km | Sensación: 8/10',
+        ]);
+
+        $entrenamiento3 = \App\Models\Entrenamiento::create([
+            'user_id' => $user->id,
+            'tipo' => 'Caminata',
+            'fecha' => now()->subDays(4),
+            'duracion_minutos' => 30,
+            'calorias_estimadas' => 135,
+            'notas' => 'Sensación: 6/10',
+        ]);
+
+        // Crear objetivos
         \App\Models\Objetivo::create([
             'user_id' => $user->id,
-            'tipo_objetivo' => 'Frecuencia Semanal',
+            'tipo_objetivo' => 'Días Entrenados',
             'valor_objetivo' => 4,
             'estado' => 'en_progreso',
             'fecha_limite' => now()->addDays(30),
+        ]);
+
+        \App\Models\Objetivo::create([
+            'user_id' => $user->id,
+            'tipo_objetivo' => 'Peso Corporal',
+            'valor_objetivo' => 70,
+            'estado' => 'en_progreso',
+            'fecha_limite' => now()->addDays(60),
         ]);
     }
 }

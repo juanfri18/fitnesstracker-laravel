@@ -26,10 +26,25 @@
                 <div class="card-body p-4">
                     <form action="/perfil" method="POST" enctype="multipart/form-data">
                         @csrf
+                        @if ($errors->any())
+                            <div class="alert alert-danger mx-3 mt-2 small">
+                                <ul class="mb-0">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
                         <div class="avatar-container mb-4">
-                            <img src="{{ $user->foto ? asset('storage/' . $user->foto) : 'https://via.placeholder.com/120?text=Usuario' }}" id="preview" class="profile-img">
-                            <input type="file" name="foto" id="fileUp" hidden onchange="loadImg(event)" accept="image/*" disabled>
-                            <label for="fileUp" id="btnCamera" class="btn-camera d-none" title="Cambiar foto"><i class="fas fa-camera text-primary"></i></label>
+                            <div class="position-relative d-inline-block">
+                                @if($user->foto)
+                                    <img src="{{ asset('storage/' . $user->foto) }}" id="preview" class="profile-img">
+                                @else
+                                    <img id="preview" class="profile-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' fill='%232A5199'/%3E%3Ccircle cx='60' cy='42' r='22' fill='white' opacity='0.9'/%3E%3Cellipse cx='60' cy='100' rx='35' ry='28' fill='white' opacity='0.9'/%3E%3C/svg%3E">
+                                @endif
+                                <input type="file" name="foto" id="fileUp" hidden onchange="loadImg(event)" accept="image/*" disabled>
+                                <label for="fileUp" id="btnCamera" class="btn-camera d-none" style="right: 0; margin-right: 0;" title="Cambiar foto"><i class="fas fa-camera text-primary"></i></label>
+                            </div>
                             <h3 class="mt-2 fw-bold mb-0">{{ $user->name ?? '' }}</h3>
                             <p class="text-muted fst-italic" id="bioDisplay">{{ $user->biografia ? '"'.$user->biografia.'"' : '' }}</p>
                         </div>
@@ -105,10 +120,10 @@
                         $mejor_racha = $user->mejor_racha ?? 0;
                     @endphp
                     
-                    <div class="d-flex justify-content-between align-items-center mt-5 mb-3 border-bottom pb-2">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3 border-bottom pb-2 gap-2">
                         <h5 class="section-title mb-0 border-0 pb-0"><i class="fas fa-trophy me-2 text-warning"></i>Vitrina de Logros</h5>
-                        <div>
-                            <span class="badge bg-danger rounded-pill px-3 py-2 me-2 shadow-sm" style="font-size: 0.9rem;" title="Récord histórico: {{ $mejor_racha }} días">
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-danger rounded-pill px-3 py-2 shadow-sm" style="font-size: 0.9rem;" title="Récord histórico: {{ $mejor_racha }} días">
                                 <i class="fas fa-fire me-1"></i> Racha: {{ $racha_actual }} días
                             </span>
                             <span class="badge bg-warning text-dark rounded-pill px-3 py-2 shadow-sm" style="font-size: 0.9rem;">

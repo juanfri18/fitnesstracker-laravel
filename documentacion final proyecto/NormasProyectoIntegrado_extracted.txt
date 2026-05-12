@@ -1,0 +1,523 @@
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
+ 
+ 
+2024-25 
+ 
+I.E.S. TRAFALGAR 
+BARBATE - CÁDIZ 
+ 
+ 
+NORMAS PARA LA REALIZACIÓN 
+DEL MÓDULO  
+PROYECTO INTEGRADO 
+ 
+DEPARTAMENTO INFORMÁTICA 
+CICLO FORMATIVO CFGS ASIR / DAW 
+MÓDULO PROFESIONAL PROYECTO INTEGRADO 
+ 
+
+
+---
+
+APARTADOS DE LA PROGRAMACIÓN DIDÁCTICA 
+ 
+1. OBJETIVO Y ALCANCE DEL DOCUMENTO ................................................................................................................................. 3 
+2. LICENCIAS .................................................................................................................................................................................................... 3 
+3. TIPOS DE PROYECTOS .......................................................................................................................................................................... 3 
+4. ANTEPROYECTO ....................................................................................................................................................................................... 5 
+5. DOCUMENTO DEL PROYECTO ..................................................................................................................................................................7 
+5.1. PROPUESTA PLANTILLA DOCUMENTACIÓN PROYECTO ................................................................................. 8 
+6.  DEFENSA DEL PROYECTO ........................................................................................................................................................................ 11 
+6.1. EXPOSICIÓN DEL PROYECTO ........................................................................................................................................... 11 
+6.2.  PREPARACIÓN DE LA EXPOSICIÓN ............................................................................................................................ 11 
+6.3. DESARROLLO DE LA EXPOSICIÓN ............................................................................................................................. 12 
+7. INSTRUCCIONES GENERALES PARA LA ELABORACIÓN DEL DOCUMENTO DEL PROYECTO ............................. 13 
+7.1. OPCIONES DE FORMATO .................................................................................................................................................. 13 
+8. NORMAS PARA LA ENTREGA DEL PROYECTO .............................................................................................................................. 14 
+8.1. SOPORTE DE ENTREGA ...................................................................................................................................................... 14 
+
+---
+
+NORMAS PARA LA REALIZACIÓN DEL MÓDULO PROYECTO INTEGRADO  
+I.E.S. Trafalgar | Departamento de Informática 3 
+ 
+1. OBJETIVO Y ALCANCE DEL DOCUMENTO 
+Sirva el presente documento como guía para establecer una normativa básica que deberán 
+cumplir todos los alumnos que cursen el módulo de Proyecto Integrado del Ciclo Formativo Superior 
+de Administración de Sistemas Informáticos en Red (ASIR)  y Desarrollo de Aplicaciones Web 
+(DAW) impartidos por el Departamento de Informática en el IES Trafalgar. 
+En este documento se fijarán unas líneas generales sobre cómo abordar la realización del 
+Proyecto Integrado, así como el formato y soporte en el que deberán ser entregados los materiales 
+elaborados y empleados por el alumnado. 
+2. LICENCIAS 
+El proyecto a realizar debe respetar la legislación vigente, por este motivo el alumnado en todo 
+momento deberá adecuarse a las características que tenga la licencia del software o materiales 
+utilizados, no incluyendo en ningún momento contenidos o materiales que pudiesen ser considerados 
+ilegales.  
+Las creaciones realizadas por el alumnado deberán someterse igualmente a las restricciones que 
+imponen determinados tipos de licencias, no permitiéndose la vulneración de las condiciones exigidas. 
+ 
+El alumnado indicará el tipo de licencia que establece para la creación realizada. 
+3. TIPOS DE PROYECTOS  
+La tipología de los proyectos puede ser diversa, teniendo presente que deberían abordar en mayor 
+o menor medida las temáticas que a continuación se describen. No es preciso que se aborden todas, 
+aunque deberemos tratar en la medida de lo posible la mayor parte.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+---
+
+NORMAS PARA LA REALIZACIÓN DEL MÓDULO PROYECTO INTEGRADO  
+I.E.S. Trafalgar | Departamento de Informática 4 
+ 
+ASIR 
+ 
+ 
+ 
+DAW 
+ 
+ 
+TIPOS DE PROYECTOS
+ADMINISTRACIÓN Y GESTIÓN DE SISTEMAS INFORMÁTICOS
+ADMINISTRACIÓN DE SERVICIOS DE INTERNET
+ADMINISTRACIÓN Y GESTIÓN DE LA INFORMACIÓN
+ADMINISTRACIÓN DE LA SEGURIDAD
+ADMINISTRACIÓN DEL MANTENIMIENTO Y RECUPERACIÓN DEL SISTEMA
+TIPOS DE PROYECTOS
+DESARROLLO Y ADMINISTRACIÓN DE SERVICIOS WEB
+GESTIÓN Y ADMINISTRACIÓN DE LA INFORMACIÓN
+SEGURIDAD EN EL DESARROLLO WEB
+MANTENIMIENTO Y RECUPERACIÓN DE APLICACIONES WEB
+INTEGRACIÓN DE TECNOLOGÍAS Y FRAMEWORKS ACTUALES
+DESARROLLO DE SISTEMAS DE GESTIÓN DOCUMENTAL
+
+---
+
+NORMAS PARA LA REALIZACIÓN DEL MÓDULO PROYECTO INTEGRADO  
+I.E.S. Trafalgar | Departamento de Informática 5 
+ 
+4. ANTEPROYECTO 
+ 
+Antes de aventurarse en la realización del proyecto se debe estudiar la viabilidad y adecuación de 
+la 
+propuesta a desarrollar. 
+El módulo profesional de Proyecto será realizado por los alumnos y alumnas con la 
+orientación y asesoramiento de un tutor docente. 
+El proyecto a realizar puede a partir de tres caminos diferentes: 
+1. Adecuar alguna de las actividades a realizar en la F.C.T. de suficiente interés y complejidad 
+como propuesta. 
+2. El propio alumno sugiere el contenido del proyecto. 
+3. El profesor o equipo docente planteará las pautas del proyecto a desarrollar por parte del 
+alumno, adecuando dificultad y contenido a la programación. 
+En último término cualquier propuesta a desarrollar por el alumno debe contar con la aprobación 
+previa del equipo docente antes de comenzar. Estos deben verificar que la propuesta tiene la 
+complejidad necesaria, o delimitará la realización de un proyecto de gran amplitud. 
+ 
+Para solicitar la realización de un proyecto el alumno propondrá a los profesores el proyecto 
+a realizar siguiendo las directrices y restricciones indicadas en este documento. El proyecto se 
+presentará al tutor de 2º curso del CFGS de ASIR/DAW. Más adelante se informará a los alumnos cual 
+será el profesor responsable de su seguimiento.  
+Se deberán tener presentes los siguientes objetivos en la elaboración del proyecto: 
+1. El contenido del proyecto debe versar sobre las tecnologías que actualmente se utilizan en el 
+mundo informático. 
+2. El proyecto deberá de ser un trabajo de investigación intentando alcanzar el mayor nivel 
+posible acorde a los estudios realizados. 
+Los alumnos deberán realizar un anteproyecto que presentarán a los profesores, los cuales 
+dictaminarán si el proyecto se ajusta a lo esperado, ampliando o delimitando la extensión del mismo 
+si fuese preciso. 
+ 
+
+---
+
+NORMAS PARA LA REALIZACIÓN DEL MÓDULO PROYECTO INTEGRADO  
+I.E.S. Trafalgar | Departamento de Informática 6 
+ 
+El anteproyecto consistirá en un resumen del trabajo a realizar de una hoja o dos a lo sumo 
+que 
+incluya información sobre los siguientes aspectos: 
+ 
+1. IDENTIFICACIÓN 
+Nombre del proyecto, autor y curso 
+2. OBJETIVOS 
+Se indicará de forma genérica y si entrar en concreciones el objetivo que se pretende alcanzar al 
+realizar el proyecto. Se indicará igualmente donde será utilizado el proyecto obtenido 
+3. ANÁLISIS DE LO EXISTENTE 
+Si procede, se informará brevemente sobre el funcionamiento del sistema actual.  
+4. ANÁLISIS DEL SISTEMA 
+Indicar con brevedad las partes del sistema sobre las que trabajaréis, identificando de forma genérica 
+los requisitos que pretendéis satisfacer. 
+5. DISEÑO DEL SISTEMA 
+Si el sistema precisa de nuevo material, hardware o software, indicar las características de este: 
+dispositivos hardware, sistemas operativos, lenguajes, bases de datos, etc. 
+Indicar qué módulos profesionales del Ciclo se trabajan en el proyecto y cómo. 
+6. ESTIMACIÓN DE COSTES 
+Estimar el coste que representará la creación del proyecto para una empresa. Esta estimación 
+será temporal y económica si procede. 
+ Temporal: Tiempo le llevará la realización del proyecto que propone, incluyendo el tiempo para el 
+desarrollo del proyecto y el tiempo para la preparación de la documentación. 
+ Económica: Cálculo de la inversión material que se precisaría para realizar el proyecto. En este 
+apartado solo se considerará el material del que aún no disponga la empresa y que por lo tanto 
+precisase comprar. Debemos también considerar el cambio de uso de determi nados elementos que 
+también podrían tener un coste. Ejemplo: Dedicar un ordenador a la función de servidor, privándolo 
+de la posibilidad de usarlo como escritorio. 
+ 
+ 
+
+---
+
+NORMAS PARA LA REALIZACIÓN DEL MÓDULO PROYECTO INTEGRADO  
+I.E.S. Trafalgar | Departamento de Informática 7 
+ 
+ 
+7. ESTUDIO DE NECESIDADES DEL SECTOR PRODUCTIVO 
+Se justificará la necesidad del proyecto tratando de encuadrarlo en el sector productivo actual. Se 
+buscarán entornos en los que el proyecto podría resultar útil. 
+ 
+Como se ha indicado la información del anteproyecto, tan solo pretende ser una aproximación 
+informativa que permitirá a los tutores encauzar correctamente a los alumnos. 
+ 
+5. DOCUMENTO DEL PROYECTO 
+ 
+El documento del Proyecto será un documento en el que se explique las tareas que se han 
+realizado o deberían realizarse, en el caso de no poder completarlo debido a su complejidad. 
+ 
+En el documento se hará referencia a otros materiales adicionales que se incluirán igualmente 
+en el proyecto. Hay que tratar de incluir en este documento únicamente información relevante y  
+creada por el alumnado tratando de evitar en la medida de lo posible copiar contenidos que se 
+pueden incluir como documentos o ficheros anexos. 
+ 
+El documento debe tener una longitud mínima de 30 páginas, debe tener un formato de letra 
+y página acorde a lo que se establece más adelante en el apartado pertinente. 
+ 
+Además del documento, que será analizado por los profesores, hay que hacer una defensa del 
+proyecto creado. Esta defensa se realizará en los últimos días del curso. El equipo de profesores 
+creará el calendario pertinente en el que se indicará el día que se realizará la defensa de cada trabajo. 
+ 
+Para la defensa del proyecto será obligatorio crear una presentación y utilizar medios 
+audiovisuales que faciliten la transmisión de la información. En el apartado "Defensa del proyecto" 
+se dispone de orientaciones sobre cómo abordar dicha tarea. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+---
+
+NORMAS PARA LA REALIZACIÓN DEL MÓDULO PROYECTO INTEGRADO  
+I.E.S. Trafalgar | Departamento de Informática 8 
+ 
+5.1. PROPUESTA PLANTILLA DOCUMENTACIÓN PROYECTO 
+ 
+[ PORTADA ] 
+ 
+ 
+ 
+ 
+DPTO INFORMÁTICA – IES TRAFALGAR 
+MÓDULO – PROYECTO INTEGRADO 
+C.F.G.S. XXXXXXXXXX 
+ 
+ 
+TÍTULO DEL PROYECTO 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Autor: ________________________________________ 
+Fecha: ________________________________________ 
+Tutor: ________________________________________ 
+ 
+ 
+ 
+ 
+  
+
+---
+
+NORMAS PARA LA REALIZACIÓN DEL MÓDULO PROYECTO INTEGRADO  
+I.E.S. Trafalgar | Departamento de Informática 9 
+ 
+La primera página incluirá un esquema resumen del proyecto. 
+ 
+HOJA RESUMEN 
+ 
+Título del proyecto: 
+Autor: Fecha: 
+Tutor: 
+Ciclo Formativo: Curso: 
+Palabras clave: 
+Aquí se deberán incluir las palabras clave que mejor identifican el proyecto. 
+Resumen del proyecto: 
+Se deberá sintetizar en unas pocas líneas el propósito del proyecto en cuestión. 
+ 
+ 
+ 
+En cuanto al índice una posible propuesta podría ser: 
+ 
+ÍNDICE  
+ 
+1.- Introducción 
+ 
+En este apartado se deberá incluir una introducción del proyecto, describiendo los objetivos 
+generales, beneficios y motivaciones personales que han hecho que el alumnado se haya decidido por 
+dicho proyecto. 
+ 
+2.- Estudio de la viabilidad 
+ 
+Se puede partir del estudio de la situación actual, realizando un diagnóstico de la problemática 
+detectada que motive el desarrollo de la propuesta del proyecto a desarrollar. 
+ 
+3.- Alternativas y selección de la solución 
+ 
+ Se pretende incluir la descripción de las diferentes alternativas disponibles (planificación, 
+evaluación de riesgos, costes, conclusiones) . 
+ 
+4.- Análisis y diseño de la solución adoptada. 
+ 
+
+---
+
+NORMAS PARA LA REALIZACIÓN DEL MÓDULO PROYECTO INTEGRADO  
+I.E.S. Trafalgar | Departamento de Informática 10 
+ 
+ Se deberá empezar por un análisis  de los requisitos del sistema planteado (se valorará 
+positivamente el uso de diagramas estandarizados). 
+ 
+ Tras dicho análisis se deberá pasar al diseño , en el que se deberá reflejar la selección de la 
+arquitectura del sistema (que elementos participan y cómo se relacionan entre ellos). 
+ 
+5.- Implementación. 
+  
+ En este punto se espera conocer la configuración de los diferentes subsistemas,  así como 
+aspectos de codificación e integración de los diferentes elementos participantes. 
+ 
+6.- Pruebas. 
+ 
+ Se deberán recoger los escenarios de prueba empleados y los resultados obtenidos. 
+ 
+7.- Costes/Presupuesto. 
+ 
+ Se incluirá una estimación pormenorizada de los costes que suponga la implantación del 
+proyecto. 
+ 
+8.- Conclusiones. 
+ 
+ Se esperan las conclusiones finales, así como posibles ampliaciones y modificaciones sin 
+olvidarse de la valoración personal del alumnado que nos ayude a comprobar su pensamiento crítico. 
+ 
+9.- Bibliografía. 
+10.- Glosario. 
+11.- Anexos. 
+ 
+ 
+IMPORTANTE: El índice se incluye a título orientativo, el desarrollo de vuestro proyecto 
+determinará qué apartados incluye. 
+ 
+ 
+ 
+  
+ 
+
+---
+
+NORMAS PARA LA REALIZACIÓN DEL MÓDULO PROYECTO INTEGRADO  
+I.E.S. Trafalgar | Departamento de Informática 11 
+ 
+6.  DEFENSA DEL PROYECTO 
+ 
+6.1. EXPOSICIÓN DEL PROYECTO 
+ 
+ Una vez entregado el proyecto llega el momento de la exposición y defensa del mismo. Este es 
+un momento importante ya que es ahora cuando se deberá demostrar que se conocen y manejan sus 
+contenidos. 
+La exposición del proyecto consta de dos momentos: 
+ La exposición como tal, en la cual se describen los principales contenidos del proyecto. 
+ La defensa del mismo, momento en el cual los miembros del tribunal harán preguntas con el 
+objetivo de aclarar aspectos que no hayan quedado suficientemente explicados y/o evaluar 
+el grado de conocimiento del proyecto por parte del alumnado que lo ha desarrollado. 
+ 
+6.2.  PREPARACIÓN DE LA EXPOSICIÓN 
+ 
+ Previo a realizar la exposición es importante realizar una preparación de la misma. Para ello se 
+deberán tener en cuenta varios aspectos: 
+a) Preparación y organización de los contenidos de la exposición. Es importante tener en  cuenta que 
+durante la exposición se presenta una síntesis con los aspectos principales del proyecto y no el 
+proyecto tal y como aparece en la memoria. 
+b) Ensayar la exposición tal y como vayamos a realizarla, empleando también los medios técnicos que 
+vamos a utilizar. De esta forma, podemos corregir posibles errores, evitar  problemas durante la 
+exposición. Este ensayo también nos servirá para controlar los tiempos, ya que el tiempo de exposición 
+suele ser limitado. 
+c) Preparación del material que se utilizará durante la exposición: 
+- Presentación de diapositivas en PowerPoint. Si se utiliza este soporte, evitar diseñar diapositivas 
+demasiado cargadas de letra y con letra demasiado pequeña. Puede facilitar el seguimiento de la 
+exposición el añadir imágenes, fotos y animar algunas diap ositivas (si hay muchas diapositivas con 
+animación se alarga el tiempo de presentación). 
+
+---
+
+NORMAS PARA LA REALIZACIÓN DEL MÓDULO PROYECTO INTEGRADO  
+I.E.S. Trafalgar | Departamento de Informática 12 
+ 
+- Esquemas-guión para desarrollar la exposición. Este esquema puede entregarse al profesor/es 
+evaluador/es para facilitarles el seguimiento de la exposición, además de utilizarlo las personas que 
+exponen. 
+- Maquetas, piezas, productos elaborados que sirvan como modelo de lo que se va a elaborar con la 
+ejecución del proyecto. 
+d) Conseguir o reservar aparatos electrónicos y otros recursos que vayamos a utilizar durante la 
+exposición: cañón de video, ordenador portátil, proyector o cualquier otro dispositivo hardware. 
+ 
+ 
+6.3. DESARROLLO DE LA EXPOSICIÓN 
+ 
+Llegado el momento de la exposición también hay una serie de consejos que pueden facilitar el 
+desarrollo de la misma y causar mejor sensación en el equipo de personas evaluadoras: 
+1. Cuidar la expresión verbal: 
+ Hablar claro, alto y a buen ritmo, pero sin acelerarse. 
+ Utilizar un tono de voz variable, para dar énfasis a algunas ideas o comentarios. 
+2. Cuidar la expresión no verbal: 
+ Mantener una conexión visual con las personas que están escuchando la exposición. 
+ Si en algún momento de la exposición es necesario leer algún texto, levantar de vez en cuando 
+la mirada. 
+3. Exponer las ideas de forma organizada, teniendo en cuenta el guión elaborado para la 
+exposición. 
+4. Intentar hacer una presentación amena , que atraiga el interés de las personas evaluadoras. 
+El mostrar entusiasmo por el proyecto puede ayudar a motivar a quien escucha la exposición. 
+5. No meterse las manos en los bolsillos, ni apoyarse o sentarse sobre la mesa , ya que la 
+imagen que se da no es adecuada. 
+6. No sentarse para realizar la exposición , ya que esto hará que sea menos dinámica y atraiga 
+menos la atención de quien evalúa. 
+7. Intentar responder de memoria a las preguntas que formulen los/as evaluadores/as , ya 
+que ello da impresión de dominio del proyecto. 
+
+---
+
+NORMAS PARA LA REALIZACIÓN DEL MÓDULO PROYECTO INTEGRADO  
+I.E.S. Trafalgar | Departamento de Informática 13 
+ 
+8. Si se tienen dudas sobre las preguntas, no se han entendido bien, etc. es preferible decirle 
+al tribunal que las repita o formule de otra manera . No hay que quedarse callado ni tampoco 
+responder con algo que no tenga nada que ver. 
+9. Se pueden utilizar los últimos minutos de la exposición para exponer argumentos de 
+defensa de la viabilidad del proyecto presentado 
+ 
+Finalmente, será el momento de responder a posibles preguntas que plantee el tribunal. En este 
+punto, es importante argumentar adecuadamente las respuestas, haciendo referencia a los 
+contenidos de la memoria del proyecto. Cada pregunta que realice el equip o evaluador, deberá ser 
+para quien defiende el proyecto una invitación para ampliar la información recogida en la memoria, 
+demostrando así el grado de conocimiento y madurez del Proyecto elaborado. 
+ 
+7. INSTRUCCIONES GENERALES PARA LA ELABORACIÓN DEL DOCUMENTO DEL PROYECTO 
+ 
+7.1. OPCIONES DE FORMATO 
+  
+ Todos los textos deberán estar ordenados en capítulos, subdivididos en apartados y éstos  en 
+subapartados. 
+ Estarán escritos en un procesador de textos con un tamaño de página formato DIN A4, fuentes  
+tamaño 12, interlineado de 1,5. El tipo de letra base que se utilizará para el documento será de la  
+familia Serif o Sans Serif. 
+ Los capítulos se escribirán en mayúsculas subrayadas o con un borde inferior en el párrafo. 
+ Los apartados y subapartados en mayúsculas sin subrayar y con la numeración correlativa. 
+ Todas las páginas, excepto la primera, mostrarán una cabecera donde aparecerá: 
+Nombre del Ciclo                                                                                                               Nombre  del Proyecto
+  
+ Los capítulos iniciarán página. 
+ En cuanto a los márgenes se proponen: 
+ izquierdo, 30 mm 
+ derecho, 30 mm 
+ superior 2 mm 
+ inferior, 2 mm. 
+ 
+
+---
+
+NORMAS PARA LA REALIZACIÓN DEL MÓDULO PROYECTO INTEGRADO  
+I.E.S. Trafalgar | Departamento de Informática 14 
+ 
+ Se utilizará sangrado de 1,5 cm en la primera línea de los primeros párrafos de cada capítulo y 
+apartado con numeración, pero no en los restantes. 
+ Todas las páginas estarán numeradas correlativamente dentro de cada volumen, indicando en 
+la esquina inferior derecha el número de la página. 
+  
+8. NORMAS PARA LA ENTREGA DEL PROYECTO 
+ 
+Las siguientes normas son de obligado cumplimiento y no se aceptarán proyectos que no se adecúen 
+a estas normas. 
+ 
+8.1. SOPORTE DE ENTREGA 
+ 
+- El proyecto se entregará en formato digital. El equipo educativo informará en su momento el modo 
+de proceder para que podáis entregar vuestros proyectos. 
+- Se incluirán todos los ficheros, materiales que se han utilizado para la elaboración del proyecto que 
+sean de libre distribución como: 
+- Documento con la explicación detallada del proyecto realizado: 
+ Obligatorio en formato PDF 
+ Entregar también el documento original del procesador, aunque esto puede ser 
+opcional si el alumno desea por algún motivo proteger el contenido del mismo. 
+- Presentación con la que se defenderá el proyecto en uno de los siguientes formatos: 
+PowerPoint, Impress…  
+- Fuentes de los programas: 
+ Si se ha creado o modificado algún software. 
+ Si se ha utilizado, compilado algún software (driver, sistema operativo, etc). 
+- Manuales adicionales de trabajo que se han creado en el proyecto: 
+ Manual de instalación del sistema creado, modificado o implantado. 
+ Manual de uso del sistema creado, modificado o implantado. 
+ Manual de referencia del sistema creado, modificado o implantado. 
+ Manuales utilizados en la creación del proyecto, siempre que estos sean de libre 
+distribución. 
+- Bibliografía: Se incluirá en un documento bibliografía, o como apartado del  documento del 
+proyecto (no contabilizará para el número mínimo de páginas) un  apartado en el que se 
+describa los libros utilizados o los sitios web de los que se ha extraído la información. 
+
+---
+
+NORMAS PARA LA REALIZACIÓN DEL MÓDULO PROYECTO INTEGRADO  
+I.E.S. Trafalgar | Departamento de Informática 15 
+ 
+- El proyecto entregado por el alumno debería facilitar la navegación por los contenidos que incluye 
+utilizando alguna de las siguientes propuestas: 
+ 
+- Crear una página web (fichero HTML) que contenga información sobre los apartados 
+y enlaces a los ficheros más relevantes.  
+- Creación de un menú autoejecutable con algún programa destinado al efecto 
+ 
+Se aceptará igualmente propuestas alternativas que permitan navegar fácilmente. 
+ 
+  
+ 
+ 
+
+---
+

@@ -12,13 +12,19 @@
                 </span>
             </a>
         </div>
-        <a href="/perfil" class="d-flex align-items-center text-white text-decoration-none" style="background: rgba(255,255,255,0.2); padding: 8px 18px; border-radius: 30px; cursor: pointer;">
-            @if(Auth::check() && Auth::user()->foto)
-                <img src="{{ asset('storage/' . Auth::user()->foto) }}" alt="Avatar" class="rounded-circle me-2 shadow-sm" style="width: 45px; height: 45px; object-fit: cover;">
-            @else
-                <i class="fas fa-user-circle fs-3 me-2"></i>
-            @endif
-            <span class="fw-bold d-none d-sm-inline" style="font-size: 1.15rem; letter-spacing: 0.5px;">{{ Auth::check() ? Auth::user()->name : 'Invitado' }}</span>
-        </a>
+        <div class="d-flex align-items-center gap-2">
+
+            <a href="/perfil" class="d-flex align-items-center text-white text-decoration-none" style="background: rgba(255,255,255,0.2); padding: 8px 18px; border-radius: 30px; cursor: pointer;">
+                @if(Auth::check() && Auth::user()->foto)
+                    <img src="{{ asset('storage/' . Auth::user()->foto) }}" alt="Avatar" class="rounded-circle me-2 shadow-sm" style="width: 45px; height: 45px; object-fit: cover;">
+                @else
+                    {{-- #3: Avatar fallback con mismo tamaño que la foto --}}
+                    <div class="rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; background: rgba(255,255,255,0.3);">
+                        <i class="fas fa-user" style="font-size: 1.2rem;"></i>
+                    </div>
+                @endif
+                <span class="fw-bold d-none d-sm-inline" style="font-size: 1.15rem; letter-spacing: 0.5px;">{{ Auth::check() ? Auth::user()->name : 'Invitado' }}</span>
+            </a>
+        </div>
     </div>
 </nav>

@@ -3,11 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>SINERGYFIT - @yield('titulo', 'Inicio')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary-color: #2A5199; --bg-light: #f0f2f5; }
+        :root { --primary-color: #2A5199; --bg-light: #f0f2f5; --text-main: #212529; --card-bg: white; --border-color: #dee2e6; }
+        
+        /* Override Bootstrap Primary Color Globally */
+        .btn-primary, .bg-primary, .text-bg-primary { background-color: var(--primary-color) !important; border-color: var(--primary-color) !important; color: white !important; }
+        .btn-primary:hover { background-color: #1e3c72 !important; border-color: #1e3c72 !important; }
+        .btn-outline-primary { color: var(--primary-color) !important; border-color: var(--primary-color) !important; }
+        .btn-outline-primary:hover, .btn-outline-primary.active { background-color: var(--primary-color) !important; color: white !important; }
+        .text-primary { color: var(--primary-color) !important; }
+        .border-primary { border-color: var(--primary-color) !important; }
+        .page-link { color: var(--primary-color); }
+        .page-item.active .page-link { background-color: var(--primary-color); border-color: var(--primary-color); color: white; }
+
+
         body { 
             background-color: var(--bg-light); 
             background-image: linear-gradient(rgba(240, 242, 245, 0.60), rgba(240, 242, 245, 0.60)), url('{{ asset("images/background.webp") }}');
@@ -43,6 +56,8 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
     @yield('scripts_extra')
 </body>
 </html>

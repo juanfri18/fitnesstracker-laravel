@@ -24,7 +24,7 @@ COPY . /var/www/html
 
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-# RUN composer install --no-dev --optimize-autoloader (En entorno prod se descomenta esto)
+RUN composer install --no-dev --optimize-autoloader
 
 # Dar permisos a storage y bootstrap/cache
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache

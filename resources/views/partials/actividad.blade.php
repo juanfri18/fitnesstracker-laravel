@@ -18,7 +18,7 @@
                 </div>
                 <div>
                     <h6 class="mb-0 fw-bold">{{ $actividad['tipo'] }}</h6>
-                    <small class="text-muted">{{ date('d/m/Y', strtotime($actividad['fecha'])) }}</small>
+                    <small class="text-muted">{{ \Carbon\Carbon::parse($actividad['fecha'])->translatedFormat('d M Y') }}</small>
                 </div>
             </div>
             
@@ -36,23 +36,41 @@
             </div>
         </div>
 
+        @php
+            // Extraer calorías de las notas para mostrarlas visualmente
+            $kcal = null;
+            if(preg_match('/Aprox:\s*(\d+)\s*kcal/', $actividad['notas'] ?? '', $m)) {
+                $kcal = $m[1];
+            }
+            $notas_limpio = preg_replace('/\s*\|\s*Aprox:\s*\d+\s*kcal/', '', $actividad['notas'] ?? '');
+        @endphp
+
         <div class="row bg-light rounded p-3 mx-1 mb-3">
             <div class="col-4 text-center border-end">
                 <small class="d-block text-muted">Duración</small>
                 <span class="fw-bold">{{ $actividad['duracion_minutos'] }} min</span>
             </div>
-            <div class="col-8 text-center text-muted small px-3">
-                <i class="fas fa-info-circle me-1"></i>
-                <span class="fst-italic">{{ $actividad['notas'] ?: 'Sin detalles adicionales' }}</span>
+            <div class="col-4 text-center {{ $kcal ? 'border-end' : '' }}">
+                @if($kcal)
+                    <small class="d-block text-muted"><i class="fas fa-fire text-danger"></i> Calorías</small>
+                    <span class="fw-bold text-danger">{{ $kcal }} kcal</span>
+                @else
+                    <small class="d-block text-muted">Calorías</small>
+                    <span class="fw-bold text-muted">--</span>
+                @endif
+            </div>
+            <div class="col-4 text-center text-muted small px-2">
+                <small class="d-block text-muted">Detalle</small>
+                <span class="fst-italic small">{{ $notas_limpio ?: 'Sin notas' }}</span>
             </div>
         </div>
 
         @if(!empty($actividad['detalles']))
             <div class="mx-1 mb-2">
                 <h6 class="small fw-bold text-secondary mb-2"><i class="fas fa-list-ul me-2"></i>Ejercicios Realizados</h6>
-                <ul class="list-group list-group-flush small" style="border-radius: 10px; overflow: hidden; border: 1px solid #eee;">
+                <ul class="list-group list-group-flush small" style="border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color);">
                     @foreach($actividad['detalles'] as $detalle)
-                        <li class="list-group-item d-flex justify-content-between align-items-center bg-light border-bottom border-white">
+                        <li class="list-group-item d-flex justify-content-between align-items-center bg-light border-bottom">
                             <span>
                                 <span class="fw-bold text-dark">{{ $detalle['ejercicio']['nombre'] ?? 'Ejercicio' }}</span>
                                 <span class="text-muted ms-1">({{ $detalle['grupo_muscular'] }})</span>

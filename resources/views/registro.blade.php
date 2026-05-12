@@ -49,7 +49,7 @@
                         </div>
                     </div>
 
-                    <div id="sec-fuerza" class="form-section animate__animated animate__fadeIn">
+                    <div id="sec-fuerza" class="form-section">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="text-primary mb-0"><i class="fas fa-dumbbell me-2"></i>Detalle Musculación</h5>
                             <button type="button" class="btn btn-sm btn-outline-primary rounded-pill" onclick="addExerciseRow()"><i class="fas fa-plus"></i> Añadir Ejercicio</button>
@@ -87,7 +87,7 @@
                         </div>
                     </div>
 
-                    <div id="sec-cardio" class="form-section animate__animated animate__fadeIn">
+                    <div id="sec-cardio" class="form-section">
                         <h5 id="cardioTitle" class="mb-3"><i class="fas fa-running me-2"></i>Detalle Cardio</h5>
                         <div class="row g-3 mb-3">
                             <div class="col-md-6"><label class="small fw-bold">Distancia (km)</label><input type="number" step="0.01" class="form-control" id="dist" name="distancia" oninput="pace()"></div>
@@ -174,7 +174,7 @@
 
         if(val === 'carrera' || val === 'caminata'){
             const title = document.getElementById('cardioTitle');
-            if(val === 'carrera') { title.innerHTML = '<i class="fas fa-running me-2"></i>Módulo Running'; title.className = "mb-3 text-danger"; }
+            if(val === 'carrera') { title.innerHTML = '<i class="fas fa-running me-2"></i>Módulo Carrera'; title.className = "mb-3 text-danger"; }
             else { title.innerHTML = '<i class="fas fa-walking me-2"></i>Módulo Caminata'; title.className = "mb-3 text-success"; }
         }
     }
@@ -219,8 +219,7 @@
             newRow.appendChild(btn);
         }
 
-        // Añadimos la nueva fila al contenedor añadiendo una pequeña animación
-        newRow.classList.add('animate__animated', 'animate__fadeInDown');
+        // Añadimos la nueva fila al contenedor
         container.appendChild(newRow);
     }
 

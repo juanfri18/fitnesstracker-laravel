@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary-color: #2A5199; --bg-light: #f0f2f5; }
+
         body { 
             background-color: var(--bg-light); 
             background-image: linear-gradient(rgba(240, 242, 245, 0.60), rgba(240, 242, 245, 0.60)), url('{{ asset("images/background.webp") }}');
@@ -80,6 +81,7 @@
             </div>
         </form>
     </div>
+
 
 </body>
 </html>

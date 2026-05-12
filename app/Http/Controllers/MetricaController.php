@@ -61,7 +61,7 @@ class MetricaController extends Controller
             ->where('entrenamientos.user_id', $usuario_id)
             ->max('carga_kg') ?? 0;
 
-        // 4. OBJETIVOS
+        // 4. OBJETIVOS (con progreso calculado dentro del rango de fechas de cada objetivo)
         $objetivos = \App\Models\Objetivo::where('user_id', $usuario_id)
             ->where('estado', 'en_progreso')
             ->get();
@@ -69,35 +69,49 @@ class MetricaController extends Controller
         $lista_objetivos = [];
         foreach($objetivos as $obj) {
             $actual = 0;
-            if ($obj->tipo_objetivo == 'Volumen Mensual') {
-                $actual = DB::table('entrenamiento_detalles')
+            $fechaInicio = $obj->fecha_inicio ? \Carbon\Carbon::parse($obj->fecha_inicio)->toDateString() : null;
+            $fechaLimite = $obj->fecha_limite ? \Carbon\Carbon::parse($obj->fecha_limite)->toDateString() : null;
+
+            if (in_array($obj->tipo_objetivo, ['Volumen Mensual', 'Volumen (kg levantados)'])) {
+                $query = DB::table('entrenamiento_detalles')
                     ->join('entrenamientos', 'entrenamiento_detalles.entrenamiento_id', '=', 'entrenamientos.id')
-                    ->where('entrenamientos.user_id', $usuario_id)
-                    ->whereRaw('MONTH(entrenamientos.fecha) = MONTH(CURDATE()) AND YEAR(entrenamientos.fecha) = YEAR(CURDATE())')
-                    ->sum(DB::raw('carga_kg * series * repeticiones'));
-            } elseif ($obj->tipo_objetivo == 'Frecuencia Semanal') {
-                $actual = \App\Models\Entrenamiento::where('user_id', $usuario_id)
-                    ->whereRaw('YEARWEEK(fecha, 1) = YEARWEEK(CURDATE(), 1)')
-                    ->count();
+                    ->where('entrenamientos.user_id', $usuario_id);
+
+                if ($fechaInicio && $fechaLimite) {
+                    $query->whereBetween('entrenamientos.fecha', [$fechaInicio, $fechaLimite]);
+                } elseif ($fechaInicio) {
+                    $query->where('entrenamientos.fecha', '>=', $fechaInicio);
+                }
+
+                $actual = $query->sum(DB::raw('carga_kg * series * repeticiones'));
+
+            } elseif (in_array($obj->tipo_objetivo, ['Frecuencia Semanal', 'Días Entrenados'])) {
+                $query = \App\Models\Entrenamiento::where('user_id', $usuario_id);
+
+                if ($fechaInicio && $fechaLimite) {
+                    $query->whereBetween('fecha', [$fechaInicio, $fechaLimite]);
+                } elseif ($fechaInicio) {
+                    $query->where('fecha', '>=', $fechaInicio);
+                }
+
+                $actual = $query->distinct('fecha')->count('fecha');
+
             } elseif ($obj->tipo_objetivo == 'Peso Corporal') {
-                $ultimo_peso = \App\Models\Metrica::where('user_id', $usuario_id)
+                $actual = \App\Models\Metrica::where('user_id', $usuario_id)
                     ->orderBy('fecha_registro', 'desc')
-                    ->value('peso');
-                // Progreso es qué tan cerca estamos (asumiendo pérdida de peso como meta o ganancia)
-                // Usaremos el valor actual simplemente para mostrarlo. El porcentaje será si cruzó la meta.
-                $actual = $ultimo_peso ?? 0;
+                    ->value('peso') ?? 0;
             }
 
-            // Cálculo dinámico de porcentaje (si es peso corporal, la meta puede ser menor que el actual)
+            // Porcentaje
             if ($obj->tipo_objetivo == 'Peso Corporal') {
-                // Simplificación: si actual <= meta (para pérdida) o actual >= meta (para ganancia)
-                // Necesitaríamos saber el peso inicial, pero lo aproximamos a completado si llegó a la meta.
-                if ($actual > 0 && clone $obj->valor_objetivo > 0) {
-                     // Si la meta es mayor (ganar masa), progreso es actual/meta. Si es menor (perder peso), es meta/actual.
-                     $porcentaje = ($obj->valor_objetivo > $actual) ? ($actual / $obj->valor_objetivo) * 100 : (($obj->valor_objetivo / $actual) * 100);
-                     if ($actual <= $obj->valor_objetivo && $obj->valor_objetivo < 65) $porcentaje = 100; // hack básico para pérdida
+                if ($actual > 0 && abs($actual - $obj->valor_objetivo) <= 0.5) {
+                    $porcentaje = 100;
+                } elseif ($actual > 0 && $obj->valor_objetivo > 0) {
+                    $porcentaje = ($obj->valor_objetivo > $actual)
+                        ? ($actual / $obj->valor_objetivo) * 100
+                        : ($obj->valor_objetivo / $actual) * 100;
                 } else {
-                     $porcentaje = 0;
+                    $porcentaje = 0;
                 }
             } else {
                 $porcentaje = ($obj->valor_objetivo > 0) ? ($actual / $obj->valor_objetivo) * 100 : 0;
@@ -112,11 +126,21 @@ class MetricaController extends Controller
             ];
         }
 
+        // Nombre legible del periodo para la vista
+        $periodo_labels = [
+            'semana' => 'la semana pasada',
+            'mes' => 'el mes pasado',
+            'anio' => 'el año pasado',
+        ];
+
         // Pasamos todo a la vista
         return view('estadisticas', [
             'totales' => $totales ? $totales->toArray() : ['total_entrenos' => 0, 'total_min' => 0],
             'semana' => $semana ? $semana->toArray() : ['sem_entrenos' => 0, 'sem_min' => 0],
             'tendencia_porcentaje' => round($tendencia_porcentaje),
+            'periodo_anterior_entrenos' => $semana_pasada ? $semana_pasada->sem_entrenos : 0,
+            'periodo_label' => $periodo_labels[$periodo] ?? 'el periodo anterior',
+            'periodo_actual' => $periodo,
             'mejor_marca' => $mejor_marca,
             'lista_objetivos' => $lista_objetivos
         ]);
@@ -124,36 +148,65 @@ class MetricaController extends Controller
 
     /**
      * Devuelve los datos JSON para las gráficas asíncronas (AJAX)
+     * Genera TODOS los puntos del periodo (sin huecos) para una gráfica coherente.
      */
     public function dashboardAPI(Request $request)
     {
         $usuario_id = Auth::id();
-        $periodo = $request->query('periodo', 'semana'); // Default a semana
-        
-        $fechaInicio = now()->subDays(7);
-        if ($periodo === 'mes') {
-            $fechaInicio = now()->subDays(30);
-        } elseif ($periodo === 'anio') {
-            $fechaInicio = now()->subDays(365);
-        }
-
-        $chartData = \App\Models\Entrenamiento::selectRaw('DATE(fecha) as dia, SUM(duracion_minutos) as total_valores')
-            ->where('user_id', $usuario_id)
-            ->where('fecha', '>=', $fechaInicio)
-            ->groupBy('dia')
-            ->orderBy('dia', 'asc')
-            ->get();
+        $periodo = $request->query('periodo', 'semana');
 
         $labels = [];
         $dataPoints = [];
-        foreach($chartData as $row) {
-            $labels[] = date('d/m', strtotime($row->dia));
-            $dataPoints[] = $row->total_valores;
-        }
 
-        if (empty($labels)) {
-            $labels = [date('d/m')];
-            $dataPoints = [0];
+        if ($periodo === 'anio') {
+            // ANUAL: 12 puntos, uno por cada mes del año actual (Ene → Dic)
+            $anioActual = now()->year;
+            $mesActual = now()->month;
+
+            // Consulta agrupada por mes
+            $datosRaw = \App\Models\Entrenamiento::selectRaw('MONTH(fecha) as mes, SUM(duracion_minutos) as total')
+                ->where('user_id', $usuario_id)
+                ->whereYear('fecha', $anioActual)
+                ->groupBy('mes')
+                ->pluck('total', 'mes');
+
+            $mesesNombres = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+            for ($m = 1; $m <= 12; $m++) {
+                $labels[] = $mesesNombres[$m - 1];
+                $dataPoints[] = (int)($datosRaw[$m] ?? 0);
+            }
+        } elseif ($periodo === 'mes') {
+            // MENSUAL: todos los días del mes actual
+            $inicioMes = now()->startOfMonth();
+            $finMes = now()->endOfMonth();
+            $diasEnMes = $inicioMes->daysInMonth;
+
+            $datosRaw = \App\Models\Entrenamiento::selectRaw('DAY(fecha) as dia, SUM(duracion_minutos) as total')
+                ->where('user_id', $usuario_id)
+                ->whereMonth('fecha', now()->month)
+                ->whereYear('fecha', now()->year)
+                ->groupBy('dia')
+                ->pluck('total', 'dia');
+
+            for ($d = 1; $d <= $diasEnMes; $d++) {
+                $labels[] = str_pad($d, 2, '0', STR_PAD_LEFT) . '/' . str_pad(now()->month, 2, '0', STR_PAD_LEFT);
+                $dataPoints[] = (int)($datosRaw[$d] ?? 0);
+            }
+        } else {
+            // SEMANAL (default): últimos 7 días, terminando en hoy
+            $datosRaw = \App\Models\Entrenamiento::selectRaw('DATE(fecha) as dia, SUM(duracion_minutos) as total')
+                ->where('user_id', $usuario_id)
+                ->where('fecha', '>=', now()->subDays(6)->toDateString())
+                ->where('fecha', '<=', now()->toDateString())
+                ->groupBy('dia')
+                ->pluck('total', 'dia');
+
+            for ($i = 6; $i >= 0; $i--) {
+                $fecha = now()->subDays($i);
+                $key = $fecha->toDateString();
+                $labels[] = $fecha->format('d/m');
+                $dataPoints[] = (int)($datosRaw[$key] ?? 0);
+            }
         }
 
         return response()->json([

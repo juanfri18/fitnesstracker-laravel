@@ -31,15 +31,21 @@
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Fecha</label>
-                            <input type="date" class="form-control" name="fecha" value="{{ $entreno['fecha'] }}" required>
+                            <input type="date" class="form-control @error('fecha') is-invalid @enderror" name="fecha" value="{{ $entreno['fecha'] }}" required>
+                            @error('fecha')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Tipo</label>
-                            <select class="form-select fw-bold" id="mainCat" name="modulo" required onchange="toggleModule()">
+                            <select class="form-select fw-bold @error('modulo') is-invalid @enderror" id="mainCat" name="modulo" required onchange="toggleModule()">
                                 <option value="fuerza" {{ $tipo_actual == 'fuerza' ? 'selected' : '' }}>Fuerza</option>
                                 <option value="carrera" {{ $tipo_actual == 'carrera' ? 'selected' : '' }}>Carrera</option>
                                 <option value="caminata" {{ $tipo_actual == 'caminata' ? 'selected' : '' }}>Caminata</option>
                             </select>
+                            @error('modulo')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
@@ -48,7 +54,7 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="small fw-bold">Distancia (km)</label>
-                                <input type="number" step="0.01" class="form-control" name="distancia" value="{{ $entreno['distancia_km'] ?? '' }}">
+                                <input type="number" step="0.01" class="form-control" name="distancia" value="" placeholder="Opcional">
                             </div>
                             <div class="col-md-6">
                                 <label class="small fw-bold">Tiempo (min)</label>
@@ -58,8 +64,79 @@
                     </div>
 
                     <div id="sec-fuerza" class="form-section">
-                        <h5 class="mb-3"><i class="fas fa-dumbbell me-2"></i>Datos Fuerza</h5>
-                        <label class="small fw-bold">Duración Total (min)</label>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="text-primary mb-0"><i class="fas fa-dumbbell me-2"></i>Detalle Musculación</h5>
+                            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill" onclick="addExerciseRow()"><i class="fas fa-plus"></i> Añadir Ejercicio</button>
+                        </div>
+                        
+                        <div id="exercises-container">
+                            @if(isset($entreno['detalles']) && count($entreno['detalles']) > 0)
+                                @foreach($entreno['detalles'] as $index => $detalle)
+                                    <div class="exercise-row p-3 mb-3 bg-light rounded border position-relative">
+                                        @if($index > 0)
+                                            <button type="button" class="btn-close btn-remove-row position-absolute top-0 end-0 m-2" onclick="removeExerciseRow(this)"></button>
+                                        @endif
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-md-6">
+                                                <label class="small fw-bold">Grupo Muscular</label>
+                                                <select class="form-select group-select" name="grupo_muscular[]" onchange="loadEx(this)">
+                                                    <option value="">Seleccione...</option>
+                                                    <option value="pecho" {{ $detalle['grupo_muscular'] == 'pecho' ? 'selected' : '' }}>Pecho</option>
+                                                    <option value="espalda" {{ $detalle['grupo_muscular'] == 'espalda' ? 'selected' : '' }}>Espalda</option>
+                                                    <option value="pierna" {{ $detalle['grupo_muscular'] == 'pierna' ? 'selected' : '' }}>Pierna</option>
+                                                    <option value="hombro" {{ $detalle['grupo_muscular'] == 'hombro' ? 'selected' : '' }}>Hombro</option>
+                                                    <option value="brazo" {{ $detalle['grupo_muscular'] == 'brazo' ? 'selected' : '' }}>Brazos (Bíceps/Tríceps)</option>
+                                                    <option value="core" {{ $detalle['grupo_muscular'] == 'core' ? 'selected' : '' }}>Core / Abdominales</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="small fw-bold">Ejercicio</label>
+                                                <select class="form-select ex-select" name="ejercicio[]">
+                                                    <!-- Se rellena con el valor precargado -->
+                                                    <option value="{{ $detalle['ejercicio']['nombre'] ?? '' }}" selected>{{ $detalle['ejercicio']['nombre'] ?? 'Seleccione grupo primero...' }}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-4"><label class="small fw-bold">Nº Series</label><input type="number" name="series[]" class="form-control" placeholder="Ej: 4" value="{{ $detalle['series'] }}"></div>
+                                            <div class="col-4"><label class="small fw-bold">Repeticiones</label><input type="number" name="reps[]" class="form-control" placeholder="Ej: 12" value="{{ $detalle['repeticiones'] }}"></div>
+                                            <div class="col-4"><label class="small fw-bold">Carga (Kg)</label><input type="number" name="carga[]" step="0.5" class="form-control" placeholder="Ej: 60" value="{{ $detalle['carga_kg'] }}"></div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @else
+                                <!-- Fila de ejercicio base si no hay detalles -->
+                                <div class="exercise-row p-3 mb-3 bg-light rounded border position-relative">
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label class="small fw-bold">Grupo Muscular</label>
+                                            <select class="form-select group-select" name="grupo_muscular[]" onchange="loadEx(this)">
+                                                <option value="">Seleccione...</option>
+                                                <option value="pecho">Pecho</option>
+                                                <option value="espalda">Espalda</option>
+                                                <option value="pierna">Pierna</option>
+                                                <option value="hombro">Hombro</option>
+                                                <option value="brazo">Brazos (Bíceps/Tríceps)</option>
+                                                <option value="core">Core / Abdominales</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="small fw-bold">Ejercicio</label>
+                                            <select class="form-select ex-select" name="ejercicio[]">
+                                                <option>Seleccione grupo primero...</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row g-2">
+                                        <div class="col-4"><label class="small fw-bold">Nº Series</label><input type="number" name="series[]" class="form-control" placeholder="Ej: 4"></div>
+                                        <div class="col-4"><label class="small fw-bold">Repeticiones</label><input type="number" name="reps[]" class="form-control" placeholder="Ej: 12"></div>
+                                        <div class="col-4"><label class="small fw-bold">Carga (Kg)</label><input type="number" name="carga[]" step="0.5" class="form-control" placeholder="Ej: 60"></div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+
+                        <label class="small fw-bold mt-2">Duración Total (min)</label>
                         <input type="number" class="form-control" name="tiempo_fuerza" value="{{ $entreno['duracion_minutos'] }}">
                     </div>
 
@@ -137,6 +214,62 @@
             inputsTiempo[0].disabled = false;
         }
     }
+    
+    const exercises = { 
+        pecho: ['Press Banca', 'Aperturas', 'Flexiones', 'Press Inclinado', 'Cruce de Poleas'], 
+        espalda: ['Dominadas', 'Remo con Barra', 'Jalón al Pecho', 'Remo en Polea Baja', 'Peso Muerto'],
+        pierna: ['Sentadillas', 'Prensa', 'Zancadas', 'Curl Femoral', 'Extensión de Cuádriceps', 'Gemelos'],
+        hombro: ['Press Militar', 'Elevaciones Laterales', 'Pájaros', 'Elevaciones Frontales'],
+        brazo: ['Curl de Bíceps', 'Curl Martillo', 'Press Francés', 'Extensión de Tríceps Polea', 'Fondos'],
+        core: ['Plancha', 'Crunch', 'Elevación de Piernas', 'Rueda Abdominal']
+    };
+
+    function loadEx(selectElement) {
+        const g = selectElement.value;
+        const l = selectElement.closest('.exercise-row').querySelector('.ex-select');
+        
+        l.innerHTML = '<option value="">Seleccione...</option>'; 
+        if(exercises[g]) {
+            exercises[g].forEach(e => l.innerHTML += `<option value="${e}">${e}</option>`);
+        }
+    }
+
+    function addExerciseRow() {
+        const container = document.getElementById('exercises-container');
+        const firstRow = container.querySelector('.exercise-row');
+        const newRow = firstRow.cloneNode(true);
+        
+        newRow.querySelectorAll('input, select').forEach(input => {
+            if(input.tagName === 'SELECT') {
+                input.selectedIndex = 0;
+            } else {
+                input.value = '';
+            }
+        });
+
+        const exSelect = newRow.querySelector('.ex-select');
+        exSelect.innerHTML = '<option>Seleccione grupo primero...</option>';
+
+        if(!newRow.querySelector('.btn-remove-row')) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn-close btn-remove-row position-absolute top-0 end-0 m-2';
+            btn.onclick = function() { removeExerciseRow(this); };
+            newRow.appendChild(btn);
+        }
+
+        container.appendChild(newRow);
+    }
+
+    function removeExerciseRow(btn) {
+        const container = document.getElementById('exercises-container');
+        if(container.querySelectorAll('.exercise-row').length > 1) {
+            btn.closest('.exercise-row').remove();
+        } else {
+            alert('Debes incluir al menos un ejercicio de fuerza.');
+        }
+    }
+
     window.onload = toggleModule;
 </script>
 @endsection

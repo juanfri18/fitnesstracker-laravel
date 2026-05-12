@@ -25,25 +25,46 @@ class EntrenamientoController extends Controller
         ]);
     }
 
-    public function historial()
+    public function historial(Request $request)
     {
         $usuario_id = Auth::id(); 
-        // Recuperamos todas las actividades ordenadas por fecha reciente usando paginate para no saturar 
-        $actividades = \App\Models\Entrenamiento::with(['detalles', 'detalles.ejercicio'])
-                        ->where('user_id', $usuario_id)
-                        ->orderBy('fecha', 'desc')
-                        ->paginate(20);
+        $query = \App\Models\Entrenamiento::with(['detalles', 'detalles.ejercicio'])
+                        ->where('user_id', $usuario_id);
 
-        // Convertir la colección a array porque la partials.actividad usa sintaxis ['id']
-        // Como es un Paginator, manipulamos los items internos
+        // #4: Filtro por tipo
+        if ($request->filled('tipo') && in_array($request->tipo, ['Fuerza', 'Carrera', 'Caminata'])) {
+            $query->where('tipo', $request->tipo);
+        }
+
+        $actividades = $query->orderBy('fecha', 'desc')->paginate(20);
+
         $coleccion_transformada = json_decode(json_encode($actividades->items()), true);
-        
-        // Reemplazar la colección en el paginating wrapper
         $actividades->setCollection(collect($coleccion_transformada));
 
         return view('entrenamientos', [
             'actividades' => $actividades
         ]);
+    }
+
+    /**
+     * #28: Exportar historial a CSV
+     */
+    public function exportCSV()
+    {
+        $usuario_id = Auth::id();
+        $entrenamientos = \App\Models\Entrenamiento::where('user_id', $usuario_id)
+            ->orderBy('fecha', 'desc')
+            ->get();
+
+        $csv = "Fecha,Tipo,Duración (min),Notas\n";
+        foreach ($entrenamientos as $e) {
+            $notas = str_replace('"', '""', $e->notas ?? '');
+            $csv .= "{$e->fecha},{$e->tipo},{$e->duracion_minutos},\"{$notas}\"\n";
+        }
+
+        return response($csv)
+            ->header('Content-Type', 'text/csv; charset=UTF-8')
+            ->header('Content-Disposition', 'attachment; filename="historial_sinergyfit.csv"');
     }
     public function store(Request $request)
     {
@@ -51,6 +72,7 @@ class EntrenamientoController extends Controller
         $request->validate([
             'fecha' => 'required|date',
             'modulo' => 'required|string',
+            'tiempo' => 'required|numeric|min:1',
         ]);
 
         // 2. LÓGICA DE CALORÍAS 
@@ -81,6 +103,7 @@ class EntrenamientoController extends Controller
             'fecha' => $request->fecha,
             'tipo' => $tipo_db,
             'duracion_minutos' => $duracion,
+            'calorias_estimadas' => $calorias_calculadas > 0 ? round($calorias_calculadas) : null,
             'notas' => $notas
         ]);
         $entrenamiento_id = $entrenamiento->id;
@@ -153,11 +176,15 @@ class EntrenamientoController extends Controller
 
         // 4. GAMIFICACIÓN: Otorgar logros pasivamente
         
+        // Track newly unlocked logros for confetti celebration
+        $logros_nuevos = [];
+
         // 4.1 Primer Entrenamiento
         if (\App\Models\Entrenamiento::where('user_id', $usuario->id)->count() === 1) {
-            $logro = \App\Models\Logro::where('criterio', 'primer_entreno')->first();
+            $logro = \App\Models\Logro::where('criterio', \App\Models\Logro::CRITERIO_PRIMER_ENTRENO)->first();
             if ($logro && !$usuario->logros->contains($logro->id)) {
                 $usuario->logros()->attach($logro->id);
+                $logros_nuevos[] = $logro->nombre;
             }
         }
 
@@ -165,49 +192,54 @@ class EntrenamientoController extends Controller
         if ($tipo_db === 'Fuerza') {
             $fuerzaCount = \App\Models\Entrenamiento::where('user_id', $usuario->id)->where('tipo', 'Fuerza')->count();
             if ($fuerzaCount >= 5) {
-                $logro = \App\Models\Logro::where('criterio', '5_sesiones_fuerza')->first();
+                $logro = \App\Models\Logro::where('criterio', \App\Models\Logro::CRITERIO_5_SESIONES_FUERZA)->first();
                 if ($logro && !$usuario->logros->contains($logro->id)) {
                     $usuario->logros()->attach($logro->id);
+                    $logros_nuevos[] = $logro->nombre;
                 }
             }
         }
         // 4.3 Maratonista (Carrera >= 10km)
         if ($tipo_db === 'Carrera' && $distancia >= 10) {
-            $logro = \App\Models\Logro::where('criterio', 'carrera_10km')->first();
+            $logro = \App\Models\Logro::where('criterio', \App\Models\Logro::CRITERIO_CARRERA_10KM)->first();
             if ($logro && !$usuario->logros->contains($logro->id)) {
                 $usuario->logros()->attach($logro->id);
+                $logros_nuevos[] = $logro->nombre;
             }
         }
 
         // 4.4 Leyenda del Sudor (Más de 1000 minutos totales)
-        // Sumamos la duración de todos sus entrenos en la BD
         $minutosTotales = \App\Models\Entrenamiento::where('user_id', $usuario->id)->sum('duracion_minutos');
         
         if ($minutosTotales >= 1000) {
-            $logro = \App\Models\Logro::where('criterio', '1000_minutos')->first();
+            $logro = \App\Models\Logro::where('criterio', \App\Models\Logro::CRITERIO_1000_MINUTOS)->first();
             if ($logro && !$usuario->logros->contains($logro->id)) {
                 $usuario->logros()->attach($logro->id);
+                $logros_nuevos[] = $logro->nombre;
             }
         }
 
         // 4.5 Constancia Pura (Racha de 3 días)
         $racha = $usuario->calcularRacha();
         if ($racha >= 3) {
-            $logro = \App\Models\Logro::where('criterio', 'racha_3_dias')->first();
+            $logro = \App\Models\Logro::where('criterio', \App\Models\Logro::CRITERIO_RACHA_3_DIAS)->first();
             if ($logro && !$usuario->logros->contains($logro->id)) {
                 $usuario->logros()->attach($logro->id);
+                $logros_nuevos[] = $logro->nombre;
             }
         }
 
         // 5. REDIRECCIÓN ELEGANTE
-        // Esto sustituye a al antiguo: header("Location: index.php?msg=guardado");
+        if (!empty($logros_nuevos)) {
+            return redirect('/')->with('msg', '¡Actividad registrada con éxito!')->with('logros_nuevos', $logros_nuevos);
+        }
         return redirect('/')->with('msg', '¡Actividad registrada con éxito!');
     }
     // 1. Mostrar el formulario de edición
     public function edit($id)
     {
         $usuario_id = Auth::id();
-        $entreno = \App\Models\Entrenamiento::where('id', $id)->where('user_id', $usuario_id)->first();
+        $entreno = \App\Models\Entrenamiento::with(['detalles.ejercicio'])->where('id', $id)->where('user_id', $usuario_id)->first();
 
         if (!$entreno) {
             return redirect('/');
@@ -247,6 +279,7 @@ class EntrenamientoController extends Controller
                 'fecha' => $request->fecha,
                 'tipo' => $tipo_db,
                 'duracion_minutos' => $duracion,
+                'calorias_estimadas' => $calorias > 0 ? round($calorias) : null,
                 'notas' => $notas
             ]);
 

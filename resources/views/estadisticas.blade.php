@@ -19,44 +19,81 @@
         </select>
     </div>
 
-    <div class="row g-4 mb-4">
+    {{-- 4 TARJETAS DE RESUMEN --}}
+    <div class="row g-4 mb-3">
         <div class="col-md-3">
             <div class="card stat-card p-3 h-100">
                 <small class="text-muted">Total Entrenamientos</small>
                 <h3 class="fw-bold text-primary">{{ $totales['total_entrenos'] }}</h3>
+                <small class="text-muted" style="font-size: 0.7rem;">Desde que creaste tu cuenta</small>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card stat-card p-3 h-100">
                 <small class="text-muted">Este Periodo</small>
-                <div class="d-flex align-items-center justify-content-between">
-                    <h3 class="fw-bold text-success mb-0">{{ $semana['sem_entrenos'] }} workouts</h3>
-                    @if(isset($tendencia_porcentaje))
-                        @if($tendencia_porcentaje > 0)
-                            <span class="badge bg-success bg-opacity-25 text-success"><i class="fas fa-arrow-up me-1"></i>{{ $tendencia_porcentaje }}% vs ant</span>
-                        @elseif($tendencia_porcentaje < 0)
-                            <span class="badge bg-danger bg-opacity-25 text-danger"><i class="fas fa-arrow-down me-1"></i>{{ abs($tendencia_porcentaje) }}% vs ant</span>
-                        @else
-                            <span class="badge bg-secondary bg-opacity-25 text-secondary"><i class="fas fa-minus me-1"></i>0% vs ant</span>
-                        @endif
+                <h3 class="fw-bold text-success mb-0">{{ $semana['sem_entrenos'] }} entrenos</h3>
+                <small class="text-muted" style="font-size: 0.7rem;">
+                    @if($periodo_actual === 'semana') En la semana actual
+                    @elseif($periodo_actual === 'mes') En el mes actual
+                    @else En el año actual
                     @endif
-                </div>
+                </small>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card stat-card p-3 h-100">
                 <small class="text-muted">Tiempo Total</small>
                 <h3 class="fw-bold text-info">{{ floor($totales['total_min']/60) }}h {{ $totales['total_min']%60 }}m</h3>
+                <small class="text-muted" style="font-size: 0.7rem;">Minutos acumulados globales</small>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card stat-card p-3 h-100">
                 <small class="text-muted d-block">Carga Máxima</small>
                 <h3 class="fw-bold text-warning">{{ $mejor_marca }} kg</h3>
+                <small class="text-muted" style="font-size: 0.7rem;">Tu récord personal de peso</small>
             </div>
         </div>
     </div>
 
+    {{-- BLOQUE COMPARATIVA (sacado fuera de las tarjetas) --}}
+    <div class="card stat-card p-3 mb-4" style="border-left: 4px solid {{ $tendencia_porcentaje > 0 ? '#198754' : ($tendencia_porcentaje < 0 ? '#dc3545' : '#6c757d') }};">
+        <div class="d-flex align-items-center">
+            @if($tendencia_porcentaje > 0)
+                <div class="me-3 p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; background: rgba(25, 135, 84, 0.1);">
+                    <i class="fas fa-arrow-up text-success fs-5"></i>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-0 text-success">+{{ $tendencia_porcentaje }}% respecto a {{ $periodo_label }}</h6>
+                    <small class="text-muted">Has hecho <strong>{{ $semana['sem_entrenos'] - $periodo_anterior_entrenos }} entreno(s) más</strong> que {{ $periodo_label }}. ¡Sigue así!</small>
+                </div>
+            @elseif($tendencia_porcentaje < 0)
+                <div class="me-3 p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; background: rgba(220, 53, 69, 0.1);">
+                    <i class="fas fa-arrow-down text-danger fs-5"></i>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-0 text-danger">{{ $tendencia_porcentaje }}% respecto a {{ $periodo_label }}</h6>
+                    <small class="text-muted">Has hecho <strong>{{ $periodo_anterior_entrenos - $semana['sem_entrenos'] }} entreno(s) menos</strong> que {{ $periodo_label }}. ¡Puedes recuperar el ritmo!</small>
+                </div>
+            @else
+                <div class="me-3 p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; background: rgba(108, 117, 125, 0.1);">
+                    <i class="fas fa-equals text-secondary fs-5"></i>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-0 text-secondary">Sin cambios respecto a {{ $periodo_label }}</h6>
+                    <small class="text-muted">
+                        @if($semana['sem_entrenos'] == 0 && $periodo_anterior_entrenos == 0)
+                            No tienes entrenamientos registrados en ninguno de los dos periodos.
+                        @else
+                            Has entrenado lo mismo que {{ $periodo_label }} ({{ $semana['sem_entrenos'] }} entrenos).
+                        @endif
+                    </small>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    {{-- METAS --}}
     <h4 class="fw-bold mb-3">Mis Metas</h4>
     <div class="row mb-5">
         @forelse($lista_objetivos as $meta)
@@ -79,21 +116,32 @@
         @endforelse
     </div>
 
+    {{-- GRÁFICAS --}}
     <div class="row g-4">
         <!-- Gráfico Principal (Lineal) -->
         <div class="col-lg-8">
             <div class="card stat-card p-4 h-100">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="fw-bold mb-0"><i class="fas fa-fire-alt text-danger me-2"></i>Tiempo de Entrenamiento</h5>
+                <div class="mb-3">
+                    <h5 class="fw-bold mb-1"><i class="fas fa-chart-line text-danger me-2"></i>Evolución de Minutos Entrenados</h5>
+                    <small class="text-muted">
+                        @if($periodo_actual === 'semana')
+                            Minutos de entrenamiento por día en los <strong>últimos 7 días</strong> (hasta hoy).
+                        @elseif($periodo_actual === 'mes')
+                            Minutos de entrenamiento <strong>cada día del mes actual</strong>.
+                        @else
+                            Minutos de entrenamiento acumulados <strong>cada mes del año {{ now()->year }}</strong>.
+                        @endif
+                    </small>
                 </div>
-                <canvas id="caloriesChart" height="100"></canvas>
+                <canvas id="caloriesChart"></canvas>
             </div>
         </div>
 
         <!-- Gráfico Secundario (Doughnut) -->
         <div class="col-lg-4">
             <div class="card stat-card p-4 h-100">
-                <h5 class="fw-bold mb-3"><i class="fas fa-chart-pie text-primary me-2"></i>Distribución de Entrenos</h5>
+                <h5 class="fw-bold mb-1"><i class="fas fa-chart-pie text-primary me-2"></i>Distribución de Entrenos</h5>
+                <small class="text-muted d-block mb-3">Porcentaje de tus entrenamientos por tipo (Fuerza, Carrera, Caminata) a lo largo de toda tu cuenta.</small>
                 <div style="position: relative; height:250px; width:100%">
                     <canvas id="pieChart"></canvas>
                 </div>
@@ -121,21 +169,58 @@
             .then(data => {
                 if(caloriesChartInst) caloriesChartInst.destroy();
                 
+                // Puntos más pequeños cuantos más datos hay (ej: 31 días del mes)
+                const numPuntos = data.labels.length;
+                const pRadius = numPuntos > 15 ? 2 : 4;
+                const pHoverRadius = numPuntos > 15 ? 4 : 6;
+                const borderW = numPuntos > 15 ? 1.5 : 2;
+
                 caloriesChartInst = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: data.labels,
                         datasets: [{
-                            label: 'Minutos',
+                            label: periodo === 'anio' ? 'Minutos por mes' : 'Minutos por día',
                             data: data.dataPoints,
                             borderColor: '#dc3545',
-                            backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                            borderWidth: borderW,
+                            backgroundColor: 'rgba(220, 53, 69, 0.08)',
                             fill: true,
-                            tension: 0.4
+                            tension: 0.3,
+                            pointRadius: pRadius,
+                            pointBackgroundColor: '#dc3545',
+                            pointHoverRadius: pHoverRadius
                         }]
                     },
                     options: {
-                        plugins: { datalabels: { display: false } } // Desactivar en línea
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        aspectRatio: 2.2,
+                        plugins: { 
+                            datalabels: { display: false },
+                            legend: { display: true, position: 'top' },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(ctx) {
+                                        return ctx.parsed.y + ' minutos';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: {
+                                    maxRotation: numPuntos > 15 ? 45 : 0,
+                                    autoSkip: numPuntos > 15,
+                                    maxTicksLimit: 15,
+                                    font: { size: numPuntos > 15 ? 10 : 12 }
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: 'Minutos', font: { weight: 'bold' } }
+                            }
+                        }
                     }
                 });
             })

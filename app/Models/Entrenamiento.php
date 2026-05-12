@@ -9,7 +9,14 @@ class Entrenamiento extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'user_id',
+        'fecha',
+        'tipo',
+        'duracion_minutos',
+        'calorias_estimadas',
+        'notas',
+    ];
     public $timestamps = false;
 
     /**

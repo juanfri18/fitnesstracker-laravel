@@ -10,7 +10,7 @@ use App\Http\Controllers\AuthController;
 // Rutas Públicas de Autenticación (Solo para invitados)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
     Route::get('/registro-usuario', [AuthController::class, 'showRegisterForm'])->name('registro.form');
     Route::post('/registro-usuario', [AuthController::class, 'register'])->name('registro.post');
@@ -33,6 +33,7 @@ Route::middleware(['auth'])->group(function () {
     // Entrenamientos
     Route::resource('entrenamientos', EntrenamientoController::class)->except(['create', 'show']);
     Route::get('/historial', [EntrenamientoController::class, 'historial'])->name('entrenamientos.historial');
+    Route::get('/historial/exportar', [EntrenamientoController::class, 'exportCSV'])->name('entrenamientos.exportar');
 
     // Estadísticas
     Route::get('/estadisticas', [MetricaController::class, 'index']);
