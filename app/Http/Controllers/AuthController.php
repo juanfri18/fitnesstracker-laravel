@@ -18,10 +18,15 @@ class AuthController extends Controller
     // Procesar Login
     public function login(Request $request)
     {
-        $credenciales = $request->validate([
+        $request->validate([
             'correo' => ['required', 'email'],
             'contrasena' => ['required'],
         ]);
+
+        $credenciales = [
+            'correo' => $request->correo,
+            'password' => $request->contrasena,
+        ];
 
         if (Auth::attempt($credenciales)) {
             $request->session()->regenerate();
