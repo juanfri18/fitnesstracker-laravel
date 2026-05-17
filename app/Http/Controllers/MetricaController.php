@@ -15,7 +15,7 @@ class MetricaController extends Controller
 
         // 1. TOTALES GLOBALES (Entrenos, Tiempo, Volumen)
         $totales = \App\Models\Entrenamiento::selectRaw('COUNT(id) as total_entrenos, IFNULL(SUM(duracion_minutos), 0) as total_min')
-            ->where('user_id', $usuario_id)
+            ->where('usuario_id', $usuario_id)
             ->first();
 
         // Filtros dinámicos de tiempo (Semana, Mes, Año)
@@ -38,13 +38,13 @@ class MetricaController extends Controller
 
         // 2. TOTALES PERIODO ACTUAL
         $semana = \App\Models\Entrenamiento::selectRaw('COUNT(id) as sem_entrenos, IFNULL(SUM(duracion_minutos), 0) as sem_min')
-            ->where('user_id', $usuario_id)
+            ->where('usuario_id', $usuario_id)
             ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
             ->first();
 
         // 2.5 TENDENCIA (vs Periodo Pasado)
         $semana_pasada = \App\Models\Entrenamiento::selectRaw('COUNT(id) as sem_entrenos, IFNULL(SUM(duracion_minutos), 0) as sem_min')
-            ->where('user_id', $usuario_id)
+            ->where('usuario_id', $usuario_id)
             ->whereBetween('fecha', [$inicio_pasado->toDateString(), $fin_pasado->toDateString()])
             ->first();
         
@@ -58,11 +58,11 @@ class MetricaController extends Controller
         // 3. MEJOR MARCA (Carga Máxima)
         $mejor_marca = DB::table('entrenamiento_detalles')
             ->join('entrenamientos', 'entrenamiento_detalles.entrenamiento_id', '=', 'entrenamientos.id')
-            ->where('entrenamientos.user_id', $usuario_id)
+            ->where('entrenamientos.usuario_id', $usuario_id)
             ->max('carga_kg') ?? 0;
 
         // 4. OBJETIVOS (con progreso calculado dentro del rango de fechas de cada objetivo)
-        $objetivos = \App\Models\Objetivo::where('user_id', $usuario_id)
+        $objetivos = \App\Models\Objetivo::where('usuario_id', $usuario_id)
             ->where('estado', 'en_progreso')
             ->get();
 
@@ -75,7 +75,7 @@ class MetricaController extends Controller
             if (in_array($obj->tipo_objetivo, ['Volumen Mensual', 'Volumen (kg levantados)'])) {
                 $query = DB::table('entrenamiento_detalles')
                     ->join('entrenamientos', 'entrenamiento_detalles.entrenamiento_id', '=', 'entrenamientos.id')
-                    ->where('entrenamientos.user_id', $usuario_id);
+                    ->where('entrenamientos.usuario_id', $usuario_id);
 
                 if ($fechaInicio && $fechaLimite) {
                     $query->whereBetween('entrenamientos.fecha', [$fechaInicio, $fechaLimite]);
@@ -86,7 +86,7 @@ class MetricaController extends Controller
                 $actual = $query->sum(DB::raw('carga_kg * series * repeticiones'));
 
             } elseif (in_array($obj->tipo_objetivo, ['Frecuencia Semanal', 'Días Entrenados'])) {
-                $query = \App\Models\Entrenamiento::where('user_id', $usuario_id);
+                $query = \App\Models\Entrenamiento::where('usuario_id', $usuario_id);
 
                 if ($fechaInicio && $fechaLimite) {
                     $query->whereBetween('fecha', [$fechaInicio, $fechaLimite]);
@@ -97,7 +97,7 @@ class MetricaController extends Controller
                 $actual = $query->distinct('fecha')->count('fecha');
 
             } elseif ($obj->tipo_objetivo == 'Peso Corporal') {
-                $actual = \App\Models\Metrica::where('user_id', $usuario_id)
+                $actual = \App\Models\Metrica::where('usuario_id', $usuario_id)
                     ->orderBy('fecha_registro', 'desc')
                     ->value('peso') ?? 0;
             }
@@ -165,7 +165,7 @@ class MetricaController extends Controller
 
             // Consulta agrupada por mes
             $datosRaw = \App\Models\Entrenamiento::selectRaw('MONTH(fecha) as mes, SUM(duracion_minutos) as total')
-                ->where('user_id', $usuario_id)
+                ->where('usuario_id', $usuario_id)
                 ->whereYear('fecha', $anioActual)
                 ->groupBy('mes')
                 ->pluck('total', 'mes');
@@ -182,7 +182,7 @@ class MetricaController extends Controller
             $diasEnMes = $inicioMes->daysInMonth;
 
             $datosRaw = \App\Models\Entrenamiento::selectRaw('DAY(fecha) as dia, SUM(duracion_minutos) as total')
-                ->where('user_id', $usuario_id)
+                ->where('usuario_id', $usuario_id)
                 ->whereMonth('fecha', now()->month)
                 ->whereYear('fecha', now()->year)
                 ->groupBy('dia')
@@ -195,7 +195,7 @@ class MetricaController extends Controller
         } else {
             // SEMANAL (default): últimos 7 días, terminando en hoy
             $datosRaw = \App\Models\Entrenamiento::selectRaw('DATE(fecha) as dia, SUM(duracion_minutos) as total')
-                ->where('user_id', $usuario_id)
+                ->where('usuario_id', $usuario_id)
                 ->where('fecha', '>=', now()->subDays(6)->toDateString())
                 ->where('fecha', '<=', now()->toDateString())
                 ->groupBy('dia')
@@ -223,7 +223,7 @@ class MetricaController extends Controller
         $usuario_id = Auth::id();
 
         $tiposData = \App\Models\Entrenamiento::selectRaw('tipo, COUNT(*) as cantidad')
-            ->where('user_id', $usuario_id)
+            ->where('usuario_id', $usuario_id)
             ->groupBy('tipo')
             ->get();
 

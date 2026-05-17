@@ -11,8 +11,11 @@ class Metrica extends Model
 
     protected $guarded = [];
 
-    public function user()
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
+
+    public function usuario()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Usuario::class, 'usuario_id');
     }
 }

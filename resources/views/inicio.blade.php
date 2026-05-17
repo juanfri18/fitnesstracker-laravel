@@ -26,7 +26,7 @@
                             <i class="fas fa-user"></i>
                         @endif
                     </div>
-                    <h4 class="fw-bold mb-0">¡Hola, {{ Auth::user()->name }}!</h4>
+                    <h4 class="fw-bold mb-0">¡Hola, {{ Auth::user()->nombre }}!</h4>
                     <p class="text-muted small">{{ Auth::user()->biografia ? '"'.Auth::user()->biografia.'"' : '' }}</p>
                 </div>
                 <div class="row g-2 mb-4">

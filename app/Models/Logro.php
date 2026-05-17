@@ -24,8 +24,11 @@ class Logro extends Model
         'puntos'
     ];
 
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
+
     public function usuarios()
     {
-        return $this->belongsToMany(User::class, 'logro_user')->withTimestamps();
+        return $this->belongsToMany(Usuario::class, 'logro_usuario', 'logro_id', 'usuario_id')->withTimestamps();
     }
 }

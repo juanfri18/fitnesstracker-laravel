@@ -10,25 +10,25 @@ class Entrenamiento extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'usuario_id',
         'fecha',
         'tipo',
         'duracion_minutos',
         'calorias_estimadas',
         'notas',
     ];
-    public $timestamps = false;
+    public $timestamps = false; // Actually, wait, it has created_at/updated_at renamed, but timestamps are false here anyway? If it is false, I don't need CREATED_AT.
 
     /**
-     * Get the user that owns the training.
+     * Obtener el usuario al que pertenece el entrenamiento.
      */
-    public function user()
+    public function usuario()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Usuario::class, 'usuario_id');
     }
 
     /**
-     * Get the details for the training (strength exercises etc).
+     * Obtener los detalles del entrenamiento (ejercicios de fuerza, etc.).
      */
     public function detalles()
     {
@@ -36,7 +36,7 @@ class Entrenamiento extends Model
     }
 
     /**
-     * Get the exercises for this training.
+     * Obtener los ejercicios de este entrenamiento.
      */
     public function ejercicios()
     {

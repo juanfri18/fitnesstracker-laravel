@@ -59,7 +59,7 @@
                 <label class="form-label small fw-bold text-muted">Nombre</label>
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0"><i class="fas fa-user text-muted"></i></span>
-                    <input type="text" name="name" class="form-control border-start-0 ps-0" placeholder="Tu nombre" value="{{ old('name') }}" required autofocus>
+                    <input type="text" name="nombre" class="form-control border-start-0 ps-0" placeholder="Tu nombre" value="{{ old('name') }}" required autofocus>
                 </div>
             </div>
 
@@ -67,7 +67,7 @@
                 <label class="form-label small fw-bold text-muted">Correo Electrónico</label>
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0"><i class="fas fa-envelope text-muted"></i></span>
-                    <input type="email" name="email" class="form-control border-start-0 ps-0" placeholder="atleta@ejemplo.com" value="{{ old('email') }}" required>
+                    <input type="email" name="correo" class="form-control border-start-0 ps-0" placeholder="atleta@ejemplo.com" value="{{ old('email') }}" required>
                 </div>
             </div>
             
@@ -75,7 +75,7 @@
                 <label class="form-label small fw-bold text-muted">Contraseña</label>
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0"><i class="fas fa-lock text-muted"></i></span>
-                    <input type="password" name="password" class="form-control border-start-0 ps-0" placeholder="Mínimo 8 caracteres" required>
+                    <input type="password" name="contrasena" class="form-control border-start-0 ps-0" placeholder="Mínimo 8 caracteres" required>
                 </div>
             </div>
 
@@ -83,7 +83,7 @@
                 <label class="form-label small fw-bold text-muted">Confirmar Contraseña</label>
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0"><i class="fas fa-lock text-muted"></i></span>
-                    <input type="password" name="password_confirmation" class="form-control border-start-0 ps-0" placeholder="Repite la contraseña" required>
+                    <input type="password" name="contrasena_confirmation" class="form-control border-start-0 ps-0" placeholder="Repite la contraseña" required>
                 </div>
             </div>
 

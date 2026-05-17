@@ -11,8 +11,11 @@ class EntrenamientoDetalle extends Model
 
     protected $guarded = [];
 
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
+
     /**
-     * Get the training session that owns this detail.
+     * Obtener la sesión de entrenamiento a la que pertenece este detalle.
      */
     public function entrenamiento()
     {
@@ -20,7 +23,7 @@ class EntrenamientoDetalle extends Model
     }
 
     /**
-     * Get the exercise associated with this detail.
+     * Obtener el ejercicio asociado a este detalle.
      */
     public function ejercicio()
     {

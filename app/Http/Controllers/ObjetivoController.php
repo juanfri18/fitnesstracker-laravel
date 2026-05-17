@@ -16,7 +16,7 @@ class ObjetivoController extends Controller
     public function index()
     {
         $usuario_id = Auth::id();
-        $objetivos = \App\Models\Objetivo::where('user_id', $usuario_id)
+        $objetivos = \App\Models\Objetivo::where('usuario_id', $usuario_id)
             ->orderByRaw("FIELD(estado, 'en_progreso', 'completado') ASC")
             ->get();
 
@@ -35,7 +35,7 @@ class ObjetivoController extends Controller
                 // Suma de (carga * series * repeticiones) dentro del rango de fechas del objetivo
                 $query = DB::table('entrenamiento_detalles')
                     ->join('entrenamientos', 'entrenamiento_detalles.entrenamiento_id', '=', 'entrenamientos.id')
-                    ->where('entrenamientos.user_id', $usuario_id);
+                    ->where('entrenamientos.usuario_id', $usuario_id);
 
                 if ($fechaInicio && $fechaLimite) {
                     $query->whereBetween('entrenamientos.fecha', [$fechaInicio, $fechaLimite]);
@@ -47,7 +47,7 @@ class ObjetivoController extends Controller
 
             } elseif ($obj->tipo_objetivo === 'Frecuencia Semanal' || $obj->tipo_objetivo === 'Días Entrenados') {
                 // Cuenta de entrenamientos distintos (por fecha) dentro del rango
-                $query = \App\Models\Entrenamiento::where('user_id', $usuario_id);
+                $query = \App\Models\Entrenamiento::where('usuario_id', $usuario_id);
 
                 if ($fechaInicio && $fechaLimite) {
                     $query->whereBetween('fecha', [$fechaInicio, $fechaLimite]);
@@ -58,7 +58,7 @@ class ObjetivoController extends Controller
                 $actual = $query->distinct('fecha')->count('fecha');
 
             } elseif ($obj->tipo_objetivo === 'Peso Corporal') {
-                $actual = \App\Models\Metrica::where('user_id', $usuario_id)
+                $actual = \App\Models\Metrica::where('usuario_id', $usuario_id)
                     ->orderBy('fecha_registro', 'desc')
                     ->value('peso') ?? 0;
             }
@@ -102,7 +102,7 @@ class ObjetivoController extends Controller
         ]);
 
         \App\Models\Objetivo::create([
-            'user_id' => Auth::id(),
+            'usuario_id' => Auth::id(),
             'tipo_objetivo' => $request->tipo_objetivo,
             'valor_objetivo' => $request->valor_objetivo,
             'estado' => 'en_progreso',
@@ -123,7 +123,7 @@ class ObjetivoController extends Controller
         ]);
 
         \App\Models\Objetivo::where('id', $id)
-            ->where('user_id', Auth::id())
+            ->where('usuario_id', Auth::id())
             ->update([
                 'estado' => $request->estado
             ]);
@@ -137,7 +137,7 @@ class ObjetivoController extends Controller
     public function destroy(string $id)
     {
         \App\Models\Objetivo::where('id', $id)
-            ->where('user_id', Auth::id())
+            ->where('usuario_id', Auth::id())
             ->delete();
 
         return redirect('/objetivos')->with('msg', 'Objetivo eliminado.');

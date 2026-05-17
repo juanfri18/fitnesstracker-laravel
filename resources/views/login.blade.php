@@ -62,7 +62,7 @@
                 <label class="form-label small fw-bold text-muted">Correo Electrónico</label>
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0"><i class="fas fa-envelope text-muted"></i></span>
-                    <input type="email" name="email" class="form-control border-start-0 ps-0" placeholder="atleta@ejemplo.com" value="{{ old('email') }}" required autofocus>
+                    <input type="email" name="correo" class="form-control border-start-0 ps-0" placeholder="atleta@ejemplo.com" value="{{ old('email') }}" required autofocus>
                 </div>
             </div>
             
@@ -70,7 +70,7 @@
                 <label class="form-label small fw-bold text-muted">Contraseña</label>
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0"><i class="fas fa-lock text-muted"></i></span>
-                    <input type="password" name="password" class="form-control border-start-0 ps-0" required>
+                    <input type="password" name="contrasena" class="form-control border-start-0 ps-0" required>
                 </div>
             </div>
 

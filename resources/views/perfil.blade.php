@@ -37,31 +37,31 @@
                         @endif
                         <div class="avatar-container mb-4">
                             <div class="position-relative d-inline-block">
-                                @if($user->foto)
-                                    <img src="{{ asset('storage/' . $user->foto) }}" id="preview" class="profile-img">
+                                @if($usuario->foto)
+                                    <img src="{{ asset('storage/' . $usuario->foto) }}" id="preview" class="profile-img">
                                 @else
                                     <img id="preview" class="profile-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' fill='%232A5199'/%3E%3Ccircle cx='60' cy='42' r='22' fill='white' opacity='0.9'/%3E%3Cellipse cx='60' cy='100' rx='35' ry='28' fill='white' opacity='0.9'/%3E%3C/svg%3E">
                                 @endif
                                 <input type="file" name="foto" id="fileUp" hidden onchange="loadImg(event)" accept="image/*" disabled>
                                 <label for="fileUp" id="btnCamera" class="btn-camera d-none" style="right: 0; margin-right: 0;" title="Cambiar foto"><i class="fas fa-camera text-primary"></i></label>
                             </div>
-                            <h3 class="mt-2 fw-bold mb-0">{{ $user->name ?? '' }}</h3>
-                            <p class="text-muted fst-italic" id="bioDisplay">{{ $user->biografia ? '"'.$user->biografia.'"' : '' }}</p>
+                            <h3 class="mt-2 fw-bold mb-0">{{ $usuario->nombre ?? '' }}</h3>
+                            <p class="text-muted fst-italic" id="bioDisplay">{{ $usuario->biografia ? '"'.$usuario->biografia.'"' : '' }}</p>
                         </div>
 
                         <h5 class="section-title"><i class="fas fa-user me-2"></i>Datos Personales</h5>
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="small fw-bold">Nombre</label>
-                                <input type="text" name="nombre" class="form-control editable-field" value="{{ $user->name ?? '' }}" required readonly>
+                                <input type="text" name="nombre" class="form-control editable-field" value="{{ $usuario->nombre ?? '' }}" required readonly>
                             </div>
                             <div class="col-md-6">
                                 <label class="small fw-bold">Apellidos</label>
-                                <input type="text" name="apellidos" class="form-control editable-field" value="{{ $user->apellidos ?? '' }}" placeholder="Opcional" readonly>
+                                <input type="text" name="apellidos" class="form-control editable-field" value="{{ $usuario->apellidos ?? '' }}" placeholder="Opcional" readonly>
                             </div>
                             <div class="col-12">
                                 <label class="small fw-bold">Biografía / Estado</label>
-                                <input type="text" name="biografia" class="form-control editable-field" id="bioInput" value="{{ $user->biografia ?? '' }}" oninput="updateBio()" readonly>
+                                <input type="text" name="biografia" class="form-control editable-field" id="bioInput" value="{{ $usuario->biografia ?? '' }}" oninput="updateBio()" readonly>
                             </div>
                         </div>
 
@@ -69,38 +69,38 @@
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="small fw-bold">Edad</label>
-                                <input type="number" name="edad" class="form-control editable-field" value="{{ $user->edad ?? '' }}" placeholder="Ej: 28" readonly>
+                                <input type="number" name="edad" class="form-control editable-field" value="{{ $usuario->edad ?? '' }}" placeholder="Ej: 28" readonly>
                             </div>
                             <div class="col-md-4">
                                 <label class="small fw-bold">Altura (cm)</label>
-                                <input type="number" name="altura" class="form-control editable-field" value="{{ $user->altura ?? '' }}" placeholder="Ej: 175" readonly>
+                                <input type="number" name="altura" class="form-control editable-field" value="{{ $usuario->altura ?? '' }}" placeholder="Ej: 175" readonly>
                             </div>
                             <div class="col-md-4">
                                 <label class="small fw-bold">Género</label>
                                 <select name="genero" class="form-select editable-field" disabled style="background-color: #e9ecef;">
-                                    <option value="" disabled {{ empty($user->genero) ? 'selected' : '' }}>Selecciona...</option>
-                                    <option value="Hombre" {{ $user->genero === 'Hombre' ? 'selected' : '' }}>Hombre</option>
-                                    <option value="Mujer" {{ $user->genero === 'Mujer' ? 'selected' : '' }}>Mujer</option>
+                                    <option value="" disabled {{ empty($usuario->genero) ? 'selected' : '' }}>Selecciona...</option>
+                                    <option value="Hombre" {{ $usuario->genero === 'Hombre' ? 'selected' : '' }}>Hombre</option>
+                                    <option value="Mujer" {{ $usuario->genero === 'Mujer' ? 'selected' : '' }}>Mujer</option>
                                 </select>
                             </div>
                             <div class="col-md-4 mt-3">
                                 <label class="small fw-bold">Peso (kg)</label>
-                                <input type="number" step="0.1" name="peso" class="form-control editable-field" value="{{ $user->peso ?? '' }}" placeholder="Ej: 75.5" readonly>
+                                <input type="number" step="0.1" name="peso" class="form-control editable-field" value="{{ $usuario->peso ?? '' }}" placeholder="Ej: 75.5" readonly>
                             </div>
                             <div class="col-md-8 mt-3">
                                 <label class="small fw-bold">Nivel de Actividad</label>
                                 <select name="nivel_actividad" class="form-select editable-field" disabled style="background-color: #e9ecef;">
-                                    <option value="" disabled {{ empty($user->nivel_actividad) ? 'selected' : '' }}>Selecciona tu nivel diario...</option>
-                                    <option value="Sedentario" {{ $user->nivel_actividad === 'Sedentario' ? 'selected' : '' }}>Sedentario (Poco o nada de ejercicio)</option>
-                                    <option value="Ligero" {{ $user->nivel_actividad === 'Ligero' ? 'selected' : '' }}>Ligero (Ejercicio 1-3 días extra a la semana)</option>
-                                    <option value="Moderado" {{ $user->nivel_actividad === 'Moderado' ? 'selected' : '' }}>Moderado (Ejercicio 3-5 días extra a la semana)</option>
-                                    <option value="Intenso" {{ $user->nivel_actividad === 'Intenso' ? 'selected' : '' }}>Intenso (Ejercicio 6-7 días a la semana)</option>
-                                    <option value="Muy Intenso" {{ $user->nivel_actividad === 'Muy Intenso' ? 'selected' : '' }}>Muy Intenso (Doble turno o trabajo físico fuerte)</option>
+                                    <option value="" disabled {{ empty($usuario->nivel_actividad) ? 'selected' : '' }}>Selecciona tu nivel diario...</option>
+                                    <option value="Sedentario" {{ $usuario->nivel_actividad === 'Sedentario' ? 'selected' : '' }}>Sedentario (Poco o nada de ejercicio)</option>
+                                    <option value="Ligero" {{ $usuario->nivel_actividad === 'Ligero' ? 'selected' : '' }}>Ligero (Ejercicio 1-3 días extra a la semana)</option>
+                                    <option value="Moderado" {{ $usuario->nivel_actividad === 'Moderado' ? 'selected' : '' }}>Moderado (Ejercicio 3-5 días extra a la semana)</option>
+                                    <option value="Intenso" {{ $usuario->nivel_actividad === 'Intenso' ? 'selected' : '' }}>Intenso (Ejercicio 6-7 días a la semana)</option>
+                                    <option value="Muy Intenso" {{ $usuario->nivel_actividad === 'Muy Intenso' ? 'selected' : '' }}>Muy Intenso (Doble turno o trabajo físico fuerte)</option>
                                 </select>
                             </div>
                             <div class="col-md-12 mt-3">
                                 <label class="small fw-bold text-primary">Grasa Corporal (%) <span class="badge bg-primary ms-1" style="font-size: 0.6rem;">Auto-calculado</span></label>
-                                <input type="text" name="grasa" class="form-control" value="{{ $user->grasa ?? 'Pendiente de datos' }}" readonly style="background-color: #f8f9fa; font-weight: bold; color: var(--primary-color);">
+                                <input type="text" name="grasa" class="form-control" value="{{ $usuario->grasa ?? 'Pendiente de datos' }}" readonly style="background-color: #f8f9fa; font-weight: bold; color: var(--primary-color);">
                                 <small class="text-muted" style="font-size: 0.7rem;">Rellena peso, altura, edad y género para calcularlo.</small>
                             </div>
                         </div>
@@ -114,10 +114,10 @@
                     <!-- SECCIÓN GAMIFICACIÓN (LOGROS) -->
                     @php
                         $all_logros = \App\Models\Logro::all();
-                        $mis_logros = $user->logros->pluck('id')->toArray();
-                        $total_puntos = $user->logros->sum('puntos');
-                        $racha_actual = $user->racha_actual ?? 0;
-                        $mejor_racha = $user->mejor_racha ?? 0;
+                        $mis_logros = $usuario->logros->pluck('id')->toArray();
+                        $total_puntos = $usuario->logros->sum('puntos');
+                        $racha_actual = $usuario->racha_actual ?? 0;
+                        $mejor_racha = $usuario->mejor_racha ?? 0;
                     @endphp
                     
                     <div class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3 border-bottom pb-2 gap-2">

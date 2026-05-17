@@ -13,7 +13,7 @@ class EntrenamientoController extends Controller
         $usuario_id = Auth::id(); 
 
         $actividades = \App\Models\Entrenamiento::with(['detalles', 'detalles.ejercicio'])
-                        ->where('user_id', $usuario_id)
+                        ->where('usuario_id', $usuario_id)
                         ->orderBy('fecha', 'desc')
                         ->limit(5)
                         ->get();
@@ -29,7 +29,7 @@ class EntrenamientoController extends Controller
     {
         $usuario_id = Auth::id(); 
         $query = \App\Models\Entrenamiento::with(['detalles', 'detalles.ejercicio'])
-                        ->where('user_id', $usuario_id);
+                        ->where('usuario_id', $usuario_id);
 
         // #4: Filtro por tipo
         if ($request->filled('tipo') && in_array($request->tipo, ['Fuerza', 'Carrera', 'Caminata'])) {
@@ -52,7 +52,7 @@ class EntrenamientoController extends Controller
     public function exportCSV()
     {
         $usuario_id = Auth::id();
-        $entrenamientos = \App\Models\Entrenamiento::where('user_id', $usuario_id)
+        $entrenamientos = \App\Models\Entrenamiento::where('usuario_id', $usuario_id)
             ->orderBy('fecha', 'desc')
             ->get();
 
@@ -99,7 +99,7 @@ class EntrenamientoController extends Controller
         if ($calorias_calculadas > 0) $notas .= " | Aprox: " . round($calorias_calculadas) . " kcal";
 
         $entrenamiento = \App\Models\Entrenamiento::create([
-            'user_id' => Auth::id(),
+            'usuario_id' => Auth::id(),
             'fecha' => $request->fecha,
             'tipo' => $tipo_db,
             'duracion_minutos' => $duracion,
@@ -133,8 +133,8 @@ class EntrenamientoController extends Controller
                         'series' => empty($series[$index]) ? null : intval($series[$index]),
                         'repeticiones' => empty($reps[$index]) ? null : intval($reps[$index]),
                         'carga_kg' => empty($cargas[$index]) ? null : floatval($cargas[$index]),
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                        'creado_en' => now(),
+                        'actualizado_en' => now(),
                     ];
                 }
             }
@@ -145,7 +145,7 @@ class EntrenamientoController extends Controller
         }
 
         // --- 3.5. GESTIÓN DE RACHAS (STREAKS) ---
-        $usuario = \App\Models\User::find(Auth::id());
+        $usuario = \App\Models\Usuario::find(Auth::id());
         $fecha_entreno = \Carbon\Carbon::parse($request->fecha)->startOfDay();
         
         if ($usuario->ultima_actividad_fecha) {
@@ -180,7 +180,7 @@ class EntrenamientoController extends Controller
         $logros_nuevos = [];
 
         // 4.1 Primer Entrenamiento
-        if (\App\Models\Entrenamiento::where('user_id', $usuario->id)->count() === 1) {
+        if (\App\Models\Entrenamiento::where('usuario_id', $usuario->id)->count() === 1) {
             $logro = \App\Models\Logro::where('criterio', \App\Models\Logro::CRITERIO_PRIMER_ENTRENO)->first();
             if ($logro && !$usuario->logros->contains($logro->id)) {
                 $usuario->logros()->attach($logro->id);
@@ -190,7 +190,7 @@ class EntrenamientoController extends Controller
 
         // 4.2 Levantador NATO (5 Sesiones de Fuerza)
         if ($tipo_db === 'Fuerza') {
-            $fuerzaCount = \App\Models\Entrenamiento::where('user_id', $usuario->id)->where('tipo', 'Fuerza')->count();
+            $fuerzaCount = \App\Models\Entrenamiento::where('usuario_id', $usuario->id)->where('tipo', 'Fuerza')->count();
             if ($fuerzaCount >= 5) {
                 $logro = \App\Models\Logro::where('criterio', \App\Models\Logro::CRITERIO_5_SESIONES_FUERZA)->first();
                 if ($logro && !$usuario->logros->contains($logro->id)) {
@@ -209,7 +209,7 @@ class EntrenamientoController extends Controller
         }
 
         // 4.4 Leyenda del Sudor (Más de 1000 minutos totales)
-        $minutosTotales = \App\Models\Entrenamiento::where('user_id', $usuario->id)->sum('duracion_minutos');
+        $minutosTotales = \App\Models\Entrenamiento::where('usuario_id', $usuario->id)->sum('duracion_minutos');
         
         if ($minutosTotales >= 1000) {
             $logro = \App\Models\Logro::where('criterio', \App\Models\Logro::CRITERIO_1000_MINUTOS)->first();
@@ -239,7 +239,7 @@ class EntrenamientoController extends Controller
     public function edit($id)
     {
         $usuario_id = Auth::id();
-        $entreno = \App\Models\Entrenamiento::with(['detalles.ejercicio'])->where('id', $id)->where('user_id', $usuario_id)->first();
+        $entreno = \App\Models\Entrenamiento::with(['detalles.ejercicio'])->where('id', $id)->where('usuario_id', $usuario_id)->first();
 
         if (!$entreno) {
             return redirect('/');
@@ -274,7 +274,7 @@ class EntrenamientoController extends Controller
         if ($calorias > 0) $notas .= " | Aprox: " . round($calorias) . " kcal";
 
         \App\Models\Entrenamiento::where('id', $id)
-            ->where('user_id', Auth::id()) // Seguridad: solo el dueño puede editar
+            ->where('usuario_id', Auth::id()) // Seguridad: solo el dueño puede editar
             ->update([
                 'fecha' => $request->fecha,
                 'tipo' => $tipo_db,
@@ -309,8 +309,8 @@ class EntrenamientoController extends Controller
                         'series' => empty($series[$index]) ? null : intval($series[$index]),
                         'repeticiones' => empty($reps[$index]) ? null : intval($reps[$index]),
                         'carga_kg' => empty($cargas[$index]) ? null : floatval($cargas[$index]),
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                        'creado_en' => now(),
+                        'actualizado_en' => now(),
                     ];
                 }
             }
@@ -327,7 +327,7 @@ class EntrenamientoController extends Controller
     public function destroy($id)
     {
         \App\Models\Entrenamiento::where('id', $id)
-            ->where('user_id', Auth::id()) // Seguridad: solo el dueño puede borrar
+            ->where('usuario_id', Auth::id()) // Seguridad: solo el dueño puede borrar
             ->delete();
 
         return redirect('/')->with('msg', 'Entrenamiento eliminado.');
@@ -343,7 +343,7 @@ class EntrenamientoController extends Controller
     public function eventosAPI()
     {
         $usuario_id = Auth::id();
-        $entrenamientos = \App\Models\Entrenamiento::where('user_id', $usuario_id)
+        $entrenamientos = \App\Models\Entrenamiento::where('usuario_id', $usuario_id)
                             ->get();
 
         $eventos = [];

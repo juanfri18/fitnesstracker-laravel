@@ -11,10 +11,10 @@ class PerfilController extends Controller
     public function index()
     {
         // Obtenemos el usuario autenticado directamente usando el Facade Auth
-        $user = Auth::user();
+        $usuario = Auth::user();
 
         // Lo pasamos a la vista
-        return view('perfil', ['user' => $user]);
+        return view('perfil', ['usuario' => $usuario]);
     }
 
     public function update(Request $request)
@@ -31,15 +31,15 @@ class PerfilController extends Controller
             'nivel_actividad' => 'nullable|string|max:255',
         ]);
 
-        $user = Auth::user();
+        $usuario = Auth::user();
         
         $grasa_calculada = null;
 
         // Cálculo automático de Grasa Corporal (Aproximación por IMC)
-        $peso_calc = $request->peso ?? $user->peso;
-        $altura_calc = $request->altura ?? $user->altura;
-        $edad_calc = $request->edad ?? $user->edad;
-        $genero_calc = $request->genero ?? $user->genero;
+        $peso_calc = $request->peso ?? $usuario->peso;
+        $altura_calc = $request->altura ?? $usuario->altura;
+        $edad_calc = $request->edad ?? $usuario->edad;
+        $genero_calc = $request->genero ?? $usuario->genero;
 
         if ($peso_calc && $altura_calc && $edad_calc && $genero_calc) {
             $altura_metros = $altura_calc / 100;
@@ -52,7 +52,7 @@ class PerfilController extends Controller
         }
 
         // Variable para la ruta de la foto, por defecto la que ya tiene el usuario
-        $foto_path = $user->foto;
+        $foto_path = $usuario->foto;
 
         // Manejar subida de foto
         if ($request->hasFile('foto')) {
@@ -60,18 +60,18 @@ class PerfilController extends Controller
             $foto_path = $request->file('foto')->store('avatars', 'public');
         }
 
-        \App\Models\User::where('id', $user->id)->update([
-            'name' => $request->nombre,
+        \App\Models\Usuario::where('id', $usuario->id)->update([
+            'nombre' => $request->nombre,
             'apellidos' => $request->apellidos,
             'biografia' => $request->biografia,
             'peso' => $request->peso,
             'altura' => $request->altura,
             'edad' => $request->edad,
             'genero' => $request->genero,
-            'grasa' => $grasa_calculada ?? $user->grasa,
+            'grasa' => $grasa_calculada ?? $usuario->grasa,
             'foto' => $foto_path,
             'nivel_actividad' => $request->nivel_actividad,
-            'updated_at' => now(),
+            'actualizado_en' => now(),
         ]);
 
         return redirect('/perfil')->with('msg', 'Perfil actualizado correctamente.');

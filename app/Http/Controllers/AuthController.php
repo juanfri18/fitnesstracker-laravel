@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+use App\Models\Usuario;
 
 class AuthController extends Controller
 {
@@ -18,19 +18,19 @@ class AuthController extends Controller
     // Procesar Login
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+        $credenciales = $request->validate([
+            'correo' => ['required', 'email'],
+            'contrasena' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credenciales)) {
             $request->session()->regenerate();
             return redirect()->intended('/')->with('msg', '¡Bienvenido de nuevo!');
         }
 
         return back()->withErrors([
-            'email' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
-        ])->onlyInput('email');
+            'correo' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
+        ])->onlyInput('correo');
     }
 
     // Mostrar formulario de Registro
@@ -43,23 +43,23 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:usuarios'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'nombre' => ['required', 'string', 'max:255'],
+            'correo' => ['required', 'string', 'email', 'max:255', 'unique:usuarios'],
+            'contrasena' => ['required', 'string', 'min:8', 'confirmed'],
         ], [
-            'email.unique' => 'Este correo electrónico ya está registrado.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres.'
+            'correo.unique' => 'Este correo electrónico ya está registrado.',
+            'contrasena.confirmed' => 'Las contraseñas no coinciden.',
+            'contrasena.min' => 'La contraseña debe tener al menos 8 caracteres.'
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+        $usuario = Usuario::create([
+            'nombre' => $request->nombre,
+            'correo' => $request->correo,
+            'contrasena' => Hash::make($request->contrasena),
         ]);
 
         // Auto-login después de registrarse
-        Auth::login($user);
+        Auth::login($usuario);
 
         return redirect('/')->with('msg', '¡Cuenta creada con éxito! Bienvenido.');
     }

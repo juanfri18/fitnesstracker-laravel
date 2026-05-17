@@ -8,78 +8,93 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class Usuario extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
-     * The table associated with the model.
+     * La tabla asociada con el modelo.
      *
      * @var string
      */
     protected $table = 'usuarios';
 
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
+
     /**
-     * The attributes that are mass assignable.
+     * Los atributos que se pueden asignar masivamente.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'nombre',
+        'correo',
+        'contrasena',
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * Los atributos que deben ocultarse para la serialización.
      *
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'contrasena',
+        'token_recuerdo',
     ];
 
     /**
-     * The attributes that should be cast.
+     * Los atributos que deben convertirse a tipos nativos.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'correo_verificado_en' => 'datetime',
+        'contrasena' => 'hashed',
     ];
 
+    public function getAuthPassword()
+    {
+        return $this->contrasena;
+    }
+
+    public function getRememberTokenName()
+    {
+        return 'token_recuerdo';
+    }
+
     /**
-     * Get the trainings for the user.
+     * Obtener los entrenamientos del usuario.
      */
     public function entrenamientos()
     {
-        return $this->hasMany(Entrenamiento::class);
+        return $this->hasMany(Entrenamiento::class, 'usuario_id');
     }
 
     /**
-     * Get the objectives for the user.
+     * Obtener los objetivos del usuario.
      */
     public function objetivos()
     {
-        return $this->hasMany(Objetivo::class);
+        return $this->hasMany(Objetivo::class, 'usuario_id');
     }
 
     /**
-     * Get the metrics for the user.
+     * Obtener las métricas del usuario.
      */
     public function metricas()
     {
-        return $this->hasMany(Metrica::class, 'user_id');
+        return $this->hasMany(Metrica::class, 'usuario_id');
     }
 
     /**
-     * Get the achievements for the user.
+     * Obtener los logros del usuario.
      */
     public function logros()
     {
-        return $this->belongsToMany(Logro::class, 'logro_user')->withTimestamps();
+        return $this->belongsToMany(Logro::class, 'logro_usuario', 'usuario_id', 'logro_id')
+            ->withPivot('creado_en', 'actualizado_en') // Use custom timestamps if Laravel doesn't pick up the model's constants automatically for pivots
+            ->withTimestamps();
     }
 
     /**

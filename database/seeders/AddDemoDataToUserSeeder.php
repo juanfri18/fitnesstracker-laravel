@@ -12,11 +12,19 @@ class AddDemoDataToUserSeeder extends Seeder
 {
     public function run(): void
     {
-        $user = User::where('email', 'Juanfranciscocort@gmail.com')->first();
-        if (!$user) {
-            echo "Usuario no encontrado.\n";
-            return;
-        }
+        $user = User::firstOrCreate(
+            ['email' => 'Juanfranciscocort@gmail.com'],
+            [
+                'name' => 'Juanfrancisco',
+                'apellidos' => 'Cortejosa',
+                'password' => bcrypt('12345678'),
+                'edad' => 22,
+                'altura' => 171,
+                'peso' => 72.5,
+                'nivel_actividad' => 'Moderado',
+                'genero' => 'Hombre',
+            ]
+        );
 
         // Asegurar que existan algunos ejercicios básicos
         $ej1 = Ejercicio::firstOrCreate(['nombre' => 'Press de Banca'], ['grupo_muscular' => 'Pecho']);

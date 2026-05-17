@@ -11,6 +11,9 @@ class Ejercicio extends Model
 
     protected $guarded = [];
 
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
+
     public function entrenamientos()
     {
         return $this->belongsToMany(Entrenamiento::class, 'entrenamiento_detalles')

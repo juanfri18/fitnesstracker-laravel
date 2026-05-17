@@ -60,6 +60,7 @@
                 week: 'Semana',
                 list: 'Lista'
             },
+            allDayText: 'Sesión', // Personaliza "Todo el día"
             // API AJAX
             events: '/api/calendario/eventos',
             dateClick: function(info) {

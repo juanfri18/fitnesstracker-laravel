@@ -23,7 +23,7 @@
                         <i class="fas fa-user" style="font-size: 1.2rem;"></i>
                     </div>
                 @endif
-                <span class="fw-bold d-none d-sm-inline" style="font-size: 1.15rem; letter-spacing: 0.5px;">{{ Auth::check() ? Auth::user()->name : 'Invitado' }}</span>
+                <span class="fw-bold d-none d-sm-inline" style="font-size: 1.15rem; letter-spacing: 0.5px;">{{ Auth::check() ? Auth::user()->nombre : 'Invitado' }}</span>
             </a>
         </div>
     </div>

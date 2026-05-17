@@ -9,8 +9,11 @@ class Objetivo extends Model
 {
     use HasFactory;
 
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
+
     protected $fillable = [
-        'user_id',
+        'usuario_id',
         'tipo_objetivo',
         'valor_objetivo',
         'progreso',
@@ -40,11 +43,11 @@ class Objetivo extends Model
     }
 
     /**
-     * Get the user that owns the objective.
+     * Obtener el usuario al que pertenece el objetivo.
      */
-    public function user()
+    public function usuario()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Usuario::class, 'usuario_id');
     }
 }
 
