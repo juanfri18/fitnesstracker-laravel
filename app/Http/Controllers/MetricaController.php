@@ -66,6 +66,11 @@ class MetricaController extends Controller
             ->where('estado', 'en_progreso')
             ->get();
 
+        // Pre-fetch peso corporal una sola vez para todos los objetivos de tipo Peso Corporal
+        $pesoActual = \App\Models\Metrica::where('usuario_id', $usuario_id)
+            ->orderBy('fecha_registro', 'desc')
+            ->value('peso') ?? 0;
+
         $lista_objetivos = [];
         foreach($objetivos as $obj) {
             $actual = 0;
@@ -97,9 +102,7 @@ class MetricaController extends Controller
                 $actual = $query->distinct('fecha')->count('fecha');
 
             } elseif ($obj->tipo_objetivo == 'Peso Corporal') {
-                $actual = \App\Models\Metrica::where('usuario_id', $usuario_id)
-                    ->orderBy('fecha_registro', 'desc')
-                    ->value('peso') ?? 0;
+                $actual = $pesoActual;
             }
 
             // Porcentaje
@@ -161,7 +164,6 @@ class MetricaController extends Controller
         if ($periodo === 'anio') {
             // ANUAL: 12 puntos, uno por cada mes del año actual (Ene → Dic)
             $anioActual = now()->year;
-            $mesActual = now()->month;
 
             // Consulta agrupada por mes
             $datosRaw = \App\Models\Entrenamiento::selectRaw('MONTH(fecha) as mes, SUM(duracion_minutos) as total')
@@ -178,7 +180,6 @@ class MetricaController extends Controller
         } elseif ($periodo === 'mes') {
             // MENSUAL: todos los días del mes actual
             $inicioMes = now()->startOfMonth();
-            $finMes = now()->endOfMonth();
             $diasEnMes = $inicioMes->daysInMonth;
 
             $datosRaw = \App\Models\Entrenamiento::selectRaw('DAY(fecha) as dia, SUM(duracion_minutos) as total')

@@ -9,16 +9,11 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ObjetivoFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            'user_id' => \App\Models\User::factory(),
-            'tipo_objetivo' => fake()->randomElement(['Frecuencia Semanal', 'Volumen Mensual', 'Peso Corporal']),
+            'usuario_id' => \App\Models\Usuario::factory(),
+            'tipo_objetivo' => fake()->randomElement(['Días Entrenados', 'Volumen (kg levantados)', 'Peso Corporal']),
             'valor_objetivo' => fake()->numberBetween(1, 100),
             'fecha_limite' => fake()->dateTimeBetween('now', '+1 year')->format('Y-m-d'),
             'estado' => 'en_progreso',

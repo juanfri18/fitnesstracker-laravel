@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SinergyFit — Presentación Final</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #0a0f1e;
+    color: #fff;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    user-select: none;
+  }
+
+  /* ── SLIDES CONTAINER ── */
+  .deck {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+
+  .slide.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* ── BACKGROUNDS ── */
+  .bg-cover {
+    background: linear-gradient(135deg, #0a0f1e 0%, #0d2137 50%, #0a1628 100%);
+  }
+  .bg-dark {
+    background: linear-gradient(160deg, #0f172a 0%, #1a2744 100%);
+  }
+  .bg-mid {
+    background: linear-gradient(160deg, #111827 0%, #1e2d4a 100%);
+  }
+
+  /* decorative grid lines */
+  .slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(42,81,153,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(42,81,153,0.07) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  /* ── NAVIGATION ── */
+  .nav {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 100;
+  }
+
+  .nav button {
+    background: rgba(42,81,153,0.3);
+    border: 1px solid rgba(42,81,153,0.5);
+    color: #fff;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav button:hover { background: rgba(42,81,153,0.7); transform: scale(1.1); }
+
+  .counter {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 2px;
+    font-weight: 500;
+    min-width: 60px;
+    text-align: center;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #2A5199, #4fc3f7);
+    transition: width 0.4s ease;
+    z-index: 100;
+  }
+
+  /* ── TYPOGRAPHY ── */
+  .label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #4fc3f7;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-size: clamp(42px, 6vw, 72px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -1px;
+  }
+
+  h2 {
+    font-size: clamp(28px, 4vw, 46px);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
+
+  h3 {
+    font-size: clamp(18px, 2.5vw, 26px);
+    font-weight: 600;
+    color: #4fc3f7;
+    margin-bottom: 10px;
+  }
+
+  p, li {
+    font-size: clamp(14px, 1.6vw, 18px);
+    line-height: 1.7;
+    color: rgba(255,255,255,0.82);
+  }
+
+  .accent { color: #4fc3f7; }
+  .strong { color: #fff; font-weight: 700; }
+
+  /* ── COMPONENTS ── */
+  .tag {
+    display: inline-block;
+    background: rgba(42,81,153,0.35);
+    border: 1px solid rgba(79,195,247,0.3);
+    color: #4fc3f7;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 24px 28px;
+  }
+
+  .card-accent {
+    background: rgba(42,81,153,0.15);
+    border: 1px solid rgba(42,81,153,0.35);
+    border-radius: 16px;
+    padding: 22px 26px;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; width: 100%; }
+
+  .icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .pill {
+    display: inline-block;
+    background: rgba(79,195,247,0.15);
+    border: 1px solid rgba(79,195,247,0.3);
+    color: #4fc3f7;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 20px;
+  }
+
+  ul { list-style: none; padding: 0; }
+  ul li { padding: 5px 0; }
+  ul li::before { content: '→ '; color: #4fc3f7; font-weight: 700; }
+
+  .divider {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #2A5199, #4fc3f7);
+    border-radius: 2px;
+    margin: 18px 0;
+  }
+
+  /* ── TABLE ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: clamp(12px, 1.4vw, 15px);
+  }
+  th {
+    background: rgba(42,81,153,0.4);
+    color: #4fc3f7;
+    padding: 10px 16px;
+    text-align: left;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.85);
+  }
+  tr:last-child td {
+    border-bottom: none;
+    color: #fff;
+    font-weight: 700;
+  }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  /* ── FLOW STEPS ── */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  .flow-step {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: clamp(12px, 1.4vw, 15px);
+    color: rgba(255,255,255,0.85);
+  }
+  .flow-num {
+    background: rgba(42,81,153,0.5);
+    color: #4fc3f7;
+    font-weight: 800;
+    font-size: 13px;
+    min-width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── FAQ ── */
+  .faq-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 14px 20px;
+    margin-bottom: 10px;
+  }
+  .faq-q {
+    color: #4fc3f7;
+    font-weight: 700;
+    font-size: clamp(12px, 1.4vw, 15px);
+    margin-bottom: 4px;
+  }
+  .faq-a {
+    color: rgba(255,255,255,0.78);
+    font-size: clamp(11px, 1.25vw, 14px);
+    line-height: 1.5;
+  }
+
+  /* ── COVER SLIDE SPECIFIC ── */
+  .cover-logo {
+    font-size: clamp(56px, 8vw, 96px);
+    font-weight: 900;
+    letter-spacing: -3px;
+    background: linear-gradient(135deg, #fff 30%, #4fc3f7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+
+  .cover-sub {
+    font-size: clamp(14px, 2vw, 20px);
+    color: rgba(255,255,255,0.55);
+    margin-top: 12px;
+    letter-spacing: 1px;
+  }
+
+  .badge-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 32px;
+  }
+  .badge {
+    background: rgba(42,81,153,0.25);
+    border: 1px solid rgba(42,81,153,0.5);
+    color: rgba(255,255,255,0.7);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── SINERGY EQUATION ── */
+  .equation {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(42,81,153,0.15);
+    border: 1px solid rgba(42,81,153,0.35);
+    border-radius: 16px;
+    padding: 20px 32px;
+    margin: 20px 0;
+    font-size: clamp(16px, 2vw, 22px);
+    font-weight: 700;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .eq-op { color: rgba(255,255,255,0.4); font-size: 1.4em; }
+  .eq-highlight { color: #4fc3f7; }
+
+  /* ── MVC COLUMNS ── */
+  .mvc-col {
+    display: flex;
+    flex-direction: column;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 22px;
+  }
+  .mvc-letter {
+    font-size: 40px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #2A5199, #4fc3f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .mvc-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #4fc3f7;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .mvc-path {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    background: rgba(0,0,0,0.3);
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    display: inline-block;
+  }
+
+  /* ── PROBLEM CARDS ── */
+  .problem-card {
+    background: rgba(255,255,255,0.03);
+    border-left: 3px solid #4fc3f7;
+    border-radius: 0 12px 12px 0;
+    padding: 16px 20px;
+  }
+  .problem-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #4fc3f7;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .problem-title {
+    font-size: clamp(14px, 1.6vw, 18px);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  /* ── FINAL SLIDE ── */
+  .final-circle {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    border: 2px solid rgba(42,81,153,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    margin-bottom: 32px;
+    background: rgba(42,81,153,0.1);
+  }
+
+  /* ── SECTION GRID (frontend) ── */
+  .section-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    width: 100%;
+  }
+  .section-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 16px 14px;
+    text-align: center;
+  }
+  .section-item .icon { font-size: 22px; margin-bottom: 8px; }
+  .section-item .s-name {
+    font-size: clamp(11px, 1.2vw, 14px);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .section-item .s-desc {
+    font-size: clamp(10px, 1vw, 12px);
+    color: rgba(255,255,255,0.55);
+    line-height: 1.4;
+  }
+
+  /* ── HIGHLIGHT BOX ── */
+  .highlight-box {
+    background: linear-gradient(135deg, rgba(42,81,153,0.25), rgba(79,195,247,0.1));
+    border: 1px solid rgba(79,195,247,0.3);
+    border-radius: 14px;
+    padding: 20px 28px;
+    text-align: center;
+  }
+  .big-number {
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 900;
+    background: linear-gradient(135deg, #fff, #4fc3f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<div class="deck" id="deck">
+
+  <!-- ═══════════════════════════════════════════════
+       SLIDE 1 — PORTADA
+  ════════════════════════════════════════════════ -->
+  <div class="slide bg-cover active" id="s1">
+    <div style="text-align:center; max-width:800px;">
+      <div class="tag">Proyecto Final · Desarrollo de Aplicaciones Web</div>
+      <div class="cover-logo">SinergyFit</div>
+      <div class="cover-sub">Aplicación web de seguimiento de fitness</div>
+      <div class="divider" style="margin: 24px auto;"></div>
+      <div class="badge-row" style="justify-content:center;">
+        <span class="badge">Laravel 11</span>
+        <span class="badge">PHP 8.2</span>
+        <span class="badge">MySQL 8.0</span>
+        <span class="badge">Bootstrap 5</span>
+        <span class="badge">Docker</span>
+        <span class="badge">Chart.js</span>
+        <span class="badge">FullCalendar</span>
+      </div>
+      <p style="margin-top: 36px; color: rgba(255,255,255,0.35); font-size:14px; letter-spacing:1px;">
+        Juanfri &nbsp;·&nbsp; 2026
+      </p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SLIDE 2 — INTRODUCCIÓN: ¿QUÉ ES Y POR QUÉ?
+  ════════════════════════════════════════════════ -->
+  <div class="slide bg-dark" id="s2">
+    <div style="width:100%; max-width:1100px;">
+      <div class="label">01 — Introducción</div>
+      <h2 style="margin-bottom:10px;">¿Qué es SinergyFit y por qué existe?</h2>
+      <div class="divider"></div>
+
+      <div class="grid-2" style="margin-top: 24px; align-items: start;">
+        <div>
+          <div class="problem-card" style="margin-bottom:16px;">
+            <div class="problem-num">El problema</div>
+            <div class="problem-title">Las apps existentes son limitadas</div>
+            <p style="font-size:clamp(13px,1.4vw,16px);">Apps como Strava son o muy complejas o demasiado simples. Los entrenamientos de fuerza se reducen a un cronómetro y estimación de calorías. Sin registro de ejercicios, series ni pesos.</p>
+          </div>
+          <div class="problem-card">
+            <div class="problem-num">La motivación</div>
+            <div class="problem-title">Convertir una rutina en un hábito</div>
+            <p style="font-size:clamp(13px,1.4vw,16px);">Quedarse estancado en el gimnasio es común. Con un registro real puedes ver cómo empezaste hace tres meses y cómo estás ahora. Eso es lo que crea adherencia.</p>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div class="card-accent">
+            <h3 style="font-size:clamp(14px,1.5vw,17px); margin-bottom:10px;">¿Qué permite SinergyFit?</h3>
+            <ul>
+              <li>Registrar cada ejercicio de fuerza: grupo muscular, series, repeticiones y peso</li>
+              <li>Registrar sesiones de carrera y caminata</li>
+              <li>Ver la evolución del volumen levantado a lo largo del tiempo</li>
+              <li>Establecer objetivos y seguir su progreso</li>
+              <li>Ver rachas y desbloquear logros para motivarse</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <div style="font-size:13px; color:rgba(255,255,255,0.5); margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Tipos de actividad</div>
+            <div style="display:flex; justify-content:center; gap:16px; margin-top:8px;">
+              <span class="pill">🏋️ Fuerza</span>
+              <span class="pill">🏃 Carrera</span>
+              <span class="pill">🚶 Caminata</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SLIDE 3 — EL NOMBRE
+  ════════════════════════════════════════════════ -->
+  <div class="slide bg-mid" id="s3">
+    <div style="width:100%; max-width:1000px;">
+      <div class="label">02 — El nombre</div>
+      <h2 style="margin-bottom:10px;">¿Por qué SinergyFit?</h2>
+      <div class="divider"></div>
+
+      <div class="grid-2" style="margin-top:24px; align-items:center;">
+        <div>
+          <div class="card" style="margin-bottom:16px;">
+            <div style="font-size:12px; letter-spacing:2px; color:rgba(255,255,255,0.4); text-transform:uppercase; margin-bottom:8px;">El nombre original</div>
+            <div style="font-size:clamp(20px,2.5vw,28px); font-weight:700; color:rgba(255,255,255,0.5); text-decoration:line-through;">FitnessTracker</div>
+            <p style="margin-top:8px; font-size:clamp(12px,1.3vw,15px);">Nombre genérico asignado al inicio del proyecto. Correcto, pero sin identidad ni significado propio.</p>
+          </div>
+          <div class="card-accent">
+            <div style="font-size:12px; letter-spacing:2px; color:rgba(255,255,255,0.4); text-transform:uppercase; margin-bottom:8px;">El nombre definitivo</div>
+            <div style="font-size:clamp(24px,3vw,36px); font-weight:900; background: linear-gradient(135deg,#fff,#4fc3f7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">SinergyFit</div>
+            <div style="margin-top:6px; font-size:clamp(12px,1.3vw,15px); color:rgba(255,255,255,0.6);">
+              <span style="color:#4fc3f7;">Sinergia</span> + <span style="color:#4fc3f7;">Fitness</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div class="card">
+            <h3 style="font-size:clamp(13px,1.4vw,16px); margin-bottom:8px;">¿Qué es la sinergia?</h3>
+            <p style="font-size:clamp(12px,1.3vw,15px); font-style:italic; color:rgba(255,255,255,0.7);">"La cooperación entre dos o más elementos produce un resultado superior a la suma de sus partes individuales."</p>
+            <p style="margin-top:10px; font-size:clamp(12px,1.3vw,15px);">El todo es mayor que la suma de sus partes.</p>
+          </div>
+          <div class="equation">
+            <span>💪 Fuerza</span>
+            <span class="eq-op">+</span>
+            <span>🏃 Cardio</span>
+            <span class="eq-op">=</span>
+            <span class="eq-highlight">Resultado superior</span>
+          </div>
+          <p style="font-size:clamp(12px,1.3vw,15px); color:rgba(255,255,255,0.65); text-align:center;">
+            Solo fuerza o solo cardio son incompletos. La combinación de ambos —la sinergia aplicada al deporte— es el núcleo de la aplicación.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SLIDE 4 — FRONTEND: LAS 7 SECCIONES
+  ════════════════════════════════════════════════ -->
+  <div class="slide bg-dark" id="s4">
+    <div style="width:100%; max-width:1150px;">
+      <div class="label">03 — Frontend</div>
+      <h2 style="margin-bottom:10px;">La aplicación por fuera: 7 secciones</h2>
+      <div class="divider"></div>
+
+      <div class="section-grid" style="margin-top:24px;">
+        <div class="section-item">
+          <div class="icon">🏠</div>
+          <div class="s-name">Dashboard</div>
+          <div class="s-desc">Últimos 5 entrenos, racha, logros y mini-gráfico semanal. Todo de un vistazo.</div>
+        </div>
+        <div class="section-item">
+          <div class="icon">➕</div>
+          <div class="s-name">Registrar Actividad</div>
+          <div class="s-desc">Formulario adaptativo por tipo. Fuerza: ejercicios, series, reps y peso. Cardio: duración y notas.</div>
+        </div>
+        <div class="section-item">
+          <div class="icon">📋</div>
+          <div class="s-name">Historial</div>
+          <div class="s-desc">Lista paginada de todos los entrenos. Filtro por tipo, edición y eliminación.</div>
+        </div>
+        <div class="section-item">
+          <div class="icon">📊</div>
+          <div class="s-name">Estadísticas</div>
+          <div class="s-desc">Gráfica de evolución, donut por tipo, comparativa con el periodo anterior en %.</div>
+        </div>
+        <div class="section-item" style="grid-column: span 1;">
+          <div class="icon">🎯</div>
+          <div class="s-name">Objetivos</div>
+          <div class="s-desc">Días entrenados, volumen levantado o peso corporal. Progreso calculado automáticamente.</div>
+        </div>
+        <div class="section-item">
+          <div class="icon">📅</div>
+          <div class="s-name">Calendario</div>
+          <div class="s-desc">Calendario mensual interactivo. Entrenamientos por color y clic para registrar.</div>
+        </div>
+        <div class="section-item">
+          <div class="icon">👤</div>
+          <div class="s-name">Mi Perfil</div>
+          <div class="s-desc">Foto, métricas físicas, historial de peso y datos personales.</div>
+        </div>
+        <div class="section-item" style="background: rgba(42,81,153,0.12); border-color: rgba(42,81,153,0.3);">
+          <div class="icon">🏆</div>
+          <div class="s-name">Gamificación</div>
+          <div class="s-desc">5 logros desbloqueables + sistema de rachas de días consecutivos.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SLIDE 5 — BACKEND: LARAVEL + MVC
+  ════════════════════════════════════════════════ -->
+  <div class="slide bg-mid" id="s5">
+    <div style="width:100%; max-width:1100px;">
+      <div class="label">04 — Backend</div>
+      <h2 style="margin-bottom:10px;">Cómo funciona SinergyFit por dentro</h2>
+      <div class="divider"></div>
+
+      <div style="margin-top:18px; margin-bottom:20px;">
+        <div class="card-accent" style="display:flex; align-items:center; gap:20px; padding:16px 24px;">
+          <div style="font-size:32px;">⚙️</div>
+          <div>
+            <div style="font-size:clamp(14px,1.6vw,18px); font-weight:700; color:#fff; margin-bottom:4px;">Framework: <span class="accent">Laravel 11</span></div>
+            <p style="font-size:clamp(12px,1.3vw,15px);">Un framework es una caja de herramientas ya construida: login, base de datos, validaciones, rutas y sesiones vienen resueltos. El desarrollador solo se centra en la lógica de la aplicación.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size:clamp(13px,1.4vw,16px); font-weight:700; color:rgba(255,255,255,0.5); letter-spacing:2px; text-transform:uppercase; margin-bottom:14px; text-align:center;">Patrón de arquitectura: MVC</div>
+
+      <div class="grid-3">
+        <div class="mvc-col">
+          <div class="mvc-letter">M</div>
+          <div class="mvc-name">Modelo</div>
+          <div class="mvc-path">app/Models/</div>
+          <p style="font-size:clamp(12px,1.3vw,15px);">Habla con la base de datos. Cada tabla tiene su clase PHP. En vez de SQL crudo se usa <span class="accent">Eloquent ORM</span>.</p>
+          <div style="margin-top:10px; font-family:'Courier New',monospace; font-size:11px; color:rgba(255,255,255,0.4); background:rgba(0,0,0,0.3); padding:6px 10px; border-radius:6px;">
+            Entrenamiento::where(<br>'usuario_id', 5)->get()
+          </div>
+        </div>
+        <div class="mvc-col">
+          <div class="mvc-letter">V</div>
+          <div class="mvc-name">Vista</div>
+          <div class="mvc-path">resources/views/</div>
+          <p style="font-size:clamp(12px,1.3vw,15px);">Todo lo que ve el usuario. Plantillas <span class="accent">Blade</span> que mezclan HTML con datos de forma limpia. No hacen cálculos, solo muestran.</p>
+          <div style="margin-top:10px; font-family:'Courier New',monospace; font-size:11px; color:rgba(255,255,255,0.4); background:rgba(0,0,0,0.3); padding:6px 10px; border-radius:6px;">
+            @foreach($entrenos)<br>&nbsp;&nbsp;{{ $e->tipo }}<br>@endforeach
+          </div>
+        </div>
+        <div class="mvc-col">
+          <div class="mvc-letter">C</div>
+          <div class="mvc-name">Controlador</div>
+          <div class="mvc-path">app/Http/Controllers/</div>
+          <p style="font-size:clamp(12px,1.3vw,15px);">El intermediario. Recibe la petición, consulta el Modelo y pasa los datos a la Vista. Aquí vive toda la <span class="accent">lógica de negocio</span>.</p>
+          <div style="margin-top:10px; font-family:'Courier New',monospace; font-size:11px; color:rgba(255,255,255,0.4); background:rgba(0,0,0,0.3); padding:6px 10px; border-radius:6px;">
+            return view('stats',<br>&nbsp;&nbsp;['datos' => $datos]);
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SLIDE 6 — FLUJO DE UNA PETICIÓN HTTP
+  ════════════════════════════════════════════════ -->
+  <div class="slide bg-dark" id="s6">
+    <div style="width:100%; max-width:1000px;">
+      <div class="label">04 — Backend · Flujo HTTP</div>
+      <h2 style="margin-bottom:10px;">Ejemplo real: el usuario abre Estadísticas</h2>
+      <div class="divider"></div>
+      <p style="margin-bottom:20px; font-size:clamp(13px,1.4vw,16px);">Así viaja una petición desde que el usuario hace clic hasta que ve la página renderizada:</p>
+
+      <div class="flow">
+        <div class="flow-step">
+          <div class="flow-num">1</div>
+          <span>El navegador envía: <span style="font-family:monospace; color:#4fc3f7;">GET /estadisticas</span></span>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">2</div>
+          <span>Apache recibe la petición y la pasa a <span style="font-family:monospace; color:#4fc3f7;">public/index.php</span> — punto de entrada de Laravel</span>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">3</div>
+          <span>Laravel busca en <span style="font-family:monospace; color:#4fc3f7;">routes/web.php</span> qué controlador gestiona esa URL</span>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">4</div>
+          <span><strong>Middleware auth</strong>: ¿hay sesión activa? → Sí, continúa. No → redirige a /login</span>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">5</div>
+          <span>Se ejecuta <span style="font-family:monospace; color:#4fc3f7;">MetricaController::index()</span> — consulta BD con Eloquent, calcula totales y tendencias</span>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">6</div>
+          <span>Blade compila <span style="font-family:monospace; color:#4fc3f7;">estadisticas.blade.php</span> con los datos → genera el HTML final</span>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">7</div>
+          <span>El navegador renderiza la página y lanza peticiones <strong>AJAX</strong> para cargar las gráficas de Chart.js sin recargar</span>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:14px; margin-top:18px;">
+        <div class="highlight-box" style="flex:1;">
+          <div style="font-size:12px; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:1px;">Base de datos</div>
+          <div class="big-number">8</div>
+          <div style="font-size:13px; color:rgba(255,255,255,0.6);">tablas propias</div>
+        </div>
+        <div class="highlight-box" style="flex:1;">
+          <div style="font-size:12px; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:1px;">Tests automáticos</div>
+          <div class="big-number">8</div>
+          <div style="font-size:13px; color:rgba(255,255,255,0.6);">tests PHPUnit</div>
+        </div>
+        <div class="highlight-box" style="flex:1;">
+          <div style="font-size:12px; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:1px;">Contenedores Docker</div>
+          <div class="big-number">3</div>
+          <div style="font-size:13px; color:rgba(255,255,255,0.6);">app · db · phpmyadmin</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SLIDE 7 — PROBLEMAS: PHP NATIVO Y MIGRACIÓN
+  ════════════════════════════════════════════════ -->
+  <div class="slide bg-mid" id="s7">
+    <div style="width:100%; max-width:1100px;">
+      <div class="label">05 — Dificultades</div>
+      <h2 style="margin-bottom:10px;">Problemas durante el desarrollo</h2>
+      <div class="divider"></div>
+
+      <div class="grid-2" style="margin-top:22px; align-items:start;">
+        <div class="problem-card">
+          <div class="problem-num">Problema 01</div>
+          <div class="problem-title">Empezar con PHP puro (sin framework)</div>
+          <ul style="margin-top:10px;">
+            <li>Cada página mezclaba SQL, validaciones, HTML y CSS en un mismo archivo</li>
+            <li>El login, las sesiones y la protección contra SQL injection había que programarlos desde cero</li>
+            <li>Añadir funcionalidades implicaba copiar y pegar código entre páginas</li>
+            <li>El código creció hasta ser imposible de mantener</li>
+          </ul>
+          <div style="margin-top:14px; padding:12px 16px; background:rgba(0,0,0,0.2); border-radius:8px; font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.6);">
+            Resultado: fue más eficiente reescribir la aplicación entera que intentar seguir sobre esa base.
+          </div>
+        </div>
+
+        <div class="problem-card">
+          <div class="problem-num">Problema 02</div>
+          <div class="problem-title">La migración a Laravel</div>
+          <p style="font-size:clamp(12px,1.3vw,15px); margin-bottom:10px;">Migrar no es copiar el código. Hay que reaprender cómo se organiza todo:</p>
+          <ul>
+            <li>La estructura de la BD pasa a <span class="accent">migraciones</span> versionadas con Git</li>
+            <li>Las consultas SQL se reescriben como código <span class="accent">Eloquent</span></li>
+            <li>Las páginas se reorganizan en <span class="accent">controladores + vistas Blade</span></li>
+            <li>Login, validación y sesiones los gestiona Laravel de forma segura por defecto</li>
+          </ul>
+          <div style="margin-top:14px; padding:12px 16px; background:rgba(42,81,153,0.15); border-radius:8px; font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.75);">
+            Resultado: base sólida, código limpio y mantenible. La inversión mereció la pena.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SLIDE 8 — PROBLEMA DOCKER
+  ════════════════════════════════════════════════ -->
+  <div class="slide bg-dark" id="s8">
+    <div style="width:100%; max-width:1100px;">
+      <div class="label">05 — Dificultades · Docker</div>
+      <h2 style="margin-bottom:6px;">De <span style="color:#ef4444;">18 segundos</span> por clic a <span style="color:#22c55e;">&lt; 200ms</span></h2>
+      <div class="divider"></div>
+
+      <div class="grid-2" style="margin-top:20px; align-items:start;">
+        <div>
+          <p style="font-size:clamp(13px,1.4vw,16px); margin-bottom:14px;">Al desplegar en Docker en Windows, cada página tardaba <strong>10-18 segundos</strong>. No era un problema, eran <strong>cinco problemas apilados</strong>:</p>
+          <table>
+            <thead>
+              <tr><th>Causa</th><th>Tiempo perdido</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Volume mount Windows (WSL2)</td><td>7 – 9 s</td></tr>
+              <tr><td>Sin OPcache activado</td><td>2 – 3 s</td></tr>
+              <tr><td>Modo debug activo (APP_DEBUG=true)</td><td>1 – 2 s</td></tr>
+              <tr><td>Sin caches de Laravel generados</td><td>0.5 s</td></tr>
+              <tr><td>Assets cargados desde CDN externo</td><td>1 – 3 s</td></tr>
+              <tr><td><strong>Total</strong></td><td><strong>10 – 18 segundos</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div class="problem-card">
+            <div class="problem-num">Causa principal</div>
+            <div class="problem-title">Volume mount + WSL2</div>
+            <p style="font-size:clamp(12px,1.3vw,15px);">Laravel carga más de <strong>300 archivos PHP</strong> del framework en cada petición. Con el volume mount activo, cada lectura cruzaba el puente de traducción WSL2 (Windows → Linux), sumando 7-9 segundos antes de ejecutar una sola línea de código.</p>
+          </div>
+          <div class="problem-card" style="border-left-color:#22c55e;">
+            <div class="problem-num" style="color:#22c55e;">La solución</div>
+            <div class="problem-title">Código dentro del contenedor</div>
+            <p style="font-size:clamp(12px,1.3vw,15px);">Se eliminó el volume mount. El código vive en el filesystem nativo Linux del contenedor (copiado en el <code style="color:#4fc3f7;">docker build</code>). Además: OPcache activado, modo producción, caches de Laravel generados al arrancar y todos los assets descargados dentro de la imagen.</p>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <div class="highlight-box" style="flex:1;">
+              <div style="font-size:12px; color:rgba(255,255,255,0.4); text-transform:uppercase;">Antes</div>
+              <div class="big-number" style="background:linear-gradient(135deg,#ef4444,#f97316); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">~15s</div>
+            </div>
+            <div class="highlight-box" style="flex:1;">
+              <div style="font-size:12px; color:rgba(255,255,255,0.4); text-transform:uppercase;">Después</div>
+              <div class="big-number" style="background:linear-gradient(135deg,#22c55e,#4fc3f7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">185ms</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SLIDE 9 — FAQ
+  ════════════════════════════════════════════════ -->
+  <div class="slide bg-mid" id="s9">
+    <div style="width:100%; max-width:1100px;">
+      <div class="label">06 — Preguntas frecuentes</div>
+      <h2 style="margin-bottom:10px;">FAQ</h2>
+      <div class="divider"></div>
+
+      <div class="grid-2" style="margin-top:20px; align-items:start;">
+        <div>
+          <div class="faq-item">
+            <div class="faq-q">¿Por qué Laravel y no otro framework?</div>
+            <div class="faq-a">Es el framework PHP más usado, con la mayor comunidad y documentación. Ofrece el equilibrio perfecto entre potencia y curva de aprendizaje para un proyecto académico de este nivel.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">¿Por qué PHP y no Node.js o Python?</div>
+            <div class="faq-a">PHP sigue siendo el lenguaje servidor más extendido en la web (WordPress, Wikipedia...). Laravel lo eleva al nivel de frameworks modernos. Además era el lenguaje con el que más experiencia tenía.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">¿Se pueden añadir más tipos de entrenamiento?</div>
+            <div class="faq-a">Sí. Solo hay que añadir el nuevo tipo en la validación del controlador y en la fórmula de calorías. La estructura de la base de datos no requiere ningún cambio.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">¿Funciona en móvil?</div>
+            <div class="faq-a">Sí. La interfaz está construida sobre Bootstrap 5, que es responsive por diseño y se adapta automáticamente a cualquier tamaño de pantalla.</div>
+          </div>
+        </div>
+        <div>
+          <div class="faq-item">
+            <div class="faq-q">¿La aplicación es segura?</div>
+            <div class="faq-a">Sí, a varios niveles: contraseñas con <strong>bcrypt</strong>, protección automática contra <strong>SQL injection</strong> con Eloquent, escape de datos en Blade contra <strong>XSS</strong>, tokens <strong>CSRF</strong> en todos los formularios y límite de 5 intentos de login por minuto contra ataques de fuerza bruta.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">¿Cómo se despliega la aplicación?</div>
+            <div class="faq-a">Con un solo comando: <code style="color:#4fc3f7;">docker-compose up --build</code>. Docker levanta automáticamente los tres contenedores: servidor web (PHP + Apache), base de datos MySQL y phpMyAdmin.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">¿Qué cubren los tests automáticos?</div>
+            <div class="faq-a">La aplicación tiene 8 tests con PHPUnit que verifican el cálculo de calorías por tipo, la validación de objetivos y el cálculo de estadísticas con y sin datos. Detectan regresiones automáticamente si se modifica el código.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SLIDE 10 — FIN
+  ════════════════════════════════════════════════ -->
+  <div class="slide bg-cover" id="s10">
+    <div style="text-align:center; max-width:700px;">
+      <div class="final-circle">🏋️</div>
+      <div class="label" style="font-size:13px;">SinergyFit · Proyecto Final DAW</div>
+      <h1 style="font-size:clamp(40px,6vw,72px); font-weight:900; margin-bottom:16px;">Muchas gracias</h1>
+      <div class="divider" style="margin: 20px auto;"></div>
+      <p style="font-size:clamp(16px,2vw,22px); color:rgba(255,255,255,0.6); margin-bottom:32px;">
+        Quedo a vuestra disposición para responder cualquier pregunta.
+      </p>
+      <div class="badge-row" style="justify-content:center;">
+        <span class="badge">Laravel 11</span>
+        <span class="badge">PHP 8.2</span>
+        <span class="badge">MySQL 8.0</span>
+        <span class="badge">Docker</span>
+        <span class="badge">PHPUnit</span>
+      </div>
+      <p style="margin-top: 40px; color: rgba(255,255,255,0.25); font-size:13px; letter-spacing:1px;">
+        Juanfri &nbsp;·&nbsp; 2026
+      </p>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- ── NAVIGATION ── -->
+<div class="nav">
+  <button id="prev" title="Anterior (←)">&#8592;</button>
+  <span class="counter" id="counter">1 / 10</span>
+  <button id="next" title="Siguiente (→)">&#8594;</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  function goTo(n) {
+    slides[current].classList.remove('active');
+    current = (n + total) % total;
+    slides[current].classList.add('active');
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
+  }
+
+  document.getElementById('next').addEventListener('click', () => goTo(current + 1));
+  document.getElementById('prev').addEventListener('click', () => goTo(current - 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') goTo(current + 1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                    goTo(current - 1);
+  });
+
+  // Initial progress bar
+  document.getElementById('progress').style.width = (1 / total * 100) + '%';
+</script>
+</body>
+</html>

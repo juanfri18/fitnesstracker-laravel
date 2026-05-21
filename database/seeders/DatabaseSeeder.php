@@ -21,41 +21,41 @@ class DatabaseSeeder extends Seeder
         // =============================================
         // 1. CREAR 5 USUARIOS DE PRUEBA
         // =============================================
-        $user1 = \App\Models\User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => bcrypt('password'),
+        $user1 = \App\Models\Usuario::factory()->create([
+            'nombre' => 'Test User',
+            'correo' => 'test@example.com',
+            'contrasena' => bcrypt('password'),
         ]);
 
-        $user2 = \App\Models\User::factory()->create([
-            'name' => 'María López',
-            'email' => 'maria@example.com',
-            'password' => bcrypt('password'),
+        $user2 = \App\Models\Usuario::factory()->create([
+            'nombre' => 'María López',
+            'correo' => 'maria@example.com',
+            'contrasena' => bcrypt('password'),
         ]);
 
-        $user3 = \App\Models\User::factory()->create([
-            'name' => 'Carlos García',
-            'email' => 'carlos@example.com',
-            'password' => bcrypt('password'),
+        $user3 = \App\Models\Usuario::factory()->create([
+            'nombre' => 'Carlos García',
+            'correo' => 'carlos@example.com',
+            'contrasena' => bcrypt('password'),
         ]);
 
-        $user4 = \App\Models\User::factory()->create([
-            'name' => 'Laura Fernández',
-            'email' => 'laura@example.com',
-            'password' => bcrypt('password'),
+        $user4 = \App\Models\Usuario::factory()->create([
+            'nombre' => 'Laura Fernández',
+            'correo' => 'laura@example.com',
+            'contrasena' => bcrypt('password'),
         ]);
 
-        $user5 = \App\Models\User::factory()->create([
-            'name' => 'Pedro Martínez',
-            'email' => 'pedro@example.com',
-            'password' => bcrypt('password'),
+        $user5 = \App\Models\Usuario::factory()->create([
+            'nombre' => 'Pedro Martínez',
+            'correo' => 'pedro@example.com',
+            'contrasena' => bcrypt('password'),
         ]);
 
         $usuarios = [$user1, $user2, $user3, $user4, $user5];
 
         // Crear métricas para el usuario principal
         \App\Models\Metrica::create([
-            'user_id' => $user1->id,
+            'usuario_id' => $user1->id,
             'peso' => 75.5,
             'altura' => 180,
             'fecha_registro' => now(),
@@ -106,7 +106,7 @@ class DatabaseSeeder extends Seeder
 
         // -- User 1: 3 entrenamientos --
         $entrenamiento1 = \App\Models\Entrenamiento::create([
-            'user_id' => $user1->id,
+            'usuario_id' => $user1->id,
             'tipo' => 'Fuerza',
             'fecha' => now()->subDay(),
             'duracion_minutos' => 60,
@@ -121,7 +121,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\Entrenamiento::create([
-            'user_id' => $user1->id,
+            'usuario_id' => $user1->id,
             'tipo' => 'Carrera',
             'fecha' => now()->subDays(2),
             'duracion_minutos' => 45,
@@ -130,7 +130,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\Entrenamiento::create([
-            'user_id' => $user1->id,
+            'usuario_id' => $user1->id,
             'tipo' => 'Caminata',
             'fecha' => now()->subDays(4),
             'duracion_minutos' => 30,
@@ -140,7 +140,7 @@ class DatabaseSeeder extends Seeder
 
         // -- User 2: 3 entrenamientos --
         $ent4 = \App\Models\Entrenamiento::create([
-            'user_id' => $user2->id,
+            'usuario_id' => $user2->id,
             'tipo' => 'Fuerza',
             'fecha' => now()->subDays(1),
             'duracion_minutos' => 50,
@@ -155,7 +155,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\Entrenamiento::create([
-            'user_id' => $user2->id,
+            'usuario_id' => $user2->id,
             'tipo' => 'Carrera',
             'fecha' => now()->subDays(3),
             'duracion_minutos' => 35,
@@ -164,7 +164,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\Entrenamiento::create([
-            'user_id' => $user2->id,
+            'usuario_id' => $user2->id,
             'tipo' => 'Caminata',
             'fecha' => now()->subDays(5),
             'duracion_minutos' => 40,
@@ -174,7 +174,7 @@ class DatabaseSeeder extends Seeder
 
         // -- User 3: 2 entrenamientos --
         $ent7 = \App\Models\Entrenamiento::create([
-            'user_id' => $user3->id,
+            'usuario_id' => $user3->id,
             'tipo' => 'Fuerza',
             'fecha' => now()->subDays(2),
             'duracion_minutos' => 70,
@@ -186,7 +186,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\Entrenamiento::create([
-            'user_id' => $user3->id,
+            'usuario_id' => $user3->id,
             'tipo' => 'Carrera',
             'fecha' => now()->subDays(6),
             'duracion_minutos' => 55,
@@ -196,7 +196,7 @@ class DatabaseSeeder extends Seeder
 
         // -- User 4: 2 entrenamientos --
         \App\Models\Entrenamiento::create([
-            'user_id' => $user4->id,
+            'usuario_id' => $user4->id,
             'tipo' => 'Caminata',
             'fecha' => now()->subDays(1),
             'duracion_minutos' => 60,
@@ -205,7 +205,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $ent10 = \App\Models\Entrenamiento::create([
-            'user_id' => $user4->id,
+            'usuario_id' => $user4->id,
             'tipo' => 'Fuerza',
             'fecha' => now()->subDays(3),
             'duracion_minutos' => 45,
@@ -218,7 +218,7 @@ class DatabaseSeeder extends Seeder
 
         // -- User 5: 2 entrenamientos --
         \App\Models\Entrenamiento::create([
-            'user_id' => $user5->id,
+            'usuario_id' => $user5->id,
             'tipo' => 'Carrera',
             'fecha' => now()->subDays(1),
             'duracion_minutos' => 25,
@@ -227,7 +227,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\Entrenamiento::create([
-            'user_id' => $user5->id,
+            'usuario_id' => $user5->id,
             'tipo' => 'Caminata',
             'fecha' => now()->subDays(7),
             'duracion_minutos' => 50,
@@ -239,7 +239,7 @@ class DatabaseSeeder extends Seeder
         // 4. CREAR 5+ OBJETIVOS (repartidos entre usuarios)
         // =============================================
         \App\Models\Objetivo::create([
-            'user_id' => $user1->id,
+            'usuario_id' => $user1->id,
             'tipo_objetivo' => 'Días Entrenados',
             'valor_objetivo' => 4,
             'estado' => 'en_progreso',
@@ -248,7 +248,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\Objetivo::create([
-            'user_id' => $user1->id,
+            'usuario_id' => $user1->id,
             'tipo_objetivo' => 'Peso Corporal',
             'valor_objetivo' => 70,
             'estado' => 'en_progreso',
@@ -257,7 +257,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\Objetivo::create([
-            'user_id' => $user2->id,
+            'usuario_id' => $user2->id,
             'tipo_objetivo' => 'Volumen (kg levantados)',
             'valor_objetivo' => 500,
             'estado' => 'en_progreso',
@@ -266,7 +266,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\Objetivo::create([
-            'user_id' => $user3->id,
+            'usuario_id' => $user3->id,
             'tipo_objetivo' => 'Días Entrenados',
             'valor_objetivo' => 10,
             'estado' => 'en_progreso',
@@ -275,7 +275,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\Objetivo::create([
-            'user_id' => $user4->id,
+            'usuario_id' => $user4->id,
             'tipo_objetivo' => 'Peso Corporal',
             'valor_objetivo' => 65,
             'estado' => 'en_progreso',

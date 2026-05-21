@@ -116,8 +116,8 @@
                         $all_logros = \App\Models\Logro::all();
                         $mis_logros = $usuario->logros->pluck('id')->toArray();
                         $total_puntos = $usuario->logros->sum('puntos');
-                        $racha_actual = $usuario->racha_actual ?? 0;
-                        $mejor_racha = $usuario->mejor_racha ?? 0;
+                        $racha_actual = $usuario->calcularRacha();
+                        $mejor_racha = max($usuario->mejor_racha ?? 0, $racha_actual);
                     @endphp
                     
                     <div class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3 border-bottom pb-2 gap-2">

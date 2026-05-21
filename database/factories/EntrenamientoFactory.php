@@ -9,15 +9,10 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class EntrenamientoFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            'user_id' => \App\Models\User::factory(),
+            'usuario_id' => \App\Models\Usuario::factory(),
             'fecha' => fake()->date(),
             'tipo' => fake()->randomElement(['Fuerza', 'Carrera', 'Caminata']),
             'duracion_minutos' => fake()->numberBetween(10, 120),

@@ -93,8 +93,7 @@ class Usuario extends Authenticatable
     public function logros()
     {
         return $this->belongsToMany(Logro::class, 'logro_usuario', 'usuario_id', 'logro_id')
-            ->withPivot('creado_en', 'actualizado_en') // Use custom timestamps if Laravel doesn't pick up the model's constants automatically for pivots
-            ->withTimestamps();
+            ->withTimestamps('creado_en', 'actualizado_en');
     }
 
     /**

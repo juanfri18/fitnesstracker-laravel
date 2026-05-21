@@ -42,6 +42,6 @@ class Entrenamiento extends Model
     {
         return $this->belongsToMany(Ejercicio::class, 'entrenamiento_detalles')
                     ->withPivot(['series', 'repeticiones', 'carga_kg'])
-                    ->withTimestamps();
+                    ->withTimestamps('creado_en', 'actualizado_en');
     }
 }

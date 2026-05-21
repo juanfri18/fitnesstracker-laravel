@@ -42,6 +42,12 @@ Podrás desbloquear "Medallas" automáticamente cuando alcances hitos matemátic
 
 ---
 
+## 📅 Calendario de Entrenamientos
+Accede a la sección **Calendario** desde la barra lateral para ver todos tus entrenamientos organizados visualmente por fecha y tipo. Cada color representa un tipo: rojo (Fuerza), verde (Carrera) y amarillo (Caminata). Haz clic en cualquier día para añadir un nuevo registro con la fecha preseleccionada.
+> **[PEGAR CAPTURA DE PANTALLA AQUÍ - Vista de Calendario Mensual con eventos]**
+
+---
+
 ## 🔧 Problemas Frecuentes y Soluciones (Troubleshooting)
 
 | Problema | Causa Posible | Solución |

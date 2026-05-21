@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\User;
+use App\Models\Usuario;
 use App\Models\Entrenamiento;
 use App\Models\Ejercicio;
 use Carbon\Carbon;
@@ -12,12 +12,12 @@ class AddDemoDataToUserSeeder extends Seeder
 {
     public function run(): void
     {
-        $user = User::firstOrCreate(
-            ['email' => 'Juanfranciscocort@gmail.com'],
+        $user = Usuario::firstOrCreate(
+            ['correo' => 'Juanfranciscocort@gmail.com'],
             [
-                'name' => 'Juanfrancisco',
+                'nombre' => 'Juanfrancisco',
                 'apellidos' => 'Cortejosa',
-                'password' => bcrypt('12345678'),
+                'contrasena' => bcrypt('12345678'),
                 'edad' => 22,
                 'altura' => 171,
                 'peso' => 72.5,
@@ -59,11 +59,11 @@ class AddDemoDataToUserSeeder extends Seeder
             
             $sensacion = rand(5, 10);
             $notas = "Sensación: " . $sensacion . "/10";
-            if ($distancia > 0) $notas .= " | Distancia: {$distancia}km";
+            if ($distancia > 0) $notes = $notas .= " | Distancia: {$distancia}km";
             if ($calorias > 0) $notas .= " | Aprox: " . round($calorias) . " kcal";
 
             $entrenamiento = Entrenamiento::create([
-                'user_id' => $user->id,
+                'usuario_id' => $user->id,
                 'tipo' => $tipo,
                 'fecha' => $fecha,
                 'duracion_minutos' => $duracion,
@@ -88,6 +88,6 @@ class AddDemoDataToUserSeeder extends Seeder
             }
         }
         
-        echo "¡30 entrenamientos añadidos a {$user->email}!\n";
+        echo "¡30 entrenamientos añadidos a {$user->correo}!\n";
     }
 }

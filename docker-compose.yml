@@ -9,14 +9,25 @@ services:
     ports:
       - "8000:80"
     volumes:
-      - .:/var/www/html
+      # Solo persistimos las fotos de perfil subidas por los usuarios.
+      # El código fuente vive en la imagen (COPY en Dockerfile) — no montamos
+      # .:/var/www/html para evitar el puente WSL2 lento en Windows.
+      - fitness_storage:/var/www/html/storage/app/public
     environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - LOG_LEVEL=error
+      - APP_URL=http://localhost:8000
+      - APP_KEY=base64:ZdGxVCtE5kIuFNy8pA4oKZV51H/5MFj2MWywma1msHM=
       - DB_CONNECTION=mysql
       - DB_HOST=db
       - DB_PORT=3306
       - DB_DATABASE=fitnesstracker
       - DB_USERNAME=sail
       - DB_PASSWORD=password
+      - CACHE_DRIVER=file
+      - SESSION_DRIVER=file
+      - QUEUE_CONNECTION=sync
     depends_on:
       - db
 
@@ -49,3 +60,4 @@ services:
 
 volumes:
   fitness_db_data:
+  fitness_storage:

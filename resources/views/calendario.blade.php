@@ -39,8 +39,8 @@
 
 @section('scripts_extra')
 <!-- FullCalendar JS v6 (Incluye estilos por defecto) -->
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/locales-all.global.min.js'></script>
+<script src='/vendor/fullcalendar/index.global.min.js'></script>
+<script src='/vendor/fullcalendar/locales-all.global.min.js'></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
