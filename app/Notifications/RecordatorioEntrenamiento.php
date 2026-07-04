@@ -36,7 +36,7 @@ class RecordatorioEntrenamiento extends Notification
     {
         return (new MailMessage)
                     ->subject('¡Te echamos de menos en FitnessTracker!')
-                    ->greeting('¡Hola, ' . $notifiable->name . '!')
+                    ->greeting('¡Hola, ' . $notifiable->nombre . '!')
                     ->line('Hemos notado que llevas unos días sin registrar un entrenamiento.')
                     ->action('Volver a Entrenar', url('/registro'))
                     ->line('¡Mantén tu racha viva y no dejes que el progreso se estanque!');

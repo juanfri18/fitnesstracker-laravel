@@ -128,7 +128,6 @@ class EntrenamientoController extends Controller
 
                     $detalles[] = [
                         'entrenamiento_id' => $entrenamiento_id,
-                        'grupo_muscular' => $grupo,
                         'ejercicio_id' => $ej_model->id,
                         'series' => empty($series[$index]) ? null : intval($series[$index]),
                         'repeticiones' => empty($reps[$index]) ? null : intval($reps[$index]),
@@ -146,33 +145,29 @@ class EntrenamientoController extends Controller
 
         // --- 3.5. GESTIÓN DE RACHAS (STREAKS) ---
         $usuario = \App\Models\Usuario::find(Auth::id());
+        $racha = $usuario->racha ?? \App\Models\Racha::create(['usuario_id' => $usuario->id]);
         $fecha_entreno = \Carbon\Carbon::parse($request->fecha)->startOfDay();
-        
-        if ($usuario->ultima_actividad_fecha) {
-            $ultima = \Carbon\Carbon::parse($usuario->ultima_actividad_fecha)->startOfDay();
+
+        if ($racha->ultima_actividad_fecha) {
+            $ultima = \Carbon\Carbon::parse($racha->ultima_actividad_fecha)->startOfDay();
             $diferencia_dias = $ultima->diffInDays($fecha_entreno, false); 
             
             if ($diferencia_dias == 1) {
-                // Entrenó justo al día siguiente
-                $usuario->racha_actual += 1;
-                $usuario->ultima_actividad_fecha = $fecha_entreno->toDateString();
+                $racha->racha_actual += 1;
+                $racha->ultima_actividad_fecha = $fecha_entreno->toDateString();
             } elseif ($diferencia_dias > 1) {
-                // Rompió la racha
-                $usuario->racha_actual = 1;
-                $usuario->ultima_actividad_fecha = $fecha_entreno->toDateString();
+                $racha->racha_actual = 1;
+                $racha->ultima_actividad_fecha = $fecha_entreno->toDateString();
             }
-            // Si diff == 0, entrena 2 veces el mismo día, no sube la racha ni cambia la fecha (ya es hoy)
         } else {
-            // Su primer registro absoluto
-            $usuario->racha_actual = 1;
-            $usuario->ultima_actividad_fecha = $fecha_entreno->toDateString();
+            $racha->racha_actual = 1;
+            $racha->ultima_actividad_fecha = $fecha_entreno->toDateString();
         }
-        
-        // Récord histórico
-        if ($usuario->racha_actual > $usuario->mejor_racha) {
-            $usuario->mejor_racha = $usuario->racha_actual;
+
+        if ($racha->racha_actual > $racha->mejor_racha) {
+            $racha->mejor_racha = $racha->racha_actual;
         }
-        $usuario->save();
+        $racha->save();
 
         // 4. GAMIFICACIÓN: Otorgar logros pasivamente
         
@@ -245,7 +240,12 @@ class EntrenamientoController extends Controller
             return redirect('/');
         }
 
-        return view('editar', ['entreno' => $entreno->toArray()]);
+        $ejercicios = \App\Models\Ejercicio::all()->groupBy('grupo_muscular');
+
+        return view('editar', [
+            'entreno' => $entreno->toArray(),
+            'ejercicios' => $ejercicios
+        ]);
     }
 
     // 2. Guardar los cambios en la BD
@@ -304,7 +304,6 @@ class EntrenamientoController extends Controller
 
                     $detalles[] = [
                         'entrenamiento_id' => $id,
-                        'grupo_muscular' => $grupo,
                         'ejercicio_id' => $ej_model->id,
                         'series' => empty($series[$index]) ? null : intval($series[$index]),
                         'repeticiones' => empty($reps[$index]) ? null : intval($reps[$index]),

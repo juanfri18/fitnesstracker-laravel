@@ -63,6 +63,10 @@ class AuthController extends Controller
             'contrasena' => Hash::make($request->contrasena),
         ]);
 
+        // Crear perfil y racha vacíos para el nuevo usuario
+        \App\Models\PerfilUsuario::create(['usuario_id' => $usuario->id]);
+        \App\Models\Racha::create(['usuario_id' => $usuario->id]);
+
         // Auto-login después de registrarse
         Auth::login($usuario);
 

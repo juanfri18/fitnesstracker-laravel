@@ -9,7 +9,7 @@ class Ejercicio extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = ['nombre', 'grupo_muscular'];
 
     const CREATED_AT = 'creado_en';
     const UPDATED_AT = 'actualizado_en';
@@ -18,6 +18,6 @@ class Ejercicio extends Model
     {
         return $this->belongsToMany(Entrenamiento::class, 'entrenamiento_detalles')
                     ->withPivot(['series', 'repeticiones', 'carga_kg'])
-                    ->withTimestamps();
+                    ->withTimestamps('creado_en', 'actualizado_en');
     }
 }

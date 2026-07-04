@@ -81,12 +81,12 @@
                                                 <label class="small fw-bold">Grupo Muscular</label>
                                                 <select class="form-select group-select" name="grupo_muscular[]" onchange="loadEx(this)">
                                                     <option value="">Seleccione...</option>
-                                                    <option value="pecho" {{ $detalle['grupo_muscular'] == 'pecho' ? 'selected' : '' }}>Pecho</option>
-                                                    <option value="espalda" {{ $detalle['grupo_muscular'] == 'espalda' ? 'selected' : '' }}>Espalda</option>
-                                                    <option value="pierna" {{ $detalle['grupo_muscular'] == 'pierna' ? 'selected' : '' }}>Pierna</option>
-                                                    <option value="hombro" {{ $detalle['grupo_muscular'] == 'hombro' ? 'selected' : '' }}>Hombro</option>
-                                                    <option value="brazo" {{ $detalle['grupo_muscular'] == 'brazo' ? 'selected' : '' }}>Brazos (Bíceps/Tríceps)</option>
-                                                    <option value="core" {{ $detalle['grupo_muscular'] == 'core' ? 'selected' : '' }}>Core / Abdominales</option>
+                                                    <option value="pecho" {{ ($detalle['ejercicio']['grupo_muscular'] ?? '') == 'pecho' ? 'selected' : '' }}>Pecho</option>
+                                                    <option value="espalda" {{ ($detalle['ejercicio']['grupo_muscular'] ?? '') == 'espalda' ? 'selected' : '' }}>Espalda</option>
+                                                    <option value="pierna" {{ ($detalle['ejercicio']['grupo_muscular'] ?? '') == 'pierna' ? 'selected' : '' }}>Pierna</option>
+                                                    <option value="hombro" {{ ($detalle['ejercicio']['grupo_muscular'] ?? '') == 'hombro' ? 'selected' : '' }}>Hombro</option>
+                                                    <option value="brazo" {{ ($detalle['ejercicio']['grupo_muscular'] ?? '') == 'brazo' ? 'selected' : '' }}>Brazos (Bíceps/Tríceps)</option>
+                                                    <option value="core" {{ ($detalle['ejercicio']['grupo_muscular'] ?? '') == 'core' ? 'selected' : '' }}>Core / Abdominales</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-6">
@@ -215,14 +215,9 @@
         }
     }
     
-    const exercises = { 
-        pecho: ['Press Banca', 'Aperturas', 'Flexiones', 'Press Inclinado', 'Cruce de Poleas'], 
-        espalda: ['Dominadas', 'Remo con Barra', 'Jalón al Pecho', 'Remo en Polea Baja', 'Peso Muerto'],
-        pierna: ['Sentadillas', 'Prensa', 'Zancadas', 'Curl Femoral', 'Extensión de Cuádriceps', 'Gemelos'],
-        hombro: ['Press Militar', 'Elevaciones Laterales', 'Pájaros', 'Elevaciones Frontales'],
-        brazo: ['Curl de Bíceps', 'Curl Martillo', 'Press Francés', 'Extensión de Tríceps Polea', 'Fondos'],
-        core: ['Plancha', 'Crunch', 'Elevación de Piernas', 'Rueda Abdominal']
-    };
+    const exercises = @json($ejercicios->mapWithKeys(function($items, $key) {
+        return [strtolower($key) => $items->pluck('nombre')];
+    }));
 
     function loadEx(selectElement) {
         const g = selectElement.value;

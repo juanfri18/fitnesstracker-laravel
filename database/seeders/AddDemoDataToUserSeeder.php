@@ -16,22 +16,37 @@ class AddDemoDataToUserSeeder extends Seeder
             ['correo' => 'Juanfranciscocort@gmail.com'],
             [
                 'nombre' => 'Juanfrancisco',
-                'apellidos' => 'Cortejosa',
                 'contrasena' => bcrypt('12345678'),
-                'edad' => 22,
-                'altura' => 171,
-                'peso' => 72.5,
-                'nivel_actividad' => 'Moderado',
-                'genero' => 'Hombre',
             ]
         );
 
+        // Crear o actualizar perfil
+        \App\Models\PerfilUsuario::updateOrCreate(
+            ['usuario_id' => $user->id],
+            [
+                'apellidos' => 'Cortejosa',
+                'edad' => 22,
+                'altura' => 171,
+                'genero' => 'Hombre',
+                'nivel_actividad' => 'Moderado',
+            ]
+        );
+
+        // Crear racha si no existe
+        \App\Models\Racha::firstOrCreate(['usuario_id' => $user->id]);
+
+        // Crear métrica con el peso
+        \App\Models\Metrica::firstOrCreate(
+            ['usuario_id' => $user->id, 'fecha_registro' => now()->toDateString()],
+            ['peso' => 72.5, 'altura' => 171]
+        );
+
         // Asegurar que existan algunos ejercicios básicos
-        $ej1 = Ejercicio::firstOrCreate(['nombre' => 'Press de Banca'], ['grupo_muscular' => 'Pecho']);
-        $ej2 = Ejercicio::firstOrCreate(['nombre' => 'Sentadillas'], ['grupo_muscular' => 'Piernas']);
-        $ej3 = Ejercicio::firstOrCreate(['nombre' => 'Dominadas'], ['grupo_muscular' => 'Espalda']);
-        $ej4 = Ejercicio::firstOrCreate(['nombre' => 'Peso Muerto'], ['grupo_muscular' => 'Piernas']);
-        $ej5 = Ejercicio::firstOrCreate(['nombre' => 'Press Militar'], ['grupo_muscular' => 'Hombros']);
+        $ej1 = Ejercicio::firstOrCreate(['nombre' => 'Press de Banca (Plano con barra)'], ['grupo_muscular' => 'pecho']);
+        $ej2 = Ejercicio::firstOrCreate(['nombre' => 'Sentadillas Traseras (Squats clásicos)'], ['grupo_muscular' => 'pierna']);
+        $ej3 = Ejercicio::firstOrCreate(['nombre' => 'Dominadas (Pronas/Supinas)'], ['grupo_muscular' => 'espalda']);
+        $ej4 = Ejercicio::firstOrCreate(['nombre' => 'Peso Muerto (Convencional)'], ['grupo_muscular' => 'espalda']);
+        $ej5 = Ejercicio::firstOrCreate(['nombre' => 'Press Militar (De pie con barra)'], ['grupo_muscular' => 'hombro']);
 
         $tipos = ['Fuerza', 'Carrera', 'Caminata'];
         
@@ -79,7 +94,6 @@ class AddDemoDataToUserSeeder extends Seeder
                 foreach ($ejerciciosSeleccionados as $idx) {
                     $ej = $ejerciciosDisponibles[$idx];
                     $entrenamiento->ejercicios()->attach($ej->id, [
-                        'grupo_muscular' => $ej->grupo_muscular,
                         'series' => rand(3, 4),
                         'repeticiones' => rand(8, 12),
                         'carga_kg' => rand(20, 100),
@@ -88,6 +102,34 @@ class AddDemoDataToUserSeeder extends Seeder
             }
         }
         
+        // =============================================
+        // ASIGNAR LOGROS AL USUARIO DEMO
+        // =============================================
+        $logrosModel = \App\Models\Logro::all();
+        $numEntrenamientos = $user->entrenamientos()->count();
+        if ($numEntrenamientos >= 1) {
+            $l = $logrosModel->where('criterio', \App\Models\Logro::CRITERIO_PRIMER_ENTRENO)->first();
+            if ($l) $user->logros()->syncWithoutDetaching([$l->id]);
+        }
+        
+        $numFuerza = $user->entrenamientos()->where('tipo', 'Fuerza')->count();
+        if ($numFuerza >= 5) {
+            $l = $logrosModel->where('criterio', \App\Models\Logro::CRITERIO_5_SESIONES_FUERZA)->first();
+            if ($l) $user->logros()->syncWithoutDetaching([$l->id]);
+        }
+        
+        $minutosTotales = $user->entrenamientos()->sum('duracion_minutos');
+        if ($minutosTotales >= 1000) {
+            $l = $logrosModel->where('criterio', \App\Models\Logro::CRITERIO_1000_MINUTOS)->first();
+            if ($l) $user->logros()->syncWithoutDetaching([$l->id]);
+        }
+        
+        $racha = $user->calcularRacha();
+        if ($racha >= 3) {
+            $l = $logrosModel->where('criterio', \App\Models\Logro::CRITERIO_RACHA_3_DIAS)->first();
+            if ($l) $user->logros()->syncWithoutDetaching([$l->id]);
+        }
+
         echo "¡30 entrenamientos añadidos a {$user->correo}!\n";
     }
 }

@@ -17,21 +17,37 @@
 <div class="container-fluid px-4 mt-4">
     <div class="row g-4 align-items-start">
         <div class="col-lg-4 sticky-lg-top" style="top: 80px; padding-top: 80px;">
+            @php
+                $perfil = Auth::user()->perfil;
+                $metrica = Auth::user()->metricaActual;
+                $peso = $metrica->peso ?? null;
+                $altura = $perfil->altura ?? null;
+                $edad = $perfil->edad ?? null;
+                $genero = $perfil->genero ?? null;
+                $grasa = null;
+                if ($peso && $altura && $edad && $genero) {
+                    $altura_metros = $altura / 100;
+                    $imc = $peso / ($altura_metros * $altura_metros);
+                    $factor_genero = ($genero === 'Hombre') ? 1 : 0;
+                    $grasa = (1.20 * $imc) + (0.23 * $edad) - (10.8 * $factor_genero) - 5.4;
+                    $grasa = max(1, min(60, round($grasa, 1)));
+                }
+            @endphp
             <div class="card profile-card p-4 shadow-sm mb-4">
                 <div class="text-center mb-3">
                     <div class="rounded-circle mx-auto mb-2 overflow-hidden" style="width: 80px; height: 80px; background: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
-                        @if(Auth::user()->foto)
-                            <img src="{{ asset('storage/' . Auth::user()->foto) }}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                        @if($perfil && $perfil->foto)
+                            <img src="{{ asset('storage/' . $perfil->foto) }}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
                         @else
                             <i class="fas fa-user"></i>
                         @endif
                     </div>
                     <h4 class="fw-bold mb-0">¡Hola, {{ Auth::user()->nombre }}!</h4>
-                    <p class="text-muted small">{{ Auth::user()->biografia ? '"'.Auth::user()->biografia.'"' : '' }}</p>
+                    <p class="text-muted small">{{ ($perfil && $perfil->biografia) ? '"'.$perfil->biografia.'"' : '' }}</p>
                 </div>
                 <div class="row g-2 mb-4">
-                    <div class="col-6"><div class="stat-badge"><small class="d-block text-muted">Peso</small><span class="stat-value">{{ Auth::user()->peso ?? '-- '}} kg</span></div></div>
-                    <div class="col-6"><div class="stat-badge"><small class="d-block text-muted">Grasa</small><span class="stat-value">{{ Auth::user()->grasa ?? '-- '}} %</span></div></div>
+                    <div class="col-6"><div class="stat-badge"><small class="d-block text-muted">Peso</small><span class="stat-value">{{ $peso ?? '-- '}} kg</span></div></div>
+                    <div class="col-6"><div class="stat-badge"><small class="d-block text-muted">Grasa</small><span class="stat-value">{{ $grasa ?? '-- '}} %</span></div></div>
                 </div>
                 <h6 class="fw-bold small text-muted">Progreso Semanal</h6>
                 <canvas id="miniChart" height="150"></canvas>

@@ -73,7 +73,7 @@
                         <li class="list-group-item d-flex justify-content-between align-items-center bg-light border-bottom">
                             <span>
                                 <span class="fw-bold text-dark">{{ $detalle['ejercicio']['nombre'] ?? 'Ejercicio' }}</span>
-                                <span class="text-muted ms-1">({{ $detalle['grupo_muscular'] }})</span>
+                                <span class="text-muted ms-1">({{ $detalle['ejercicio']['grupo_muscular'] ?? '' }})</span>
                             </span>
                             <span class="badge bg-secondary rounded-pill">
                                 {{ $detalle['series'] }}x{{ $detalle['repeticiones'] }} @if($detalle['carga_kg']) | {{ $detalle['carga_kg'] }}kg @endif

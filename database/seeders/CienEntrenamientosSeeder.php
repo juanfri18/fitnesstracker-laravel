@@ -23,16 +23,16 @@ class CienEntrenamientosSeeder extends Seeder
 
         // Asegurar ejercicios básicos para sesiones de fuerza
         $ejercicios = [
-            Ejercicio::firstOrCreate(['nombre' => 'Press de Banca'],    ['grupo_muscular' => 'Pecho']),
-            Ejercicio::firstOrCreate(['nombre' => 'Sentadillas'],        ['grupo_muscular' => 'Piernas']),
-            Ejercicio::firstOrCreate(['nombre' => 'Dominadas'],          ['grupo_muscular' => 'Espalda']),
-            Ejercicio::firstOrCreate(['nombre' => 'Peso Muerto'],        ['grupo_muscular' => 'Piernas']),
-            Ejercicio::firstOrCreate(['nombre' => 'Press Militar'],      ['grupo_muscular' => 'Hombros']),
-            Ejercicio::firstOrCreate(['nombre' => 'Curl de Bíceps'],     ['grupo_muscular' => 'Bíceps']),
-            Ejercicio::firstOrCreate(['nombre' => 'Extensión de Tríceps'], ['grupo_muscular' => 'Tríceps']),
-            Ejercicio::firstOrCreate(['nombre' => 'Remo con Barra'],     ['grupo_muscular' => 'Espalda']),
-            Ejercicio::firstOrCreate(['nombre' => 'Hip Thrust'],         ['grupo_muscular' => 'Glúteos']),
-            Ejercicio::firstOrCreate(['nombre' => 'Fondos en Paralelas'], ['grupo_muscular' => 'Tríceps']),
+            Ejercicio::firstOrCreate(['nombre' => 'Press de Banca (Plano con barra)'],    ['grupo_muscular' => 'pecho']),
+            Ejercicio::firstOrCreate(['nombre' => 'Sentadillas Traseras (Squats clásicos)'], ['grupo_muscular' => 'pierna']),
+            Ejercicio::firstOrCreate(['nombre' => 'Dominadas (Pronas/Supinas)'],          ['grupo_muscular' => 'espalda']),
+            Ejercicio::firstOrCreate(['nombre' => 'Peso Muerto (Convencional)'],        ['grupo_muscular' => 'espalda']),
+            Ejercicio::firstOrCreate(['nombre' => 'Press Militar (De pie con barra)'],      ['grupo_muscular' => 'hombro']),
+            Ejercicio::firstOrCreate(['nombre' => 'Curl de Bíceps con Barra (Barra recta o Z)'], ['grupo_muscular' => 'brazo']),
+            Ejercicio::firstOrCreate(['nombre' => 'Extensión de Tríceps en Polea (Con barra recta o cuerda)'], ['grupo_muscular' => 'brazo']),
+            Ejercicio::firstOrCreate(['nombre' => 'Remo con Barra (Inclinado)'],     ['grupo_muscular' => 'espalda']),
+            Ejercicio::firstOrCreate(['nombre' => 'Zancadas con Mancuernas (Desplantes)'], ['grupo_muscular' => 'pierna']),
+            Ejercicio::firstOrCreate(['nombre' => 'Fondos de Tríceps (En banco o paralelas con torso vertical)'],  ['grupo_muscular' => 'brazo']),
         ];
 
         // 100 tipos: 50 Fuerza, 35 Caminata, 15 Carrera
@@ -68,7 +68,6 @@ class CienEntrenamientosSeeder extends Seeder
                 foreach ((array) $keys as $k) {
                     $ej = $ejercicios[$k];
                     $entrenamiento->ejercicios()->attach($ej->id, [
-                        'grupo_muscular' => $ej->grupo_muscular,
                         'series'         => rand(3, 5),
                         'repeticiones'   => rand(6, 15),
                         'carga_kg'       => rand(20, 120),
@@ -77,6 +76,34 @@ class CienEntrenamientosSeeder extends Seeder
             }
 
             $creados++;
+        }
+
+        // =============================================
+        // ASIGNAR LOGROS AL USUARIO
+        // =============================================
+        $logrosModel = \App\Models\Logro::all();
+        $numEntrenamientos = $user->entrenamientos()->count();
+        if ($numEntrenamientos >= 1) {
+            $l = $logrosModel->where('criterio', \App\Models\Logro::CRITERIO_PRIMER_ENTRENO)->first();
+            if ($l) $user->logros()->syncWithoutDetaching([$l->id]);
+        }
+        
+        $numFuerza = $user->entrenamientos()->where('tipo', 'Fuerza')->count();
+        if ($numFuerza >= 5) {
+            $l = $logrosModel->where('criterio', \App\Models\Logro::CRITERIO_5_SESIONES_FUERZA)->first();
+            if ($l) $user->logros()->syncWithoutDetaching([$l->id]);
+        }
+        
+        $minutosTotales = $user->entrenamientos()->sum('duracion_minutos');
+        if ($minutosTotales >= 1000) {
+            $l = $logrosModel->where('criterio', \App\Models\Logro::CRITERIO_1000_MINUTOS)->first();
+            if ($l) $user->logros()->syncWithoutDetaching([$l->id]);
+        }
+        
+        $racha = $user->calcularRacha();
+        if ($racha >= 3) {
+            $l = $logrosModel->where('criterio', \App\Models\Logro::CRITERIO_RACHA_3_DIAS)->first();
+            if ($l) $user->logros()->syncWithoutDetaching([$l->id]);
         }
 
         $this->command->info("¡{$creados} entrenamientos creados para {$user->correo}!");

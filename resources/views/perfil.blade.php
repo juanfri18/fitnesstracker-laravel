@@ -35,10 +35,25 @@
                                 </ul>
                             </div>
                         @endif
+                        @php
+                            $perfil = $usuario->perfil;
+                            $metrica = $usuario->metricaActual;
+                            $peso_val = $metrica->peso ?? null;
+                            $altura_val = $perfil->altura ?? null;
+                            $edad_val = $perfil->edad ?? null;
+                            $genero_val = $perfil->genero ?? null;
+                            $grasa_display = null;
+                            if ($peso_val && $altura_val && $edad_val && $genero_val) {
+                                $am = $altura_val / 100;
+                                $imc = $peso_val / ($am * $am);
+                                $fg = ($genero_val === 'Hombre') ? 1 : 0;
+                                $grasa_display = max(1, min(60, round((1.20 * $imc) + (0.23 * $edad_val) - (10.8 * $fg) - 5.4, 1))) . ' %';
+                            }
+                        @endphp
                         <div class="avatar-container mb-4">
                             <div class="position-relative d-inline-block">
-                                @if($usuario->foto)
-                                    <img src="{{ asset('storage/' . $usuario->foto) }}" id="preview" class="profile-img">
+                                @if($perfil && $perfil->foto)
+                                    <img src="{{ asset('storage/' . $perfil->foto) }}" id="preview" class="profile-img">
                                 @else
                                     <img id="preview" class="profile-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' fill='%232A5199'/%3E%3Ccircle cx='60' cy='42' r='22' fill='white' opacity='0.9'/%3E%3Cellipse cx='60' cy='100' rx='35' ry='28' fill='white' opacity='0.9'/%3E%3C/svg%3E">
                                 @endif
@@ -46,7 +61,7 @@
                                 <label for="fileUp" id="btnCamera" class="btn-camera d-none" style="right: 0; margin-right: 0;" title="Cambiar foto"><i class="fas fa-camera text-primary"></i></label>
                             </div>
                             <h3 class="mt-2 fw-bold mb-0">{{ $usuario->nombre ?? '' }}</h3>
-                            <p class="text-muted fst-italic" id="bioDisplay">{{ $usuario->biografia ? '"'.$usuario->biografia.'"' : '' }}</p>
+                            <p class="text-muted fst-italic" id="bioDisplay">{{ ($perfil && $perfil->biografia) ? '"'.$perfil->biografia.'"' : '' }}</p>
                         </div>
 
                         <h5 class="section-title"><i class="fas fa-user me-2"></i>Datos Personales</h5>
@@ -57,11 +72,27 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="small fw-bold">Apellidos</label>
-                                <input type="text" name="apellidos" class="form-control editable-field" value="{{ $usuario->apellidos ?? '' }}" placeholder="Opcional" readonly>
+                                <input type="text" name="apellidos" class="form-control editable-field" value="{{ $perfil->apellidos ?? '' }}" placeholder="Opcional" readonly>
                             </div>
                             <div class="col-12">
                                 <label class="small fw-bold">Biografía / Estado</label>
-                                <input type="text" name="biografia" class="form-control editable-field" id="bioInput" value="{{ $usuario->biografia ?? '' }}" oninput="updateBio()" readonly>
+                                <input type="text" name="biografia" class="form-control editable-field" id="bioInput" value="{{ $perfil->biografia ?? '' }}" oninput="updateBio()" readonly>
+                            </div>
+                        </div>
+
+                        <h5 class="section-title mt-4"><i class="fas fa-lock me-2"></i>Datos de Acceso</h5>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="small fw-bold">Correo Electrónico</label>
+                                <input type="email" name="correo" class="form-control editable-field" value="{{ $usuario->correo ?? '' }}" required readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small fw-bold">Contraseña Nueva (dejar en blanco para conservar actual)</label>
+                                <input type="password" name="contrasena" class="form-control editable-field" placeholder="Mínimo 8 caracteres" readonly autocomplete="new-password">
+                            </div>
+                            <div class="col-md-6 offset-md-6">
+                                <label class="small fw-bold">Confirmar Contraseña Nueva</label>
+                                <input type="password" name="contrasena_confirmation" class="form-control editable-field" placeholder="Repite la contraseña" readonly autocomplete="new-password">
                             </div>
                         </div>
 
@@ -69,38 +100,38 @@
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="small fw-bold">Edad</label>
-                                <input type="number" name="edad" class="form-control editable-field" value="{{ $usuario->edad ?? '' }}" placeholder="Ej: 28" readonly>
+                                <input type="number" name="edad" class="form-control editable-field" value="{{ $perfil->edad ?? '' }}" placeholder="Ej: 28" readonly>
                             </div>
                             <div class="col-md-4">
                                 <label class="small fw-bold">Altura (cm)</label>
-                                <input type="number" name="altura" class="form-control editable-field" value="{{ $usuario->altura ?? '' }}" placeholder="Ej: 175" readonly>
+                                <input type="number" name="altura" class="form-control editable-field" value="{{ $perfil->altura ?? '' }}" placeholder="Ej: 175" readonly>
                             </div>
                             <div class="col-md-4">
                                 <label class="small fw-bold">Género</label>
                                 <select name="genero" class="form-select editable-field" disabled style="background-color: #e9ecef;">
-                                    <option value="" disabled {{ empty($usuario->genero) ? 'selected' : '' }}>Selecciona...</option>
-                                    <option value="Hombre" {{ $usuario->genero === 'Hombre' ? 'selected' : '' }}>Hombre</option>
-                                    <option value="Mujer" {{ $usuario->genero === 'Mujer' ? 'selected' : '' }}>Mujer</option>
+                                    <option value="" disabled {{ empty($perfil->genero) ? 'selected' : '' }}>Selecciona...</option>
+                                    <option value="Hombre" {{ ($perfil && $perfil->genero === 'Hombre') ? 'selected' : '' }}>Hombre</option>
+                                    <option value="Mujer" {{ ($perfil && $perfil->genero === 'Mujer') ? 'selected' : '' }}>Mujer</option>
                                 </select>
                             </div>
                             <div class="col-md-4 mt-3">
                                 <label class="small fw-bold">Peso (kg)</label>
-                                <input type="number" step="0.1" name="peso" class="form-control editable-field" value="{{ $usuario->peso ?? '' }}" placeholder="Ej: 75.5" readonly>
+                                <input type="number" step="0.1" name="peso" class="form-control editable-field" value="{{ $metrica->peso ?? '' }}" placeholder="Ej: 75.5" readonly>
                             </div>
                             <div class="col-md-8 mt-3">
                                 <label class="small fw-bold">Nivel de Actividad</label>
                                 <select name="nivel_actividad" class="form-select editable-field" disabled style="background-color: #e9ecef;">
-                                    <option value="" disabled {{ empty($usuario->nivel_actividad) ? 'selected' : '' }}>Selecciona tu nivel diario...</option>
-                                    <option value="Sedentario" {{ $usuario->nivel_actividad === 'Sedentario' ? 'selected' : '' }}>Sedentario (Poco o nada de ejercicio)</option>
-                                    <option value="Ligero" {{ $usuario->nivel_actividad === 'Ligero' ? 'selected' : '' }}>Ligero (Ejercicio 1-3 días extra a la semana)</option>
-                                    <option value="Moderado" {{ $usuario->nivel_actividad === 'Moderado' ? 'selected' : '' }}>Moderado (Ejercicio 3-5 días extra a la semana)</option>
-                                    <option value="Intenso" {{ $usuario->nivel_actividad === 'Intenso' ? 'selected' : '' }}>Intenso (Ejercicio 6-7 días a la semana)</option>
-                                    <option value="Muy Intenso" {{ $usuario->nivel_actividad === 'Muy Intenso' ? 'selected' : '' }}>Muy Intenso (Doble turno o trabajo físico fuerte)</option>
+                                    <option value="" disabled {{ empty($perfil->nivel_actividad) ? 'selected' : '' }}>Selecciona tu nivel diario...</option>
+                                    <option value="Sedentario" {{ ($perfil && $perfil->nivel_actividad === 'Sedentario') ? 'selected' : '' }}>Sedentario (Poco o nada de ejercicio)</option>
+                                    <option value="Ligero" {{ ($perfil && $perfil->nivel_actividad === 'Ligero') ? 'selected' : '' }}>Ligero (Ejercicio 1-3 días extra a la semana)</option>
+                                    <option value="Moderado" {{ ($perfil && $perfil->nivel_actividad === 'Moderado') ? 'selected' : '' }}>Moderado (Ejercicio 3-5 días extra a la semana)</option>
+                                    <option value="Intenso" {{ ($perfil && $perfil->nivel_actividad === 'Intenso') ? 'selected' : '' }}>Intenso (Ejercicio 6-7 días a la semana)</option>
+                                    <option value="Muy Intenso" {{ ($perfil && $perfil->nivel_actividad === 'Muy Intenso') ? 'selected' : '' }}>Muy Intenso (Doble turno o trabajo físico fuerte)</option>
                                 </select>
                             </div>
                             <div class="col-md-12 mt-3">
                                 <label class="small fw-bold text-primary">Grasa Corporal (%) <span class="badge bg-primary ms-1" style="font-size: 0.6rem;">Auto-calculado</span></label>
-                                <input type="text" name="grasa" class="form-control" value="{{ $usuario->grasa ?? 'Pendiente de datos' }}" readonly style="background-color: #f8f9fa; font-weight: bold; color: var(--primary-color);">
+                                <input type="text" name="grasa" class="form-control" value="{{ $grasa_display ?? 'Pendiente de datos' }}" readonly style="background-color: #f8f9fa; font-weight: bold; color: var(--primary-color);">
                                 <small class="text-muted" style="font-size: 0.7rem;">Rellena peso, altura, edad y género para calcularlo.</small>
                             </div>
                         </div>
@@ -117,7 +148,7 @@
                         $mis_logros = $usuario->logros->pluck('id')->toArray();
                         $total_puntos = $usuario->logros->sum('puntos');
                         $racha_actual = $usuario->calcularRacha();
-                        $mejor_racha = max($usuario->mejor_racha ?? 0, $racha_actual);
+                        $mejor_racha = max($usuario->racha->mejor_racha ?? 0, $racha_actual);
                     @endphp
                     
                     <div class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3 border-bottom pb-2 gap-2">

@@ -27,7 +27,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Muro de Registro de Vista individual
     Route::get('/registro', function () {
-        return view('registro');
+        $ejercicios = \App\Models\Ejercicio::all()->groupBy('grupo_muscular');
+        return view('registro', compact('ejercicios'));
     });
 
     // Entrenamientos

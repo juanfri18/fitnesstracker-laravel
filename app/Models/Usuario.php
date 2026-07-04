@@ -4,13 +4,15 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class Usuario extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * La tabla asociada con el modelo.
@@ -21,6 +23,7 @@ class Usuario extends Authenticatable
 
     const CREATED_AT = 'creado_en';
     const UPDATED_AT = 'actualizado_en';
+    const DELETED_AT = 'eliminado_en';
 
     /**
      * Los atributos que se pueden asignar masivamente.
@@ -94,6 +97,39 @@ class Usuario extends Authenticatable
     {
         return $this->belongsToMany(Logro::class, 'logro_usuario', 'usuario_id', 'logro_id')
             ->withTimestamps('creado_en', 'actualizado_en');
+    }
+
+    /**
+     * Obtener el perfil del usuario.
+     */
+    public function perfil(): HasOne
+    {
+        return $this->hasOne(PerfilUsuario::class, 'usuario_id');
+    }
+
+    /**
+     * Obtener la racha del usuario.
+     */
+    public function racha(): HasOne
+    {
+        return $this->hasOne(Racha::class, 'usuario_id');
+    }
+
+    /**
+     * Obtener la métrica más reciente del usuario.
+     */
+    public function metricaActual(): HasOne
+    {
+        return $this->hasOne(Metrica::class, 'usuario_id')
+                    ->latestOfMany('fecha_registro');
+    }
+
+    /**
+     * Obtener las estadísticas del usuario.
+     */
+    public function estadisticas(): HasOne
+    {
+        return $this->hasOne(EstadisticaUsuario::class, 'usuario_id');
     }
 
     /**

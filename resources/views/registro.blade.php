@@ -122,14 +122,9 @@
 
 @section('scripts_extra')
 <script>
-    const exercises = { 
-        pecho: ['Press Banca', 'Aperturas', 'Flexiones', 'Press Inclinado', 'Cruce de Poleas'], 
-        espalda: ['Dominadas', 'Remo con Barra', 'Jalón al Pecho', 'Remo en Polea Baja', 'Peso Muerto'],
-        pierna: ['Sentadillas', 'Prensa', 'Zancadas', 'Curl Femoral', 'Extensión de Cuádriceps', 'Gemelos'],
-        hombro: ['Press Militar', 'Elevaciones Laterales', 'Pájaros', 'Elevaciones Frontales'],
-        brazo: ['Curl de Bíceps', 'Curl Martillo', 'Press Francés', 'Extensión de Tríceps Polea', 'Fondos'],
-        core: ['Plancha', 'Crunch', 'Elevación de Piernas', 'Rueda Abdominal']
-    };
+    const exercises = @json($ejercicios->mapWithKeys(function($items, $key) {
+        return [strtolower($key) => $items->pluck('nombre')];
+    }));
 
     function toggleModule() {
         const val = document.getElementById('mainCat').value;

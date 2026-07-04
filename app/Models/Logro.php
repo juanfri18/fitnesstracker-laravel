@@ -29,6 +29,6 @@ class Logro extends Model
 
     public function usuarios()
     {
-        return $this->belongsToMany(Usuario::class, 'logro_usuario', 'logro_id', 'usuario_id')->withTimestamps();
+        return $this->belongsToMany(Usuario::class, 'logro_usuario', 'logro_id', 'usuario_id')->withTimestamps('creado_en', 'actualizado_en');
     }
 }
