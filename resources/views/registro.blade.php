@@ -7,6 +7,16 @@
     .card-custom { border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
     .form-section { display: none; margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
     .btn-save { color: white; font-weight: bold; padding: 12px; border-radius: 25px; border: none; width: 100%; transition: 0.3s; }
+
+    /* El thumb del slider de cansancio no responde a las clases de texto de Bootstrap
+       (text-primary/text-danger/text-success solo cambian el color del texto, no el thumb
+       de un <input type="range">), asi que necesita su propia clase por color. */
+    .form-range.range-danger::-webkit-slider-thumb { background-color: var(--bs-danger); }
+    .form-range.range-danger::-moz-range-thumb { background-color: var(--bs-danger); }
+    .form-range.range-success::-webkit-slider-thumb { background-color: var(--bs-success); }
+    .form-range.range-success::-moz-range-thumb { background-color: var(--bs-success); }
+    .form-range.range-primary::-webkit-slider-thumb { background-color: var(--bs-primary); }
+    .form-range.range-primary::-moz-range-thumb { background-color: var(--bs-primary); }
 </style>
 @endsection
 
@@ -51,8 +61,8 @@
 
                     <div id="sec-fuerza" class="form-section">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="text-primary mb-0"><i class="fas fa-dumbbell me-2"></i>Detalle Musculación</h5>
-                            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill" onclick="addExerciseRow()"><i class="fas fa-plus"></i> Añadir Ejercicio</button>
+                            <h5 class="text-danger mb-0"><i class="fas fa-dumbbell me-2"></i>Detalle Musculación</h5>
+                            <button type="button" class="btn btn-sm btn-outline-danger rounded-pill" onclick="addExerciseRow()"><i class="fas fa-plus"></i> Añadir Ejercicio</button>
                         </div>
                         
                         <div id="exercises-container">
@@ -132,6 +142,7 @@
         const formTitle = document.getElementById('formTitle');
         const submitBtn = document.getElementById('submitBtn');
         const feelVal = document.getElementById('feelVal');
+        const feelRange = document.getElementById('feel');
 
         [mainCat, formTitle, submitBtn, feelVal].forEach(el => {
             if(el) {
@@ -140,27 +151,32 @@
                                     'border-success', 'text-success', 'bg-success', 'btn-success');
             }
         });
+        if(feelRange) feelRange.classList.remove('range-primary', 'range-danger', 'range-success');
 
         if (val === 'caminata') {
             mainCat.classList.add('bg-primary', 'text-white');
             if(formTitle) formTitle.classList.add('text-primary');
             if(submitBtn) submitBtn.classList.add('btn-primary');
             if(feelVal) feelVal.classList.add('bg-primary');
+            if(feelRange) feelRange.classList.add('range-primary');
         } else if (val === 'fuerza') {
             mainCat.classList.add('bg-danger', 'text-white');
             if(formTitle) formTitle.classList.add('text-danger');
             if(submitBtn) submitBtn.classList.add('btn-danger');
             if(feelVal) feelVal.classList.add('bg-danger');
+            if(feelRange) feelRange.classList.add('range-danger');
         } else if (val === 'carrera') {
             mainCat.classList.add('bg-success', 'text-white');
             if(formTitle) formTitle.classList.add('text-success');
             if(submitBtn) submitBtn.classList.add('btn-success');
             if(feelVal) feelVal.classList.add('bg-success');
+            if(feelRange) feelRange.classList.add('range-success');
         } else {
             mainCat.classList.add('bg-primary', 'text-white');
             if(formTitle) formTitle.classList.add('text-primary');
             if(submitBtn) submitBtn.classList.add('btn-primary');
             if(feelVal) feelVal.classList.add('bg-primary');
+            if(feelRange) feelRange.classList.add('range-primary');
         }
 
         document.getElementById('sec-fuerza').style.display = val === 'fuerza' ? 'block' : 'none';
@@ -169,8 +185,8 @@
 
         if(val === 'carrera' || val === 'caminata'){
             const title = document.getElementById('cardioTitle');
-            if(val === 'carrera') { title.innerHTML = '<i class="fas fa-running me-2"></i>Módulo Carrera'; title.className = "mb-3 text-danger"; }
-            else { title.innerHTML = '<i class="fas fa-walking me-2"></i>Módulo Caminata'; title.className = "mb-3 text-success"; }
+            if(val === 'carrera') { title.innerHTML = '<i class="fas fa-running me-2"></i>Módulo Carrera'; title.className = "mb-3 text-success"; }
+            else { title.innerHTML = '<i class="fas fa-walking me-2"></i>Módulo Caminata'; title.className = "mb-3 text-primary"; }
         }
     }
 

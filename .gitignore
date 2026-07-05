@@ -16,3 +16,6 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+# Paquetes de despliegue generados (contienen .env con credenciales/APP_KEY)
+/despliegue-hostinger

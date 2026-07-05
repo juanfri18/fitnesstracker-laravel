@@ -65,8 +65,8 @@
 
                     <div id="sec-fuerza" class="form-section">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="text-primary mb-0"><i class="fas fa-dumbbell me-2"></i>Detalle Musculación</h5>
-                            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill" onclick="addExerciseRow()"><i class="fas fa-plus"></i> Añadir Ejercicio</button>
+                            <h5 class="text-danger mb-0"><i class="fas fa-dumbbell me-2"></i>Detalle Musculación</h5>
+                            <button type="button" class="btn btn-sm btn-outline-danger rounded-pill" onclick="addExerciseRow()"><i class="fas fa-plus"></i> Añadir Ejercicio</button>
                         </div>
                         
                         <div id="exercises-container">
